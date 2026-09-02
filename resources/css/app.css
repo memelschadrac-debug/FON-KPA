@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+@plugin "@tailwindcss/forms";
+
+@plugin "daisyui";
+
+@import 'boxicons/css/boxicons.min.css';
+
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import "tailwindcss";
+
+@plugin "@tailwindcss/forms";
+@plugin "daisyui";
+
+@import "boxicons/css/boxicons.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+
+@theme {
+
+    /* Couleurs FON-KPA */
+    --color-heading: #593114;
+    --color-title: #593114;
+    --color-body: #6B625D;
+    --color-muted: #9A918B;
+    --color-accent: #E25F12;
+
+}
+
+
+/* =====================================================
+   COMPONENTS
+===================================================== */
+
+@layer components {
+
+    .page-container {
+        @apply mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12;
+    }
+
+}
+
+
+/* =====================================================
+   TYPOGRAPHIE
+===================================================== */
+
+h1 {
+    font-size: 2.5rem;      /* 40px */
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--color-heading);
+}
+
+h2 {
+    font-size: 1.875rem;    /* 30px */
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-title);
+}
+
+h3 {
+    font-size: 1.25rem;     /* 20px */
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-title);
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body {
+    background-color: #FFFFFF;
+    color: #201B18;
+    font-family: sans-serif;
+}
+
+
+/* =====================================================
+   TITRES
+===================================================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+    font-family: 'Montserrat', sans-serif;
+}
+
+
+/* =====================================================
+   OMBRES
+===================================================== */
+
+.smooth-shadow {
+    box-shadow: 0px 12px 32px rgba(43, 33, 27, 0.05);
+}
+
+.smooth-shadow-lg {
+    box-shadow: 0px 16px 40px rgba(43, 33, 27, 0.08);
+}
+@theme {
+
+    /* Police 
+    --font-jakarta: "Plus Jakarta Sans", sans-serif;
+    */
+
+     /* Couleurs */
+    --color-heading: #593114;
+    --color-title: #593114;
+    --color-body: #6B625D;
+    --color-muted: #9A918B;
+    --color-accent: #E25F12;
+
+  
+    
+}
+
+layer components {
+    .page-container {
+        @apply mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12;
+    }
+}
+/*'Plus Jakarta Sans',*/
+
+  /* Grands titres */
+h1 {
+    
+    font-size: 3.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-heading);
+}
+
+/* Titres de sections */
+h2 {
+    font-family: var(--font-jakarta);
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-title);
+}
+
+/* Sous-titres */
+h3 {
+    font-family: var(--font-jakarta);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-title);
+}
+
+p {
+    
+    
+    
+}
+
+body {
+    background-color: var(--color-cream-bg, #FFFF);
+    color: var(--color-on-surface, #201B18);
+    font-family: var(--font-body, sans-serif);
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+}
+
+.smooth-shadow {
+    box-shadow: 0px 12px 32px rgba(43, 33, 27, 0.05);
+}
+
+.smooth-shadow-lg {
+    box-shadow: 0px 16px 40px rgba(43, 33, 27, 0.08);
+}
