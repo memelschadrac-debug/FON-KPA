@@ -92,12 +92,14 @@
                     items-center
                     gap-3
                     rounded-xl
-                    bg-[#593114]/[0.07]
                     px-3
                     py-2.5
                     text-[12px]
-                    font-semibold
-                    text-[#593114]
+                    font-medium
+                    transition
+                    {{ request()->routeIs('admin.dashboard')
+                        ? 'bg-[#593114]/[0.07] font-semibold text-[#593114]'
+                        : 'text-gray-500 hover:bg-[#593114]/[0.05] hover:text-[#593114]' }}
                 "
             >
 
@@ -109,8 +111,10 @@
                         items-center
                         justify-center
                         rounded-lg
-                        bg-[#593114]
-                        text-white
+                        transition
+                        {{ request()->routeIs('admin.dashboard')
+                            ? 'bg-[#593114] text-white'
+                            : 'bg-gray-50 text-gray-400 group-hover:bg-[#593114]/10 group-hover:text-[#593114]' }}
                     "
                 >
                     <svg
@@ -135,33 +139,27 @@
 
 
             {{-- ============================= --}}
-            {{-- CATALOGUE --}}
+            {{-- CATÉGORIES --}}
             {{-- ============================= --}}
 
-            <div
-                x-data="{ open: true }"
-                class="pt-2"
-            >
+            @if (Route::has('admin.categories.index'))
 
-                {{-- Bouton Catalogue --}}
-                <button
-                    type="button"
-                    @click="open = !open"
+                <a
+                    href="{{ route('admin.categories.index') }}"
                     class="
                         group
                         flex
-                        w-full
                         items-center
                         gap-3
                         rounded-xl
                         px-3
                         py-2.5
-                        text-left
                         text-[12px]
-                        font-semibold
-                        text-[#593114]
+                        font-medium
                         transition
-                        hover:bg-[#593114]/[0.04]
+                        {{ request()->routeIs('admin.categories.*')
+                            ? 'bg-[#593114]/[0.07] font-semibold text-[#593114]'
+                            : 'text-gray-500 hover:bg-[#593114]/[0.05] hover:text-[#593114]' }}
                     "
                 >
 
@@ -170,12 +168,13 @@
                             flex
                             h-7
                             w-7
-                            shrink-0
                             items-center
                             justify-center
                             rounded-lg
-                            bg-[#593114]/10
-                            text-[#593114]
+                            transition
+                            {{ request()->routeIs('admin.categories.*')
+                                ? 'bg-[#593114] text-white'
+                                : 'bg-gray-50 text-gray-400 group-hover:bg-[#593114]/10 group-hover:text-[#593114]' }}
                         "
                     >
                         <svg
@@ -191,125 +190,13 @@
                         </svg>
                     </span>
 
-                    <span class="flex-1">
-                        Catalogue
+                    <span>
+                        Catégories
                     </span>
 
-                    {{-- Chevron --}}
-                    <svg
-                        class="
-                            h-4
-                            w-4
-                            shrink-0
-                            text-gray-400
-                            transition-transform
-                            duration-300
-                        "
-                        :class="{ 'rotate-180 text-[#593114]': open }"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                    >
-                        <path
-                            d="m6 9 6 6 6-6"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        />
-                    </svg>
+                </a>
 
-                </button>
-
-
-                {{-- Sous-menu Catalogue --}}
-                <div
-                    x-show="open"
-                    x-collapse
-                    class="ml-10 space-y-1 border-l border-gray-100 pl-3"
-                >
-
-                    <a
-                        href="#"
-                        class="
-                            block
-                            rounded-lg
-                            px-3
-                            py-2
-                            text-[11px]
-                            font-medium
-                            text-gray-500
-                            transition
-                            hover:bg-[#593114]/[0.05]
-                            hover:text-[#593114]
-                        "
-                    >
-                        Tous les plats
-                    </a>
-
-
-                    <a
-                        href="#"
-                        class="
-                            block
-                            rounded-lg
-                            px-3
-                            py-2
-                            text-[11px]
-                            font-medium
-                            text-gray-500
-                            transition
-                            hover:bg-[#593114]/[0.05]
-                            hover:text-[#593114]
-                        "
-                    >
-                        Ajouter un plat
-                    </a>
-
-
-                    @if (Route::has('admin.categories.index'))
-
-                        <a
-                            href="{{ route('admin.categories.index') }}"
-                            class="
-                                block
-                                rounded-lg
-                                px-3
-                                py-2
-                                text-[11px]
-                                font-medium
-                                text-gray-500
-                                transition
-                                hover:bg-[#593114]/[0.05]
-                                hover:text-[#593114]
-                            "
-                        >
-                            Catégories
-                        </a>
-
-                    @endif
-
-
-                    <a
-                        href="#"
-                        class="
-                            block
-                            rounded-lg
-                            px-3
-                            py-2
-                            text-[11px]
-                            font-medium
-                            text-gray-500
-                            transition
-                            hover:bg-[#593114]/[0.05]
-                            hover:text-[#593114]
-                        "
-                    >
-                        Médias / Images
-                    </a>
-
-                </div>
-
-            </div>
+            @endif
 
 
             {{-- Commandes --}}

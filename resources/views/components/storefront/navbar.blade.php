@@ -1,28 +1,80 @@
-<!-- Include this script tag or install `@tailwindplus/elements` via npm: -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> -->
+<!-- ========================================================= -->
+<!-- FON-KPA NAVBAR                                            -->
+<!-- ========================================================= -->
+
+<!-- Bootstrap Icons -->
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+>
 
 <div class="bg-white">
 
-    <!-- Mobile menu -->
+    <!-- ========================================================= -->
+    <!-- MOBILE MENU                                               -->
+    <!-- ========================================================= -->
+
     <el-dialog>
-        <dialog id="mobile-menu" class="backdrop:bg-transparent lg:hidden">
 
+        <dialog
+            id="mobile-menu"
+            class="backdrop:bg-transparent lg:hidden"
+        >
+
+            <!-- Backdrop -->
             <el-dialog-backdrop
-                class="fixed inset-0 bg-black/25 transition-opacity duration-300 ease-linear data-closed:opacity-0">
-            </el-dialog-backdrop>
+                class="fixed inset-0 bg-black/30 opacity-100 backdrop-blur-[1px]
+                       transition-all duration-300 ease-out
+                       data-closed:opacity-0 data-closed:backdrop-blur-0"
+            ></el-dialog-backdrop>
 
-            <div tabindex="0" class="fixed inset-0 flex focus:outline-none">
+
+            <div
+                tabindex="0"
+                class="fixed inset-0 flex focus:outline-none"
+            >
+
+                <!-- ================================================= -->
+                <!-- PANNEAU MOBILE                                     -->
+                <!-- ================================================= -->
 
                 <el-dialog-panel
-                    class="relative flex w-full max-w-xs transform flex-col overflow-y-auto bg-white pb-12 shadow-xl transition duration-300 ease-in-out data-closed:-translate-x-full">
+                    class="relative flex w-full max-w-xs transform flex-col
+                           overflow-y-auto bg-white pb-12 shadow-2xl
+                           transition-all duration-300 ease-out
+                           data-closed:-translate-x-full data-closed:opacity-0
+                           lg:max-w-sm"
+                >
 
-                    <div class="flex px-4 pt-5 pb-2">
+                    <!-- ================================================= -->
+                    <!-- HEADER MOBILE                                      -->
+                    <!-- ================================================= -->
 
+                    <div class="flex items-center justify-between px-4 pt-5 pb-3">
+
+                        <!-- Logo -->
+                        <a
+                            href="{{ route('home') }}"
+                            class="flex items-center"
+                        >
+                            <img
+                                src="{{ asset('images/FON-KPA LOGO1.png') }}"
+                                alt="FON-KPA"
+                                class="h-7 w-auto"
+                            >
+                        </a>
+
+
+                        <!-- Fermer -->
                         <button
                             type="button"
                             command="close"
                             commandfor="mobile-menu"
-                            class="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400">
+                            class="relative flex h-10 w-10 items-center justify-center rounded-full
+                                   text-gray-400 transition-all duration-200
+                                   hover:bg-gray-100 hover:text-[#e25f12]
+                                   active:scale-90"
+                        >
 
                             <span class="absolute -inset-0.5"></span>
 
@@ -30,124 +82,262 @@
                                 Fermer le menu
                             </span>
 
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                                data-slot="icon"
-                                aria-hidden="true"
-                                class="size-6">
-
-                                <path
-                                    d="M6 18 18 6M6 6l12 12"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round" />
-
-                            </svg>
+                            <i class="bi bi-x-lg text-xl"></i>
 
                         </button>
 
                     </div>
 
 
-                    <!-- Links -->
-                    <div class="mt-2 block">
+                    <!-- Petite séparation -->
+                    <div class="mx-4 border-b border-gray-100"></div>
 
-                        <div class="space-y-2 px-4 py-6">
 
-                            <div class="flow-root">
+                    <!-- ================================================= -->
+                    <!-- NAVIGATION MOBILE                                 -->
+                    <!-- ================================================= -->
 
-                                <a
-                                    href="#"
-                                    class="-m-2 block p-2 text-base font-medium text-gray-900 transition-colors duration-200 hover:text-[#e25f12]">
+                    <div class="mt-3 px-4">
 
+                        <div class="space-y-1">
+
+
+                            <!-- Accueil -->
+                            <a
+                                href="{{ route('home') }}"
+                                class="group flex items-center gap-3 rounded-xl px-3 py-3
+                                       text-base font-medium transition-all duration-200
+                                       {{ request()->routeIs('home')
+                                           ? 'bg-orange-50 text-[#e25f12]'
+                                           : 'text-gray-900 hover:bg-gray-50 hover:text-[#e25f12]' }}"
+                            >
+
+                                <span
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg
+                                           transition-colors
+                                           {{ request()->routeIs('home')
+                                               ? 'bg-white text-[#e25f12]'
+                                               : 'bg-gray-50 text-gray-500 group-hover:text-[#e25f12]' }}"
+                                >
+                                    <i class="bi bi-house text-lg"></i>
+                                </span>
+
+                                <span>
                                     Accueil
+                                </span>
 
-                                </a>
-
-                            </div>
+                            </a>
 
 
-                            <div class="flow-root">
+                            <!-- Nos plats -->
+                            <a
+                                href="{{ route('plats.index') }}"
+                                class="group flex items-center gap-3 rounded-xl px-3 py-3
+                                       text-base font-medium transition-all duration-200
+                                       {{ request()->routeIs('plats.*')
+                                           ? 'bg-orange-50 text-[#e25f12]'
+                                           : 'text-gray-900 hover:bg-gray-50 hover:text-[#e25f12]' }}"
+                            >
 
-                                <a
-                                    href="#"
-                                    class="-m-2 block p-2 text-base font-medium text-gray-900 transition-colors duration-200 hover:text-[#e25f12]">
+                                <span
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg
+                                           bg-gray-50 text-gray-500
+                                           transition-colors group-hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-egg-fried text-lg"></i>
+                                </span>
 
+                                <span>
                                     Nos plats
+                                </span>
 
-                                </a>
-
-                            </div>
+                            </a>
 
 
-                            <div class="flow-root">
+                            <!-- Catégories -->
+                            <a
+                                href="{{ route('categories.index') }}"
+                                class="group flex items-center gap-3 rounded-xl px-3 py-3
+                                       text-base font-medium transition-all duration-200
+                                       {{ request()->routeIs('categories.*')
+                                           ? 'bg-orange-50 text-[#e25f12]'
+                                           : 'text-gray-900 hover:bg-gray-50 hover:text-[#e25f12]' }}"
+                            >
 
-                                <a
-                                    href="#"
-                                    class="-m-2 block p-2 text-base font-medium text-gray-900 transition-colors duration-200 hover:text-[#e25f12]">
+                                <span
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg
+                                           bg-gray-50 text-gray-500
+                                           transition-colors group-hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-grid text-lg"></i>
+                                </span>
 
+                                <span>
                                     Catégories
+                                </span>
 
-                                </a>
-
-                            </div>
+                            </a>
 
 
-                            <div class="flow-root">
+                            <!-- À propos -->
+                            <a
+                                href="{{ route('about') }}"
+                                class="group flex items-center gap-3 rounded-xl px-3 py-3
+                                       text-base font-medium transition-all duration-200
+                                       {{ request()->routeIs('about')
+                                           ? 'bg-orange-50 text-[#e25f12]'
+                                           : 'text-gray-900 hover:bg-gray-50 hover:text-[#e25f12]' }}"
+                            >
 
-                                <a
-                                    href="#"
-                                    class="-m-2 block p-2 text-base font-medium text-gray-900 transition-colors duration-200 hover:text-[#e25f12]">
+                                <span
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg
+                                           bg-gray-50 text-gray-500
+                                           transition-colors group-hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-info-circle text-lg"></i>
+                                </span>
 
+                                <span>
                                     À propos
+                                </span>
 
-                                </a>
-
-                            </div>
+                            </a>
 
 
-                            <div class="flow-root">
+                            <!-- Contact -->
+                            <a
+                                href="{{ route('contact') }}"
+                                class="group flex items-center gap-3 rounded-xl px-3 py-3
+                                       text-base font-medium transition-all duration-200
+                                       {{ request()->routeIs('contact')
+                                           ? 'bg-orange-50 text-[#e25f12]'
+                                           : 'text-gray-900 hover:bg-gray-50 hover:text-[#e25f12]' }}"
+                            >
 
-                                <a
-                                    href="#"
-                                    class="-m-2 block p-2 text-base font-medium text-gray-900 transition-colors duration-200 hover:text-[#e25f12]">
+                                <span
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg
+                                           bg-gray-50 text-gray-500
+                                           transition-colors group-hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-envelope text-lg"></i>
+                                </span>
 
+                                <span>
                                     Contact
+                                </span>
 
-                                </a>
-
-                            </div>
+                            </a>
 
                         </div>
 
                     </div>
 
 
-                    <div class="space-y-6 border-t border-gray-200 px-4 py-6">
+                    <!-- ================================================= -->
+                    <!-- COMPTE MOBILE                                     -->
+                    <!-- ================================================= -->
 
-                        <div class="flow-root">
+                    <div
+                        x-data="{ open: false }"
+                        class="mt-5 border-t border-gray-200 px-4 pt-5"
+                    >
+
+                        <button
+                            type="button"
+                            @click="open = !open"
+                            class="flex w-full items-center justify-between rounded-xl
+                                   px-3 py-3 text-gray-900 transition-all duration-200
+                                   hover:bg-gray-50 active:scale-[0.99]"
+                        >
+
+                            <span class="flex items-center gap-3">
+
+                                <span
+                                    class="flex h-9 w-9 items-center justify-center
+                                           rounded-lg bg-orange-50 text-[#e25f12]"
+                                >
+                                    <i class="bi bi-person text-lg"></i>
+                                </span>
+
+                                <span class="text-sm font-semibold">
+                                    Mon compte
+                                </span>
+
+                            </span>
+
+
+                            <i
+                                class="bi bi-chevron-down text-sm transition-transform duration-300"
+                                :class="open ? 'rotate-180' : ''"
+                            ></i>
+
+                        </button>
+
+
+                        <!-- Sous-menu -->
+                        <div
+                            x-show="open"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-250"
+                            x-transition:enter-start="opacity-0 -translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-200"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 -translate-y-2"
+                            class="mt-2 space-y-1 overflow-hidden"
+                        >
 
                             <a
                                 href="#"
-                                class="-m-2 block p-2 font-medium text-gray-900 transition-colors duration-200 hover:text-[#e25f12]">
+                                class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                       text-sm text-gray-700 transition hover:bg-orange-50
+                                       hover:text-[#e25f12]"
+                            >
+                                <i class="bi bi-person-circle text-lg"></i>
+                                Mon profil
+                            </a>
 
+
+                            <a
+                                href="#"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                       text-sm text-gray-700 transition hover:bg-orange-50
+                                       hover:text-[#e25f12]"
+                            >
+                                <i class="bi bi-bag-check text-lg"></i>
+                                Mes commandes
+                            </a>
+
+
+                            <a
+                                href="#"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                       text-sm text-gray-700 transition hover:bg-orange-50
+                                       hover:text-[#e25f12]"
+                            >
+                                <i class="bi bi-box-arrow-in-right text-lg"></i>
                                 Se connecter
-
                             </a>
 
-                        </div>
-
-
-                        <div class="flow-root">
 
                             <a
                                 href="#"
-                                class="-m-2 block p-2 font-medium text-gray-900 transition-colors duration-200 hover:text-[#e25f12]">
-
+                                class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                       text-sm text-gray-700 transition hover:bg-orange-50
+                                       hover:text-[#e25f12]"
+                            >
+                                <i class="bi bi-person-plus text-lg"></i>
                                 Créer un compte
+                            </a>
 
+
+                            <a
+                                href="#"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                       text-sm text-red-600 transition hover:bg-red-50"
+                            >
+                                <i class="bi bi-box-arrow-right text-lg"></i>
+                                Se déconnecter
                             </a>
 
                         </div>
@@ -155,18 +345,27 @@
                     </div>
 
 
-                    <div class="border-t border-gray-200 px-4 py-6">
+                    <!-- ================================================= -->
+                    <!-- DEVISE MOBILE                                     -->
+                    <!-- ================================================= -->
+
+                    <div class="mt-5 border-t border-gray-200 px-4 pt-5">
 
                         <a
                             href="#"
-                            class="-m-2 flex items-center p-2 text-gray-900 transition-colors duration-200 hover:text-[#e25f12]">
+                            class="flex items-center gap-3 rounded-xl px-3 py-3
+                                   text-gray-900 transition hover:bg-gray-50
+                                   hover:text-[#e25f12]"
+                        >
 
-                            <span class="block text-base font-medium">
+                            <img
+                                src="https://flagcdn.io/flags/4x3/ci.svg"
+                                alt="Côte d'Ivoire"
+                                class="w-5"
+                            >
+
+                            <span class="text-sm font-medium">
                                 FCFA
-                            </span>
-
-                            <span class="sr-only">
-                                , changer la devise
                             </span>
 
                         </a>
@@ -182,138 +381,157 @@
     </el-dialog>
 
 
-    <header class="relative bg-white">
+    <!-- ========================================================= -->
+    <!-- HEADER                                                     -->
+    <!-- ========================================================= -->
 
-        <!-- Promotional banner -->
-        <p
-            class="flex h-10 items-center justify-center gap-2 bg-[#593114] px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
+    <!--
+        IMPORTANT :
+        Le bandeau et la navbar sont dans le même header sticky.
+        Ils restent donc tous les deux visibles pendant le scroll.
+    -->
 
-            <span>
-                Livraison gratuite sur les commandes de plus de 50 000 FCFA
-            </span>
-
-
-            <svg
-                viewBox="0 0 512 512"
-                fill="none"
-                aria-hidden="true"
-                class="h-7 w-7 shrink-0">
-
-                <!-- Chapeau -->
-                <path
-                    d="M158 153L61 438C57 450 68 461 80 456L363 359L158 153Z"
-                    fill="#FFC515" />
-
-                <!-- Bande rouge -->
-                <path
-                    d="M132 224L95 337L247 398L283 382L132 224Z"
-                    fill="#D93652" />
-
-                <!-- Bande bleue -->
-                <path
-                    d="M95 337L73 402L136 438L166 428L95 337Z"
-                    fill="#2867D8" />
-
-                <!-- Partie sombre -->
-                <path
-                    d="M158 153C218 180 300 244 363 359L158 153Z"
-                    fill="#D99B0B" />
-
-                <!-- Confetti bleu gauche -->
-                <path
-                    d="M234 98C254 137 254 172 217 202"
-                    stroke="#2867D8"
-                    stroke-width="14"
-                    stroke-linecap="round" />
-
-                <!-- Confetti vert -->
-                <path
-                    d="M196 126L208 138"
-                    stroke="#22B573"
-                    stroke-width="13"
-                    stroke-linecap="round" />
-
-                <!-- Confetti rouge -->
-                <path
-                    d="M313 85C323 103 324 123 314 140"
-                    stroke="#D93652"
-                    stroke-width="13"
-                    stroke-linecap="round" />
-
-                <path
-                    d="M282 115V128"
-                    stroke="#D93652"
-                    stroke-width="13"
-                    stroke-linecap="round" />
-
-                <!-- Confetti jaune -->
-                <path
-                    d="M378 126C367 145 374 159 352 168C329 177 329 192 321 202"
-                    stroke="#FFC515"
-                    stroke-width="13"
-                    stroke-linecap="round" />
-
-                <!-- Confetti vert -->
-                <path
-                    d="M282 170H293"
-                    stroke="#22B573"
-                    stroke-width="13"
-                    stroke-linecap="round" />
-
-                <!-- Confetti rouge droit -->
-                <path
-                    d="M376 204C397 195 416 196 433 203"
-                    stroke="#D93652"
-                    stroke-width="13"
-                    stroke-linecap="round" />
-
-                <path
-                    d="M346 220V232"
-                    stroke="#D93652"
-                    stroke-width="13"
-                    stroke-linecap="round" />
-
-                <path
-                    d="M388 233H400"
-                    stroke="#D93652"
-                    stroke-width="13"
-                    stroke-linecap="round" />
-
-                <!-- Confetti bleu bas -->
-                <path
-                    d="M314 298C344 267 384 265 417 282"
-                    stroke="#2867D8"
-                    stroke-width="14"
-                    stroke-linecap="round" />
-
-                <!-- Confetti vert bas -->
-                <path
-                    d="M377 309L389 321"
-                    stroke="#22B573"
-                    stroke-width="13"
-                    stroke-linecap="round" />
-
-            </svg>
-
-        </p>
+    <header class="sticky top-0 z-50 bg-white">
 
 
-        <!-- Navbar -->
+        <!-- ===================================================== -->
+        <!-- BANDEAU PROMOTIONNEL                                  -->
+        <!-- ALPINE.JS CONSERVÉ                                    -->
+        <!-- ===================================================== -->
+
+        <div
+            x-data="{
+                messages: [
+                    {
+                        text: 'Livraison gratuite dès 10 000 FCFA',
+                        icon: '🎉',
+                        confetti: true
+                    },
+                    {
+                        text: 'Paiement sécurisé',
+                        icon: '🔒',
+                        confetti: false
+                    },
+                    {
+                        text: 'Des plats ivoiriens authentiques',
+                        icon: '🍲',
+                        confetti: false
+                    },
+                    {
+                        text: 'Livraison rapide à Abidjan',
+                        icon: '⚡',
+                        confetti: false
+                    },
+                    {
+                        text: 'Profitez de nos offres du moment',
+                        icon: '🎁',
+                        confetti: false
+                    },
+                    {
+                        text: 'Préparé avec soin et passion',
+                        icon: '❤️',
+                        confetti: false
+                    }
+                ],
+
+                current: 0,
+                showPromo: true,
+
+                nextMessage() {
+                    this.showPromo = false;
+
+                    setTimeout(() => {
+                        this.current =
+                            (this.current + 1) % this.messages.length;
+
+                        this.showPromo = true;
+                    }, 500);
+                }
+            }"
+            x-init="
+                setInterval(() => {
+                    nextMessage();
+                }, 5000);
+            "
+            class="flex h-10 items-center justify-center gap-2 bg-[#593114]
+                   px-4 text-sm font-medium text-white sm:px-6 lg:px-8"
+        >
+
+            <!-- Icône -->
+            <span
+                x-show="showPromo"
+                x-transition:enter="transition ease-out duration-700 delay-100"
+                x-transition:enter-start="opacity-0 scale-50 -translate-y-3"
+                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-500"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-75"
+                x-text="messages[current].icon"
+                class="shrink-0 text-base"
+            ></span>
+
+
+            <!-- Texte -->
+            <span
+                x-show="showPromo"
+                x-transition:enter="transition ease-out duration-700"
+                x-transition:enter-start="opacity-0 scale-75 -translate-y-3"
+                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-500"
+                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                x-transition:leave-end="opacity-0 scale-90 translate-y-2"
+                x-text="messages[current].text"
+                class="inline-block text-center"
+            ></span>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- NAVBAR                                                -->
+        <!-- ===================================================== -->
+
         <nav
-            aria-label="Top"
-            class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            aria-label="Navigation principale"
+            class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+        >
 
-            <div class="border-b border-gray-200">
+            <!--
+                CORRECTION PRINCIPALE :
 
-                <div class="flex h-16 items-center">
+                3 colonnes de largeur égale.
+
+                GAUCHE  = Logo
+                CENTRE  = Menu
+                DROITE  = Actions
+
+                Le menu est donc mathématiquement centré
+                par rapport à toute la navbar.
+            -->
+
+            <div
+                class="grid h-16 grid-cols-2 items-center border-b border-gray-200
+                       lg:grid-cols-3"
+            >
 
 
-                    <!-- Mobile menu button -->
+                <!-- ================================================= -->
+                <!-- GAUCHE : MOBILE + LOGO                            -->
+                <!-- ================================================= -->
+
+                <div class="flex min-w-0 items-center justify-start">
+
+                    <!-- Menu mobile -->
                     <button
                         type="button"
                         command="show-modal"
                         commandfor="mobile-menu"
-                        class="relative rounded-md bg-white p-2 text-gray-400 lg:hidden">
+                        class="relative mr-3 flex h-10 w-10 shrink-0 items-center
+                               justify-center rounded-lg text-gray-500
+                               transition-all duration-200
+                               hover:bg-gray-100 hover:text-[#e25f12]
+                               active:scale-90 lg:hidden"
+                    >
 
                         <span class="absolute -inset-0.5"></span>
 
@@ -321,257 +539,422 @@
                             Ouvrir le menu
                         </span>
 
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            data-slot="icon"
-                            aria-hidden="true"
-                            class="size-6">
-
-                            <path
-                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round" />
-
-                        </svg>
+                        <i class="bi bi-list text-2xl"></i>
 
                     </button>
 
 
                     <!-- Logo -->
-                    <div class="ml-4 flex lg:ml-0">
+                    <a
+                        href="{{ route('home') }}"
+                        class="flex min-w-0 items-center"
+                    >
 
-                        <a href="{{ route('home') }}">
+                        <span class="sr-only">
+                            FON-KPA
+                        </span>
 
-                            <span class="sr-only">
-                                FON-KPA
+                        <img
+                            src="{{ asset('images/FON-KPA LOGO1.png') }}"
+                            alt="FON-KPA"
+                            class="h-4 w-auto sm:h-6"
+                        >
+
+                    </a>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- CENTRE : NAVIGATION                               -->
+                <!-- ================================================= -->
+
+                <div class="hidden min-w-0 lg:block">
+
+                    <div
+                        class="flex h-16 items-center justify-center
+                               gap-5 xl:gap-8 2xl:gap-10"
+                    >
+
+
+                        <!-- Accueil -->
+                        <a
+                            href="{{ route('home') }}"
+                            class="relative flex h-16 shrink-0 items-center text-sm font-medium
+                                   transition-colors duration-200
+                                   {{ request()->routeIs('home')
+                                       ? 'text-[#e25f12]'
+                                       : 'text-gray-700 hover:text-[#e25f12]' }}"
+                        >
+
+                            Accueil
+
+                            @if(request()->routeIs('home'))
+                                <span
+                                    class="absolute bottom-0 left-1/2 h-0.5 w-6
+                                           -translate-x-1/2 rounded-full bg-[#e25f12]"
+                                ></span>
+                            @endif
+
+                        </a>
+
+
+                        <!-- Nos plats -->
+                        <a
+                            href="{{ route('plats.index') }}"
+                            class="relative flex h-16 shrink-0 items-center text-sm font-medium
+                                   transition-colors duration-200
+                                   {{ request()->routeIs('plats.*')
+                                       ? 'text-[#e25f12]'
+                                       : 'text-gray-700 hover:text-[#e25f12]' }}"
+                        >
+
+                            Nos plats
+
+                            @if(request()->routeIs('plats.*'))
+                                <span
+                                    class="absolute bottom-0 left-1/2 h-0.5 w-6
+                                           -translate-x-1/2 rounded-full bg-[#e25f12]"
+                                ></span>
+                            @endif
+
+                        </a>
+
+
+                        <!-- Catégories -->
+                        <a
+                            href="{{ route('categories.index') }}"
+                            class="relative flex h-16 shrink-0 items-center text-sm font-medium
+                                   transition-colors duration-200
+                                   {{ request()->routeIs('categories.*')
+                                       ? 'text-[#e25f12]'
+                                       : 'text-gray-700 hover:text-[#e25f12]' }}"
+                        >
+
+                            Catégories
+
+                            @if(request()->routeIs('categories.*'))
+                                <span
+                                    class="absolute bottom-0 left-1/2 h-0.5 w-6
+                                           -translate-x-1/2 rounded-full bg-[#e25f12]"
+                                ></span>
+                            @endif
+
+                        </a>
+
+
+                        <!-- À propos -->
+                        <a
+                            href="{{ route('about') }}"
+                            class="relative flex h-16 shrink-0 items-center text-sm font-medium
+                                   transition-colors duration-200
+                                   {{ request()->routeIs('about')
+                                       ? 'text-[#e25f12]'
+                                       : 'text-gray-700 hover:text-[#e25f12]' }}"
+                        >
+
+                            À propos
+
+                            @if(request()->routeIs('about'))
+                                <span
+                                    class="absolute bottom-0 left-1/2 h-0.5 w-6
+                                           -translate-x-1/2 rounded-full bg-[#e25f12]"
+                                ></span>
+                            @endif
+
+                        </a>
+
+
+                        <!-- Contact -->
+                        <a
+                            href="{{ route('contact') }}"
+                            class="relative flex h-16 shrink-0 items-center text-sm font-medium
+                                   transition-colors duration-200
+                                   {{ request()->routeIs('contact')
+                                       ? 'text-[#e25f12]'
+                                       : 'text-gray-700 hover:text-[#e25f12]' }}"
+                        >
+
+                            Contact
+
+                            @if(request()->routeIs('contact'))
+                                <span
+                                    class="absolute bottom-0 left-1/2 h-0.5 w-6
+                                           -translate-x-1/2 rounded-full bg-[#e25f12]"
+                                ></span>
+                            @endif
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- DROITE                                             -->
+                <!-- ================================================= -->
+
+                <div class="flex min-w-0 items-center justify-end">
+
+
+                    <!-- ================================================= -->
+                    <!-- COMPTE UTILISATEUR                              -->
+                    <!-- ================================================= -->
+
+                    <div
+                        x-data="{ open: false }"
+                        class="relative hidden lg:block"
+                    >
+
+                        <button
+                            type="button"
+                            @click="open = !open"
+                            @click.outside="open = false"
+                            class="group flex items-center gap-2 rounded-lg px-2 py-2
+                                   text-gray-700 transition hover:bg-gray-50
+                                   hover:text-[#e25f12]"
+                        >
+
+                            <span
+                                class="flex h-9 w-9 items-center justify-center
+                                       rounded-full border border-gray-200 bg-white
+                                       transition group-hover:border-orange-200
+                                       group-hover:bg-orange-50"
+                            >
+                                <i class="bi bi-person text-lg"></i>
                             </span>
 
+                            <span class="hidden text-sm font-medium xl:block">
+                                Mon compte
+                            </span>
+
+                            <i
+                                class="bi bi-chevron-down text-xs transition-transform duration-200"
+                                :class="open ? 'rotate-180' : ''"
+                            ></i>
+
+                        </button>
+
+
+                        <!-- ================================================= -->
+                        <!-- SOUS-MENU COMPTE                                  -->
+                        <!-- ================================================= -->
+
+                        <div
+                            x-show="open"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                            class="absolute right-0 z-50 mt-3 w-64 origin-top-right
+                                   overflow-hidden rounded-xl border border-gray-100
+                                   bg-white shadow-xl ring-1 ring-black/5"
+                        >
+
+                            <!-- En-tête -->
+                            <div class="border-b border-gray-100 bg-gray-50 px-4 py-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="flex h-10 w-10 items-center justify-center
+                                               rounded-full bg-orange-100 text-[#e25f12]"
+                                    >
+                                        <i class="bi bi-person text-xl"></i>
+                                    </div>
+
+                                    <div>
+
+                                        <p class="text-sm font-semibold text-gray-900">
+                                            Mon compte
+                                        </p>
+
+                                        <p class="text-xs text-gray-500">
+                                            Gérez votre espace personnel
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Liens -->
+                            <div class="p-2">
+
+                                <a
+                                    href="#"
+                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                           text-sm text-gray-700 transition
+                                           hover:bg-orange-50 hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-person-circle text-lg"></i>
+                                    <span>Mon profil</span>
+                                </a>
+
+
+                                <a
+                                    href="#"
+                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                           text-sm text-gray-700 transition
+                                           hover:bg-orange-50 hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-bag-check text-lg"></i>
+                                    <span>Mes commandes</span>
+                                </a>
+
+
+                                <a
+                                    href="#"
+                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                           text-sm text-gray-700 transition
+                                           hover:bg-orange-50 hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-box-arrow-in-right text-lg"></i>
+                                    <span>Se connecter</span>
+                                </a>
+
+
+                                <a
+                                    href="#"
+                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                           text-sm text-gray-700 transition
+                                           hover:bg-orange-50 hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-person-plus text-lg"></i>
+                                    <span>Créer un compte</span>
+                                </a>
+
+                            </div>
+
+
+                            <!-- Déconnexion -->
+                            <div class="border-t border-gray-100 p-2">
+
+                                <a
+                                    href="#"
+                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                           text-sm text-red-600 transition hover:bg-red-50"
+                                >
+                                    <i class="bi bi-box-arrow-right text-lg"></i>
+                                    <span>Se déconnecter</span>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Séparateur -->
+                    <div
+                        class="mx-3 hidden h-6 w-px bg-gray-200 lg:block"
+                    ></div>
+
+
+                    <!-- ================================================= -->
+                    <!-- DEVISE                                             -->
+                    <!-- ================================================= -->
+
+                    <div class="hidden lg:flex">
+
+                        <a
+                            href="#"
+                            class="group flex items-center gap-2 rounded-lg px-2 py-2
+                                   text-gray-700 transition-all duration-200
+                                   hover:bg-gray-50 hover:text-[#e25f12]"
+                            aria-label="Changer la devise"
+                        >
+
                             <img
-                                src="{{ asset('images/FON-KPA LOGO1.png') }}"
-                                alt="FON-KPA"
-                                class="h-6 w-auto" />
+                                src="https://flagcdn.io/flags/4x3/ci.svg"
+                                alt="Côte d'Ivoire"
+                                class="w-5 transition-transform duration-200
+                                       group-hover:scale-105"
+                            >
+
+                            <span class="text-sm font-medium">
+                                FCFA
+                            </span>
+
+                            <i class="bi bi-chevron-down text-[10px]"></i>
 
                         </a>
 
                     </div>
 
 
-                    <!-- Navigation -->
-                    <div class="hidden lg:ml-8 lg:block lg:self-stretch">
-
-                        <div class="flex h-full space-x-8">
-
-
-                            <!-- Accueil -->
-                            <a
-                                href="{{ route('home') }}"
-                                class="flex items-center text-sm font-medium transition-colors duration-200
-                                {{ request()->routeIs('home')
-                                    ? 'text-[#e25f12]'
-                                    : 'text-gray-700 hover:text-[#e25f12]' }}"
-                            >
-                                Accueil
-                            </a>
-
-
-                            <!-- Nos plats -->
-                            <a
-                                href="{{ route('plats.index') }}"
-                                class="flex items-center text-sm font-medium transition-colors duration-200
-                                {{ request()->routeIs('plats.*')
-                                    ? 'text-[#e25f12]'
-                                    : 'text-gray-700 hover:text-[#e25f12]' }}">
-
-                                Nos plats
-
-                            </a>
-
-
-                            <!-- Catégories -->
-                            <a
-                                href="{{ route('categories.index') }}"
-                                class="flex items-center text-sm font-medium transition-colors duration-200
-                                {{ request()->routeIs('categories.*')
-                                    ? 'text-[#e25f12]'
-                                    : 'text-gray-700 hover:text-[#e25f12]' }}">
-
-                                Catégories
-
-                            </a>
-
-
-                            <!-- À propos -->
-                            <a
-                                href="{{ route('about') }}"
-                                class="flex items-center text-sm font-medium transition-colors duration-200
-                                {{ request()->routeIs('about')
-                                    ? 'text-[#e25f12]'
-                                    : 'text-gray-700 hover:text-[#e25f12]' }}">
-
-                                À propos
-
-                            </a>
-
-
-                            <!-- Contact -->
-                            <a
-                                href="{{ route('contact') }}"
-                                class="flex items-center text-sm font-medium transition-colors duration-200
-                                {{ request()->routeIs('contact')
-                                    ? 'text-[#e25f12]'
-                                    : 'text-gray-700 hover:text-[#e25f12]' }}">
-
-                                Contact
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Right side -->
-                    <div class="ml-auto flex items-center">
-
-
-                        <!-- Authentication -->
-                        <div
-                            class="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-
-                            <a
-                                href="#"
-                                class="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-[#e25f12]">
-
-                                Se connecter
-
-                            </a>
-
-
-                            <span
-                                aria-hidden="true"
-                                class="h-6 w-px bg-gray-200">
-                            </span>
-
-
-                            <a
-                                href="#"
-                                class="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-[#e25f12]">
-
-                                Créer un compte
-
-                            </a>
-
-                        </div>
-
-
-                        <!-- Currency -->
-                        <div class="hidden lg:ml-8 lg:flex">
-
-                            <a
-                                href="#"
-                                class="flex items-center text-gray-700 transition-colors duration-200 hover:text-[#e25f12]">
-
-                                <img
-                                    src="https://flagcdn.io/flags/4x3/ci.svg"
-                                    alt="Côte d'Ivoire"
-                                    class="block h-auto w-5 shrink-0" />
-
-                                <span class="ml-3 block text-sm font-medium">
-                                    FCFA
-                                </span>
-
-                                <span class="sr-only">
-                                    , changer la devise
-                                </span>
-
-                            </a>
-
-                        </div>
-
-
-                        <!-- Search -->
-                        <div class="flex lg:ml-6">
-
-                            <a
-                                href="#"
-                                class="group p-2 text-gray-400 transition-colors duration-200 hover:text-[#e25f12]">
-
-                                <span class="sr-only">
-                                    Rechercher
-                                </span>
-
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.5"
-                                    data-slot="icon"
-                                    aria-hidden="true"
-                                    class="size-6 transition-colors duration-200">
-
-                                    <path
-                                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round" />
-
-                                </svg>
-
-                            </a>
-
-                        </div>
-
-
-                        <!-- Cart -->
-                        <div class="ml-4 flow-root lg:ml-6">
-
-                            <a
-                                href="{{ route('cart.index') }}"
-                                class="group relative flex items-center rounded-full p-2 transition-all duration-200 hover:bg-gray-100"
-                                aria-label="Voir le panier">
-
-
-                                <!-- Icône panier -->
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.7"
-                                    aria-hidden="true"
-                                    class="size-6 text-gray-400 transition-colors duration-200 group-hover:text-[#e25f12]">
-
-                                    <path
-                                        d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round" />
-
-                                    <circle cx="10" cy="20" r="1" />
-
-                                    <circle cx="18" cy="20" r="1" />
-
-                                </svg>
-
-
-                                <!-- Badge quantité -->
-                                <span
-                                    class="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#e25f12] px-1 text-[11px] font-bold leading-none text-white ring-2 ring-white">
-
-                                    0
-
-                                </span>
-
-
-                                <span class="sr-only">
-                                    0 articles dans le panier, voir le panier
-                                </span>
-
-                            </a>
-
-                        </div>
-
-                    </div>
+                    <!-- ================================================= -->
+                    <!-- SÉPARATEUR                                        -->
+                    <!-- ================================================= -->
+
+                    <div
+                        class="mx-2 hidden h-6 w-px bg-gray-200 lg:block"
+                    ></div>
+
+
+                    <!-- ================================================= -->
+                    <!-- RECHERCHE                                          -->
+                    <!-- ================================================= -->
+
+                    <a
+                        href="#"
+                        class="group flex h-10 w-10 items-center justify-center
+                               rounded-full text-gray-500 transition-all duration-200
+                               hover:bg-orange-50 hover:text-[#e25f12]"
+                        aria-label="Rechercher"
+                    >
+
+                        <i
+                            class="bi bi-search text-lg transition-transform
+                                   duration-200 group-hover:scale-105"
+                        ></i>
+
+                    </a>
+
+
+                    <!-- ================================================= -->
+                    <!-- PANIER UNIQUE                                      -->
+                    <!-- ================================================= -->
+
+                    <a
+                        href="{{ route('cart.index') }}"
+                        class="group relative ml-1 flex h-10 w-10 items-center
+                               justify-center rounded-full text-gray-500
+                               transition-all duration-200
+                               hover:bg-orange-50 hover:text-[#e25f12]"
+                        aria-label="Voir le panier"
+                    >
+
+                        <!-- Icône panier -->
+                        <i
+                            class="bi bi-cart3 text-xl transition-transform
+                                   duration-200 group-hover:scale-105"
+                        ></i>
+
+
+                        <!-- Badge -->
+                        <span
+                            class="absolute -right-0.5 -top-0.5 flex h-5 min-w-5
+                                   items-center justify-center rounded-full
+                                   bg-[#e25f12] px-1 text-[10px] font-bold
+                                   leading-none text-white ring-2 ring-white"
+                        >
+                            0
+                        </span>
+
+
+                        <span class="sr-only">
+                            0 article dans le panier
+                        </span>
+
+                    </a>
 
                 </div>
 
@@ -582,3 +965,14 @@
     </header>
 
 </div>
+
+
+<!-- ========================================================= -->
+<!-- ALPINE CLOAK                                              -->
+<!-- ========================================================= -->
+
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>
