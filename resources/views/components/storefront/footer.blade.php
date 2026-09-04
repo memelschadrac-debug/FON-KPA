@@ -184,10 +184,63 @@
             class="mt-10 border-t border-[#D5D1CF] pt-6 sm:mt-12 sm:pt-7"
         >
 
-            <p class="text-xs text-[#593114] sm:text-sm">
-                <a href="{{ route('dashboard') }}">
+            <p class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-[#593114] sm:text-sm">
+
+                {{-- Copyright --}}
+                <span>
                     © {{ date('Y') }} FON-KPA. Tous droits réservés.
-                </a>
+                </span>
+
+                {{-- Séparateur --}}
+                @auth
+                    @if(auth()->user()->is_admin)
+                        <span class="h-1 w-1 rounded-full bg-[#E25F12]/60"></span>
+
+                        {{-- Accès administrateur --}}
+                        <a
+                            href="{{ route('dashboard') }}"
+                            class="group inline-flex items-center gap-1.5 font-medium text-[#593114] transition-all duration-200 hover:text-[#E25F12]"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-110"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z"
+                                />
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.9 1.9-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V20h-2.7v-.1a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06-1.9-1.9.06-.06A1.65 1.65 0 0 0 8 15a1.65 1.65 0 0 0-1.51-1H6.4v-2.7h.09A1.65 1.65 0 0 0 8 10.3a1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.9-1.9.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V5h2.7v.1a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06 1.9 1.9-.06.06A1.65 1.65 0 0 0 19.4 10a1.65 1.65 0 0 0 1.51 1H21v2.7h-.09A1.65 1.65 0 0 0 19.4 15Z"
+                                />
+                            </svg>
+
+                            <span>Administration</span>
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-3 w-3 transition-transform duration-200 group-hover:translate-x-0.5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m9 18 6-6-6-6"
+                                />
+                            </svg>
+                        </a>
+                    @endif
+                @endauth
+
             </p>
 
         </div>

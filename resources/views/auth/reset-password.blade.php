@@ -1,205 +1,642 @@
+
 <x-guest-layout>
 
-    <div class="mb-6 text-center">
-        <h2 class="font-heading font-black text-2xl text-primary">
-            Nouveau mot de passe
+    <div class="mb-7">
+
+        <h2
+            class="
+                text-[18px]
+                font-semibold
+                leading-6
+                tracking-tight
+                text-gray-900
+            "
+        >
+            
         </h2>
 
-        <p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">
-            Choisissez un nouveau mot de passe sécurisé pour votre compte FON-KPA.
+        <p
+            class="
+                mt-1.5
+                max-w-sm
+                text-[12px]
+                leading-[1.55]
+                text-gray-500
+            "
+        >
+            Rejoignez FON-KPA et découvrez les saveurs
+            authentiques de la cuisine ivoirienne.
         </p>
+
     </div>
 
-    <form method="POST" action="{{ route('password.store') }}" class="space-y-4">
+
+    <form
+        method="POST"
+        action="{{ route('password.store') }}"
+        class="space-y-4"
+    >
+
         @csrf
 
-        {{-- Token généré automatiquement par Laravel --}}
+
+        {{-- ============================= --}}
+        {{-- TOKEN --}}
+        {{-- ============================= --}}
+
         <input
             type="hidden"
             name="token"
             value="{{ $request->route('token') }}"
         >
 
-        {{-- Adresse Email --}}
+
+        {{-- ============================= --}}
+        {{-- EMAIL --}}
+        {{-- ============================= --}}
+
         <div>
+
             <label
                 for="email"
-                class="block text-sm font-medium text-gray-700 mb-1.5"
+                class="
+                    mb-1.5
+                    block
+                    text-[12px]
+                    font-medium
+                    text-gray-700
+                "
             >
-                Adresse Email
+                Adresse e-mail
             </label>
 
+
             <div class="relative">
-                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+
+                {{-- Icône email --}}
+                <div
+                    class="
+                        pointer-events-none
+                        absolute
+                        inset-y-0
+                        left-0
+                        flex
+                        items-center
+                        pl-3
+                        text-gray-400
+                    "
+                >
+
                     <svg
-                        class="w-4 h-4 text-gray-400"
+                        viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        viewBox="0 0 24 24"
+                        stroke-width="1.6"
+                        class="h-[17px] w-[17px]"
+                        aria-hidden="true"
                     >
+
                         <path
+                            d="M3.75 6.75A2.25 2.25 0 0 1 6 4.5h12a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 18 19.5H6a2.25 2.25 0 0 1-2.25-2.25V6.75Z"
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                         />
+
+                        <path
+                            d="m4.5 7.5 6.15 4.1a2.4 2.4 0 0 0 2.7 0l6.15-4.1"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
                     </svg>
+
                 </div>
+
 
                 <input
                     id="email"
-                    type="email"
                     name="email"
+                    type="email"
                     value="{{ old('email', $request->email) }}"
                     required
                     autofocus
                     autocomplete="username"
-                    class="block w-full h-10 pl-10 pr-3 rounded-md border border-gray-300 bg-[#f3f3f3] text-sm text-gray-900 focus:border-[#e25f12] focus:ring-1 focus:ring-[#e25f12] outline-none transition"
-                >
+                    placeholder="votre@email.com"
+                    class="
+                        block
+                        h-10
+                        w-full
+                        rounded-md
+                        border
+                        border-gray-200
+                        bg-[#f3f3f3]
+                        pl-9
+                        pr-3
+                        text-[12px]
+                        text-gray-900
+                        outline-none
+                        placeholder:text-gray-400
+                        transition-all
+                        duration-200
+                        hover:border-gray-300
+                        focus:border-[#593114]/30
+                        focus:bg-white
+                        focus:ring-2
+                        focus:ring-[#593114]/10
+                    "
+                />
+
             </div>
 
-            <x-input-error
-                :messages="$errors->get('email')"
-                class="mt-2"
-            />
+
+            @error('email')
+
+                <p class="mt-1.5 text-[11px] text-red-500">
+                    {{ $message }}
+                </p>
+
+            @enderror
+
         </div>
 
-        {{-- Nouveau mot de passe --}}
+
+
+        {{-- ============================= --}}
+        {{-- NOUVEAU MOT DE PASSE --}}
+        {{-- ============================= --}}
+
         <div>
+
             <label
                 for="password"
-                class="block text-sm font-medium text-gray-700 mb-1.5"
+                class="
+                    mb-1.5
+                    block
+                    text-[12px]
+                    font-medium
+                    text-gray-700
+                "
             >
                 Nouveau mot de passe
             </label>
 
+
             <div class="relative">
-                <input
-                    id="password"
-                    type="password"
-                    name="password"
-                    required
-                    autocomplete="new-password"
-                    placeholder="Minimum 8 caractères"
-                    class="block w-full h-10 px-3 pr-10 rounded-md border border-gray-300 bg-[#f3f3f3] text-sm text-gray-900 focus:border-[#e25f12] focus:ring-1 focus:ring-[#e25f12] outline-none transition"
+
+                {{-- Icône cadenas --}}
+                <div
+                    class="
+                        pointer-events-none
+                        absolute
+                        inset-y-0
+                        left-0
+                        flex
+                        items-center
+                        pl-3
+                        text-gray-400
+                    "
                 >
 
-                <button
-                    type="button"
-                    onclick="togglePassword('password', this)"
-                    class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-[#593114]"
-                    aria-label="Afficher le mot de passe"
-                >
                     <svg
-                        class="w-4 h-4"
+                        viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        viewBox="0 0 24 24"
+                        stroke-width="1.6"
+                        class="h-[17px] w-[17px]"
+                        aria-hidden="true"
                     >
+
                         <path
+                            d="M7.5 10.5V7.75a4.5 4.5 0 0 1 9 0v2.75"
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                         />
+
                         <path
+                            d="M5.75 10.5h12.5a1.75 1.75 0 0 1 1.75 1.75v6A1.75 1.75 0 0 1 18.25 20H5.75A1.75 1.75 0 0 1 4 18.25v-6a1.75 1.75 0 0 1 1.75-1.75Z"
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                         />
+
+                        <path
+                            d="M12 14.5v2"
+                            stroke-linecap="round"
+                        />
+
                     </svg>
+
+                </div>
+
+
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    autocomplete="new-password"
+                    placeholder="Votre mot de passe"
+                    class="
+                        block
+                        h-10
+                        w-full
+                        rounded-md
+                        border
+                        border-gray-200
+                        bg-[#f3f3f3]
+                        pl-9
+                        pr-10
+                        text-[12px]
+                        text-gray-900
+                        outline-none
+                        placeholder:text-gray-400
+                        transition-all
+                        duration-200
+                        hover:border-gray-300
+                        focus:border-[#593114]/30
+                        focus:bg-white
+                        focus:ring-2
+                        focus:ring-[#593114]/10
+                    "
+                />
+
+
+                {{-- Afficher / masquer --}}
+                <button
+                    type="button"
+                    onclick="togglePassword('password', 'password-eye')"
+                    class="
+                        absolute
+                        inset-y-0
+                        right-0
+                        flex
+                        items-center
+                        px-3
+                        text-gray-400
+                        transition-colors
+                        duration-200
+                        hover:text-[#593114]
+                    "
+                    aria-label="Afficher le mot de passe"
+                >
+
+                    <svg
+                        id="password-eye"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        class="h-[17px] w-[17px]"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M2.75 12s3.25-6 9.25-6 9.25 6 9.25 6-3.25 6-9.25 6-9.25-6-9.25-6Z"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="2.5"
+                        />
+
+                    </svg>
+
                 </button>
+
             </div>
 
-            <x-input-error
-                :messages="$errors->get('password')"
-                class="mt-2"
-            />
+
+            @error('password')
+
+                <p class="mt-1.5 text-[11px] text-red-500">
+                    {{ $message }}
+                </p>
+
+            @enderror
+
         </div>
 
-        {{-- Confirmation --}}
+
+
+        {{-- ============================= --}}
+        {{-- CONFIRMATION MOT DE PASSE --}}
+        {{-- ============================= --}}
+
         <div>
+
             <label
                 for="password_confirmation"
-                class="block text-sm font-medium text-gray-700 mb-1.5"
+                class="
+                    mb-1.5
+                    block
+                    text-[12px]
+                    font-medium
+                    text-gray-700
+                "
             >
                 Confirmer le nouveau mot de passe
             </label>
 
+
             <div class="relative">
-                <input
-                    id="password_confirmation"
-                    type="password"
-                    name="password_confirmation"
-                    required
-                    autocomplete="new-password"
-                    placeholder="Répétez le mot de passe"
-                    class="block w-full h-10 px-3 pr-10 rounded-md border border-gray-300 bg-[#f3f3f3] text-sm text-gray-900 focus:border-[#e25f12] focus:ring-1 focus:ring-[#e25f12] outline-none transition"
+
+                {{-- Icône cadenas --}}
+                <div
+                    class="
+                        pointer-events-none
+                        absolute
+                        inset-y-0
+                        left-0
+                        flex
+                        items-center
+                        pl-3
+                        text-gray-400
+                    "
                 >
 
-                <button
-                    type="button"
-                    onclick="togglePassword('password_confirmation', this)"
-                    class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-[#593114]"
-                    aria-label="Afficher le mot de passe"
-                >
                     <svg
-                        class="w-4 h-4"
+                        viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        viewBox="0 0 24 24"
+                        stroke-width="1.6"
+                        class="h-[17px] w-[17px]"
+                        aria-hidden="true"
                     >
+
                         <path
+                            d="M7.5 10.5V7.75a4.5 4.5 0 0 1 9 0v2.75"
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                         />
+
                         <path
+                            d="M5.75 10.5h12.5a1.75 1.75 0 0 1 1.75 1.75v6A1.75 1.75 0 0 1 18.25 20H5.75A1.75 1.75 0 0 1 4 18.25v-6a1.75 1.75 0 0 1 1.75-1.75Z"
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016-0z"
                         />
+
+                        <path
+                            d="M12 14.5v2"
+                            stroke-linecap="round"
+                        />
+
                     </svg>
+
+                </div>
+
+
+                <input
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    type="password"
+                    required
+                    autocomplete="new-password"
+                    placeholder="Votre mot de passe"
+                    class="
+                        block
+                        h-10
+                        w-full
+                        rounded-md
+                        border
+                        border-gray-200
+                        bg-[#f3f3f3]
+                        pl-9
+                        pr-10
+                        text-[12px]
+                        text-gray-900
+                        outline-none
+                        placeholder:text-gray-400
+                        transition-all
+                        duration-200
+                        hover:border-gray-300
+                        focus:border-[#593114]/30
+                        focus:bg-white
+                        focus:ring-2
+                        focus:ring-[#593114]/10
+                    "
+                />
+
+
+                {{-- Afficher / masquer --}}
+                <button
+                    type="button"
+                    onclick="togglePassword('password_confirmation', 'password-confirmation-eye')"
+                    class="
+                        absolute
+                        inset-y-0
+                        right-0
+                        flex
+                        items-center
+                        px-3
+                        text-gray-400
+                        transition-colors
+                        duration-200
+                        hover:text-[#593114]
+                    "
+                    aria-label="Afficher le mot de passe"
+                >
+
+                    <svg
+                        id="password-confirmation-eye"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        class="h-[17px] w-[17px]"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M2.75 12s3.25-6 9.25-6 9.25 6 9.25 6-3.25 6-9.25 6-9.25-6-9.25-6Z"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="2.5"
+                        />
+
+                    </svg>
+
                 </button>
+
             </div>
 
-            <x-input-error
-                :messages="$errors->get('password_confirmation')"
-                class="mt-2"
-            />
+
+            @error('password_confirmation')
+
+                <p class="mt-1.5 text-[11px] text-red-500">
+                    {{ $message }}
+                </p>
+
+            @enderror
+
         </div>
 
-        {{-- Bouton --}}
-        <div class="pt-2">
-            <x-primary-button class="w-full">
-                Réinitialiser le mot de passe
-            </x-primary-button>
-        </div>
 
-        {{-- Retour connexion --}}
-        <div class="text-center pt-4 border-t border-gray-200 mt-6">
-            <a
-                href="{{ route('login') }}"
-                class="text-xs text-[#e25f12] font-semibold hover:underline inline-flex items-center gap-1"
-            >
-                <span>←</span>
-                Retour à la connexion
-            </a>
-        </div>
+
+        {{-- ============================= --}}
+        {{-- BOUTON --}}
+        {{-- ============================= --}}
+
+        <button
+            type="submit"
+            class="
+                flex
+                h-10
+                w-full
+                items-center
+                justify-center
+                rounded-md
+                bg-[#593114]
+                px-4
+                text-[12px]
+                font-semibold
+                text-white
+                shadow-sm
+                transition-all
+                duration-200
+                hover:bg-[#47270f]
+                hover:shadow-md
+                focus:outline-none
+                focus:ring-2
+                focus:ring-[#593114]/20
+                focus:ring-offset-1
+                active:scale-[0.99]
+            "
+        >
+            Réinitialiser le mot de passe
+        </button>
 
     </form>
 
-    <script>
-        function togglePassword(inputId, button) {
-            const input = document.getElementById(inputId);
 
-            input.type = input.type === 'password'
-                ? 'text'
-                : 'password';
+
+    {{-- ============================= --}}
+    {{-- RETOUR CONNEXION --}}
+    {{-- ============================= --}}
+
+    <div
+        class="
+            mt-5
+            border-t
+            border-gray-100
+            pt-4
+            text-center
+        "
+    >
+
+        <a
+            href="{{ route('login') }}"
+            class="
+                inline-flex
+                items-center
+                gap-1
+                text-[11px]
+                font-medium
+                text-gray-400
+                transition-colors
+                duration-200
+                hover:text-[#593114]
+            "
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                class="h-3.5 w-3.5"
+                aria-hidden="true"
+            >
+
+                <path
+                    d="M19 12H5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+                <path
+                    d="m11 18-6-6 6-6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+            </svg>
+
+            <span>Retour à la connexion</span>
+
+        </a>
+
+    </div>
+
+
+
+    {{-- ============================= --}}
+    {{-- SCRIPT MOT DE PASSE --}}
+    {{-- ============================= --}}
+
+    <script>
+
+        function togglePassword(inputId, eyeId) {
+
+            const password =
+                document.getElementById(inputId);
+
+            const eye =
+                document.getElementById(eyeId);
+
+
+            if (password.type === 'password') {
+
+                password.type = 'text';
+
+                eye.innerHTML = `
+                    <path
+                        d="M3 3l18 18"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <path
+                        d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6 0 9.25 6 9.25 6a16.5 16.5 0 0 1-3.15 3.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <path
+                        d="M6.3 8.1C3.95 9.65 2.75 12 2.75 12s3.25 6 9.25 6c1.35 0 2.55-.3 3.6-.75"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                `;
+
+            } else {
+
+                password.type = 'password';
+
+                eye.innerHTML = `
+                    <path
+                        d="M2.75 12s3.25-6 9.25-6 9.25 6 9.25 6-3.25 6-9.25 6-9.25-6-9.25-6Z"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="2.5"
+                    />
+                `;
+
+            }
+
         }
+
     </script>
 
 </x-guest-layout>

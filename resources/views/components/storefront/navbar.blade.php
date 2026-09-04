@@ -287,58 +287,88 @@
                             class="mt-2 space-y-1 overflow-hidden"
                         >
 
-                            <a
-                                href="#"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2.5
-                                       text-sm text-gray-700 transition hover:bg-orange-50
-                                       hover:text-[#e25f12]"
-                            >
-                                <i class="bi bi-person-circle text-lg"></i>
-                                Mon profil
-                            </a>
+                            @auth
+
+                                <!-- Mon profil -->
+                                <a
+                                    href="{{ route('profile.edit') }}"
+                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                           text-sm text-gray-700 transition hover:bg-orange-50
+                                           hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-person-circle text-lg"></i>
+                                    Mon profil
+                                </a>
 
 
-                            <a
-                                href="#"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2.5
-                                       text-sm text-gray-700 transition hover:bg-orange-50
-                                       hover:text-[#e25f12]"
-                            >
-                                <i class="bi bi-bag-check text-lg"></i>
-                                Mes commandes
-                            </a>
+                                <!-- Mes commandes -->
+                                <a
+                                    href="#"
+                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                           text-sm text-gray-700 transition hover:bg-orange-50
+                                           hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-bag-check text-lg"></i>
+                                    Mes commandes
+                                </a>
+
+                            @endauth
 
 
-                            <a
-                                href="#"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2.5
-                                       text-sm text-gray-700 transition hover:bg-orange-50
-                                       hover:text-[#e25f12]"
-                            >
-                                <i class="bi bi-box-arrow-in-right text-lg"></i>
-                                Se connecter
-                            </a>
+                            @guest
+
+                                <!-- Se connecter -->
+                                <a
+                                    href="{{ route('login') }}"
+                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                           text-sm text-gray-700 transition hover:bg-orange-50
+                                           hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-box-arrow-in-right text-lg"></i>
+                                    Se connecter
+                                </a>
 
 
-                            <a
-                                href="#"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2.5
-                                       text-sm text-gray-700 transition hover:bg-orange-50
-                                       hover:text-[#e25f12]"
-                            >
-                                <i class="bi bi-person-plus text-lg"></i>
-                                Créer un compte
-                            </a>
+                                <!-- Créer un compte -->
+                                <a
+                                    href="{{ route('register') }}"
+                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                           text-sm text-gray-700 transition hover:bg-orange-50
+                                           hover:text-[#e25f12]"
+                                >
+                                    <i class="bi bi-person-plus text-lg"></i>
+                                    Créer un compte
+                                </a>
+
+                            @endguest
 
 
-                            <a
-                                href="#"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2.5
-                                       text-sm text-red-600 transition hover:bg-red-50"
-                            >
-                                <i class="bi bi-box-arrow-right text-lg"></i>
-                                Se déconnecter
-                            </a>
+                            @auth
+
+                                <!-- Se déconnecter -->
+                                <div class="border-t border-gray-100 pt-1">
+
+                                    <form
+                                        method="POST"
+                                        action="{{ route('logout') }}"
+                                    >
+                                        @csrf
+
+                                        <button
+                                            type="submit"
+                                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5
+                                                   text-left text-sm text-red-600 transition
+                                                   hover:bg-red-50"
+                                        >
+                                            <i class="bi bi-box-arrow-right text-lg"></i>
+                                            Se déconnecter
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            @endauth
 
                         </div>
 
@@ -787,65 +817,90 @@
                             <!-- Liens -->
                             <div class="p-2">
 
-                                <a
-                                    href="#"
-                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
-                                           text-sm text-gray-700 transition
-                                           hover:bg-orange-50 hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-person-circle text-lg"></i>
-                                    <span>Mon profil</span>
-                                </a>
+                                @auth
+
+                                    <!-- Mon profil -->
+                                    <a
+                                        href="{{ route('profile.edit') }}"
+                                        class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                               text-sm text-gray-700 transition
+                                               hover:bg-orange-50 hover:text-[#e25f12]"
+                                    >
+                                        <i class="bi bi-person-circle text-lg"></i>
+                                        <span>Mon profil</span>
+                                    </a>
 
 
-                                <a
-                                    href="#"
-                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
-                                           text-sm text-gray-700 transition
-                                           hover:bg-orange-50 hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-bag-check text-lg"></i>
-                                    <span>Mes commandes</span>
-                                </a>
+                                    <!-- Mes commandes -->
+                                    <a
+                                        href="#"
+                                        class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                               text-sm text-gray-700 transition
+                                               hover:bg-orange-50 hover:text-[#e25f12]"
+                                    >
+                                        <i class="bi bi-bag-check text-lg"></i>
+                                        <span>Mes commandes</span>
+                                    </a>
+
+                                @endauth
 
 
-                                <a
-                                    href="#"
-                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
-                                           text-sm text-gray-700 transition
-                                           hover:bg-orange-50 hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-box-arrow-in-right text-lg"></i>
-                                    <span>Se connecter</span>
-                                </a>
+                                @guest
+
+                                    <!-- Se connecter -->
+                                    <a
+                                        href="{{ route('login') }}"
+                                        class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                               text-sm text-gray-700 transition
+                                               hover:bg-orange-50 hover:text-[#e25f12]"
+                                    >
+                                        <i class="bi bi-box-arrow-in-right text-lg"></i>
+                                        <span>Se connecter</span>
+                                    </a>
 
 
-                                <a
-                                    href="#"
-                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
-                                           text-sm text-gray-700 transition
-                                           hover:bg-orange-50 hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-person-plus text-lg"></i>
-                                    <span>Créer un compte</span>
-                                </a>
+                                    <!-- Créer un compte -->
+                                    <a
+                                        href="{{ route('register') }}"
+                                        class="flex items-center gap-3 rounded-lg px-3 py-2.5
+                                               text-sm text-gray-700 transition
+                                               hover:bg-orange-50 hover:text-[#e25f12]"
+                                    >
+                                        <i class="bi bi-person-plus text-lg"></i>
+                                        <span>Créer un compte</span>
+                                    </a>
 
-                            </div>
-
-
-                            <!-- Déconnexion -->
-                            <div class="border-t border-gray-100 p-2">
-
-                                <a
-                                    href="#"
-                                    class="flex items-center gap-3 rounded-lg px-3 py-2.5
-                                           text-sm text-red-600 transition hover:bg-red-50"
-                                >
-                                    <i class="bi bi-box-arrow-right text-lg"></i>
-                                    <span>Se déconnecter</span>
-                                </a>
+                                @endguest
 
                             </div>
+
+
+                            @auth
+
+                                <!-- Déconnexion -->
+                                <div class="border-t border-gray-100 p-2">
+
+                                    <form
+                                        method="POST"
+                                        action="{{ route('logout') }}"
+                                    >
+                                        @csrf
+
+                                        <button
+                                            type="submit"
+                                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5
+                                                   text-left text-sm text-red-600 transition
+                                                   hover:bg-red-50"
+                                        >
+                                            <i class="bi bi-box-arrow-right text-lg"></i>
+                                            <span>Se déconnecter</span>
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            @endauth
 
                         </div>
 
