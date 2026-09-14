@@ -97,7 +97,7 @@
 
                     {{-- FORMULAIRE --}}
                     <form
-                        action="{{ route('commande.index') }}"
+                        action="{{ route('commande.store') }}"
                         method="POST"
                         @submit="submitOrder"
                     >
@@ -137,6 +137,7 @@
                                             id="first_name"
                                             name="first_name"
                                             type="text"
+                                            value="{{ old('first_name') }}"
                                             required
                                             placeholder="Votre prénom"
                                             class="h-11 w-full rounded-xl
@@ -182,6 +183,7 @@
                                             id="last_name"
                                             name="last_name"
                                             type="text"
+                                            value="{{ old('last_name') }}"
                                             required
                                             placeholder="Votre nom"
                                             class="h-11 w-full rounded-xl
@@ -232,6 +234,10 @@
                                             id="email"
                                             name="email"
                                             type="email"
+                                            value="{{ old(
+                                                'email',
+                                                auth()->user()->email ?? ''
+                                            ) }}"
                                             required
                                             placeholder="votre@email.com"
                                             class="h-11 w-full rounded-xl
@@ -277,6 +283,7 @@
                                             id="phone"
                                             name="phone"
                                             type="tel"
+                                            value="{{ old('phone') }}"
                                             required
                                             placeholder="+225 07 00 00 00 00"
                                             class="h-11 w-full rounded-xl
@@ -337,7 +344,7 @@
                                                focus:bg-white
                                                focus:ring-2
                                                focus:ring-[#FF681F]/10"
-                                    ></textarea>
+                                    >{{ old('address') }}</textarea>
 
                                 </div>
 
@@ -372,7 +379,7 @@
                                             id="city"
                                             name="city"
                                             type="text"
-                                            value="Abidjan"
+                                            value="{{ old('city', 'Abidjan') }}"
                                             required
                                             class="h-11 w-full rounded-xl
                                                    border border-[#EEE7E2]
@@ -433,12 +440,29 @@
                                                 Sélectionnez votre commune
                                             </option>
 
-                                            <option value="cocody">Cocody</option>
-                                            <option value="marcory">Marcory</option>
-                                            <option value="yopougon">Yopougon</option>
-                                            <option value="abobo">Abobo</option>
-                                            <option value="plateau">Plateau</option>
-                                            <option value="treichville">Treichville</option>
+                                            <option value="cocody">
+                                                Cocody
+                                            </option>
+
+                                            <option value="marcory">
+                                                Marcory
+                                            </option>
+
+                                            <option value="yopougon">
+                                                Yopougon
+                                            </option>
+
+                                            <option value="abobo">
+                                                Abobo
+                                            </option>
+
+                                            <option value="plateau">
+                                                Plateau
+                                            </option>
+
+                                            <option value="treichville">
+                                                Treichville
+                                            </option>
 
                                         </select>
 
@@ -720,7 +744,7 @@
                                        focus:bg-white
                                        focus:ring-2
                                        focus:ring-[#FF681F]/10"
-                            ></textarea>
+                            >{{ old('note') }}</textarea>
 
                         </div>
 
@@ -801,8 +825,18 @@
                                     Résumé de la commande
                                 </h3>
 
+                                {{-- =================================================
+                                     NOMBRE D'ARTICLES DYNAMIQUE
+                                ================================================== --}}
                                 <p class="mt-0.5 text-xs text-[#8A817B]">
-                                    2 articles
+
+                                    {{ $totalArticles }}
+
+                                    {{ $totalArticles > 1
+                                        ? 'articles'
+                                        : 'article'
+                                    }}
+
                                 </p>
 
                             </div>
@@ -813,80 +847,94 @@
                         <div class="my-5 h-px bg-[#EEE8E3]"></div>
 
 
-                        {{-- PRODUIT 1 --}}
-                        <div class="flex items-center gap-3">
+                        {{-- =================================================
+                             PRODUITS DU PANIER
+                        ================================================== --}}
 
-                            <img
-                                src="{{ asset('images/garba.jpg') }}"
-                                alt="Garba Royal"
-                                class="h-16 w-16 shrink-0
-                                       rounded-xl object-cover"
+                        @forelse($cart as $item)
+
+                            <div
+                                class="{{ $loop->first ? '' : 'mt-4' }}
+                                       flex items-center gap-3"
                             >
 
-                            <div class="min-w-0 flex-1">
-
-                                <h4
-                                    class="truncate text-sm font-semibold
-                                           text-[#2F1608]"
+                                {{-- Image produit --}}
+                                <img
+                                    src="{{ asset('images/garba.jpg') }}"
+                                    alt="{{ $item['name'] }}"
+                                    class="h-16 w-16 shrink-0
+                                           rounded-xl object-cover"
                                 >
-                                    Garba Royal
-                                </h4>
 
-                                <p class="mt-1 text-[11px] text-[#8A817B]">
-                                    Quantité : 1
-                                </p>
+                                <div class="min-w-0 flex-1">
+
+                                    {{-- Nom --}}
+                                    <h4
+                                        class="truncate text-sm font-semibold
+                                               text-[#2F1608]"
+                                    >
+                                        {{ $item['name'] }}
+                                    </h4>
+
+                                    {{-- Quantité --}}
+                                    <p
+                                        class="mt-1 text-[11px]
+                                               text-[#8A817B]"
+                                    >
+                                        Quantité :
+                                        {{ $item['quantity'] }}
+                                    </p>
+
+                                    {{-- Prix de la ligne --}}
+                                    <p
+                                        class="mt-1 text-sm font-bold
+                                               text-[#B84A0A]"
+                                    >
+                                        {{ number_format(
+                                            $item['price'] * $item['quantity'],
+                                            0,
+                                            ',',
+                                            ' '
+                                        ) }}
+                                        FCFA
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        @empty
+
+                            {{-- Panier vide --}}
+                            <div class="py-5 text-center">
+
+                                <div
+                                    class="mx-auto flex h-12 w-12
+                                           items-center justify-center
+                                           rounded-xl bg-[#FFF0E8]
+                                           text-[#FF681F]"
+                                >
+                                    <i class="bi bi-cart-x text-xl"></i>
+                                </div>
 
                                 <p
-                                    class="mt-1 text-sm font-bold
-                                           text-[#B84A0A]"
+                                    class="mt-3 text-xs font-semibold
+                                           text-[#593114]"
                                 >
-                                    4 500 FCFA
+                                    Votre panier est vide.
                                 </p>
 
                             </div>
 
-                        </div>
-
-
-                        {{-- PRODUIT 2 --}}
-                        <div class="mt-4 flex items-center gap-3">
-
-                            <img
-                                src="{{ asset('images/Garba.jpg') }}"
-                                alt="Poulet Braisé Entier"
-                                class="h-16 w-16 shrink-0
-                                       rounded-xl object-cover"
-                            >
-
-                            <div class="min-w-0 flex-1">
-
-                                <h4
-                                    class="truncate text-sm font-semibold
-                                           text-[#2F1608]"
-                                >
-                                    Poulet Braisé Entier
-                                </h4>
-
-                                <p class="mt-1 text-[11px] text-[#8A817B]">
-                                    Quantité : 1
-                                </p>
-
-                                <p
-                                    class="mt-1 text-sm font-bold
-                                           text-[#B84A0A]"
-                                >
-                                    8 000 FCFA
-                                </p>
-
-                            </div>
-
-                        </div>
+                        @endforelse
 
 
                         <div class="my-5 h-px bg-[#EEE8E3]"></div>
 
 
-                        {{-- SOUS-TOTAL --}}
+                        {{-- =================================================
+                             SOUS-TOTAL DYNAMIQUE
+                        ================================================== --}}
                         <div
                             class="flex items-center justify-between text-xs"
                         >
@@ -896,13 +944,24 @@
                             </span>
 
                             <span class="font-semibold text-[#2F1608]">
-                                12 500 FCFA
+
+                                {{ number_format(
+                                    $subtotal,
+                                    0,
+                                    ',',
+                                    ' '
+                                ) }}
+
+                                FCFA
+
                             </span>
 
                         </div>
 
 
-                        {{-- LIVRAISON --}}
+                        {{-- =================================================
+                             LIVRAISON
+                        ================================================== --}}
                         <div
                             class="mt-3 flex items-center justify-between text-xs"
                         >
@@ -925,7 +984,9 @@
                         <div class="my-5 h-px bg-[#EEE8E3]"></div>
 
 
-                        {{-- TOTAL --}}
+                        {{-- =================================================
+                             TOTAL DYNAMIQUE
+                        ================================================== --}}
                         <div class="flex items-center justify-between">
 
                             <span
@@ -937,7 +998,16 @@
                             <span
                                 class="text-xl font-bold text-[#B84A0A]"
                             >
-                                12 500 FCFA
+
+                                {{ number_format(
+                                    $subtotal,
+                                    0,
+                                    ',',
+                                    ' '
+                                ) }}
+
+                                FCFA
+
                             </span>
 
                         </div>
@@ -953,7 +1023,10 @@
                                shadow-[0_5px_20px_rgba(89,49,20,0.05)]"
                     >
 
-                        <div class="grid grid-cols-3 divide-x divide-[#EEE8E3]">
+                        <div
+                            class="grid grid-cols-3
+                                   divide-x divide-[#EEE8E3]"
+                        >
 
                             {{-- LIVRAISON --}}
                             <div class="px-2 text-center">

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +20,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        /*
+        |--------------------------------------------------------------------------
+        | Compteur global du panier
+        |--------------------------------------------------------------------------
+        |
+        | Le nombre total d'articles du panier est disponible
+        | sur toutes les pages de l'application.
+        |
+        */
+
+        View::composer('*', function ($view) {
+
+            $cartCount = collect(session('cart', []))
+                ->sum('quantity');
+
+            $view->with('cartCount', $cartCount);
+        });
     }
 }

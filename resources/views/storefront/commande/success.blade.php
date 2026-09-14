@@ -1,475 +1,226 @@
-<x-app-layout>
-    @section('title', 'FON-KPA — Validation commande')
-    <div
-        class="relative min-h-screen overflow-hidden bg-[#FAF9F7] px-4 py-8 sm:px-6"
-    >
+<x-blank-layout>
 
-        {{-- =========================================================
-             ARRIÈRE-PLAN
-        ========================================================== --}}
+    @section('title', 'FON-KPA — Commande confirmée')
 
-        <div
-            class="absolute inset-0 -z-10 bg-cover bg-center opacity-[0.08]"
-            style="
-                background-image: url('{{ asset('images/Hero1.png') }}');
-                filter: blur(2px);
-            "
-        ></div>
+    <div class="min-h-screen bg-[#FFFF] px-4 py-8 sm:px-6">
 
+        <div class="mx-auto flex min-h-[86vh] max-w-xl items-center justify-center">
 
-        {{-- =========================================================
-             CONTENEUR PRINCIPAL
-        ========================================================== --}}
-
-        <div class="mx-auto flex min-h-[calc(100vh-4rem)] max-w-2xl items-center justify-center">
+            {{-- ========================================================= --}}
+            {{-- CARTE PRINCIPALE                                           --}}
+            {{-- ========================================================= --}}
 
             <div
-                class="w-full overflow-hidden rounded-3xl bg-white
-                       shadow-[0_10px_40px_rgba(89,49,20,0.10)]"
+                
             >
 
-                {{-- =================================================
-                     EN-TÊTE CONFIRMATION
-                ================================================== --}}
+                {{-- Ligne décorative --}}
+               
 
-                <div class="border-b border-[#EEE8E3] px-6 py-8 text-center sm:px-10">
 
-                    {{-- ICÔNE VALIDATION --}}
+                <div class="px-5 py-9 text-center sm:px-10 sm:py-11">
+
+
+                    {{-- ================================================= --}}
+                    {{-- ICÔNE CHAPEAU DE CHEF                              --}}
+                    {{-- ================================================= --}}
+
+                    <div class="mx-auto flex h-[82px] w-[82px] items-center justify-center rounded-full bg-[#EAF8EF]">
+
+                        <div
+                            class="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[#22A447] text-white shadow-lg shadow-green-100"
+                        >
+                            <i class="bi bi-check-lg text-[31px] font-bold"></i>
+                        </div>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- BADGE                                               --}}
+                    {{-- ================================================= --}}
+
+                    <div class="mt-5">
+
+                        <span
+                            class="inline-flex items-center rounded-full bg-[#FFF1E8] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#B84A0A]"
+                        >
+                            Commande confirmée
+                        </span>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- TITRE                                                --}}
+                    {{-- ================================================= --}}
+
+                    <h2 class="mt-4 text-2xl font-extrabold tracking-tight text-[#2F1608] sm:text-[28px]">
+                        Merci pour votre commande ! 🎉
+                    </h2>
+
+
+                    {{-- ================================================= --}}
+                    {{-- DESCRIPTION                                         --}}
+                    {{-- ================================================= --}}
+
+                    <p class="mx-auto mt-3 max-w-md text-[13px] leading-6 text-[#756B65]">
+                        Votre commande a bien été enregistrée.
+                        Notre équipe va maintenant préparer votre repas avec soin.
+                    </p>
+
+
+                    {{-- ================================================= --}}
+                    {{-- NUMÉRO DE COMMANDE                                  --}}
+                    {{-- ================================================= --}}
+
+                    <div class="mx-auto mt-6 max-w-sm">
+
+                        <div
+                            class="rounded-xl border border-[#EDE3DC] bg-[#FAF9F7] px-5 py-4"
+                        >
+
+                            <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#918780]">
+                                Numéro de commande
+                            </p>
+
+
+                            <div class="mt-2 flex items-center justify-center gap-2">
+
+                                <span class="text-xl font-extrabold tracking-wide text-[#593114]">
+                                    #{{ $order->order_number }}
+                                </span>
+
+
+                                {{-- Copier --}}
+                                <button
+                                    type="button"
+                                    onclick="navigator.clipboard.writeText('{{ $order->order_number }}')"
+                                    class="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#E25F12] shadow-sm transition hover:bg-[#FFF0E8]"
+                                    title="Copier le numéro de commande"
+                                >
+                                    <i class="bi bi-copy text-[11px]"></i>
+                                </button>
+
+                            </div>
+
+
+                            <p class="mt-1.5 text-[10px] text-[#918780]">
+                                Conservez ce numéro pour suivre votre commande.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- MESSAGE EMAIL                                       --}}
+                    {{-- ================================================= --}}
 
                     <div
-                        class="mx-auto flex h-16 w-16 items-center justify-center
-                               rounded-full bg-[#BFF3D7] text-[#087A46]"
+                        class="mx-auto mt-4 flex max-w-sm items-start gap-3 rounded-xl border border-[#F2E4D9] bg-[#FFF9F5] px-4 py-3.5 text-left"
                     >
-                        <i class="bi bi-check-circle-fill text-2xl"></i>
-                    </div>
-
-
-                    {{-- TITRE --}}
-
-                    <h1
-                        class="mt-5 text-3xl font-bold tracking-tight
-                               text-[#3A1B09] sm:text-4xl"
-                    >
-                        Commande confirmée !
-                    </h1>
-
-
-                    {{-- DESCRIPTION --}}
-
-                    <p class="mt-2 text-sm text-[#756D67]">
-                        Merci pour votre confiance.
-                        Votre repas est en bonne voie.
-                    </p>
-
-                </div>
-
-
-                {{-- =================================================
-                     CONTENU
-                ================================================== --}}
-
-                <div class="px-6 py-6 sm:px-8">
-
-
-                    {{-- =================================================
-                         DÉTAILS + LIVRAISON
-                    ================================================== --}}
-
-                    <div class="grid gap-4 sm:grid-cols-2">
-
-
-                        {{-- ==============================
-                             DÉTAILS
-                        =============================== --}}
 
                         <div
-                            class="rounded-xl border border-[#EEE7E2]
-                                   bg-white p-4"
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#FFF0E8] text-[#E25F12]"
                         >
-
-                            <div class="mb-3 flex items-center gap-2">
-
-                                <i
-                                    class="bi bi-receipt text-[#B84A0A]"
-                                ></i>
-
-                                <h2
-                                    class="text-sm font-bold text-[#3A1B09]"
-                                >
-                                    Détails
-                                </h2>
-
-                            </div>
-
-
-                            {{-- NUMÉRO --}}
-
-                            <div
-                                class="flex items-center justify-between
-                                       gap-3 text-xs"
-                            >
-
-                                <span class="text-[#756D67]">
-                                    Numéro :
-                                </span>
-
-                                <span
-                                    class="font-semibold text-[#3A1B09]"
-                                >
-                                    #FK-2026-00125
-                                </span>
-
-                            </div>
-
-
-                            {{-- MONTANT --}}
-
-                            <div
-                                class="mt-3 flex items-center justify-between
-                                       gap-3 text-xs"
-                            >
-
-                                <span class="text-[#756D67]">
-                                    Montant total :
-                                </span>
-
-                                <span
-                                    class="font-bold text-[#B84A0A]"
-                                >
-                                    24 500 FCFA
-                                </span>
-
-                            </div>
-
-
-                            {{-- PAIEMENT --}}
-
-                            <div
-                                class="mt-3 flex items-center justify-between
-                                       gap-3 text-xs"
-                            >
-
-                                <span class="text-[#756D67]">
-                                    Paiement :
-                                </span>
-
-                                <span class="font-medium text-[#3A1B09]">
-                                    Carte bancaire
-                                </span>
-
-                            </div>
-
+                            <i class="bi bi-envelope-check text-base"></i>
                         </div>
 
 
-                        {{-- ==============================
-                             LIVRAISON
-                        =============================== --}}
+                        <div>
 
-                        <div
-                            class="rounded-xl border border-[#EEE7E2]
-                                   bg-white p-4"
-                        >
+                            <p class="text-[12px] font-bold text-[#593114]">
+                                Reçu envoyé par email
+                            </p>
 
-                            <div class="mb-3 flex items-center gap-2">
-
-                                <i
-                                    class="bi bi-truck text-[#B84A0A]"
-                                ></i>
-
-                                <h2
-                                    class="text-sm font-bold text-[#3A1B09]"
-                                >
-                                    Livraison
-                                </h2>
-
-                            </div>
-
-
-                            {{-- ADRESSE --}}
-
-                            <div class="flex items-start gap-2">
-
-                                <i
-                                    class="bi bi-geo-alt mt-0.5
-                                           text-sm text-[#756D67]"
-                                ></i>
-
-                                <div>
-
-                                    <p
-                                        class="text-xs font-semibold
-                                               text-[#3A1B09]"
-                                    >
-                                        Cocody Angré, 8ème Tranche
-                                    </p>
-
-                                    <p
-                                        class="mt-1 text-[10px]
-                                               leading-4 text-[#756D67]"
-                                    >
-                                        Résidence les Oliviers,<br>
-                                        Bâtiment B
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            {{-- ESTIMATION --}}
-
-                            <div
-                                class="mt-4 border-t border-[#EEE8E3]
-                                       pt-3"
-                            >
-
-                                <div class="flex items-center gap-2">
-
-                                    <i
-                                        class="bi bi-clock text-xs
-                                               text-[#B84A0A]"
-                                    ></i>
-
-                                    <span class="text-xs text-[#756D67]">
-                                        Estimation :
-                                    </span>
-
-                                    <span
-                                        class="text-xs font-bold
-                                               text-[#3A1B09]"
-                                    >
-                                        12h45 - 13h15
-                                    </span>
-
-                                </div>
-
-                            </div>
+                            <p class="mt-1 text-[11px] leading-4.5 text-[#756B65]">
+                                Un reçu détaillé contenant toutes les informations
+                                de votre commande vous a été envoyé par email.
+                            </p>
 
                         </div>
 
                     </div>
 
 
-                    {{-- =================================================
-                         ÉTAT DE LA COMMANDE
-                    ================================================== --}}
+                    {{-- ================================================= --}}
+                    {{-- TOTAL                                                --}}
+                    {{-- ================================================= --}}
 
-                    <div class="mt-7">
+                    <div
+                        class="mx-auto mt-4 flex max-w-sm items-center justify-between rounded-xl border border-[#EDE3DC] bg-white px-5 py-4"
+                    >
 
-                        <h2
-                            class="text-center text-sm font-bold
-                                   text-[#3A1B09]"
-                        >
-                            État de la commande
-                        </h2>
+                        <div class="text-left">
 
+                            <p class="text-[11px] font-medium text-[#756B65]">
+                                Total de la commande
+                            </p>
 
-                        {{-- PROGRESSION --}}
-
-                        <div class="mt-5 grid grid-cols-5 gap-1">
-
-
-                            {{-- REÇUE --}}
-
-                            <div class="text-center">
-
-                                <div
-                                    class="mx-auto flex h-9 w-9
-                                           items-center justify-center
-                                           rounded-full
-                                           bg-[#B84A0A]
-                                           text-white
-                                           shadow-sm"
-                                >
-                                    <i class="bi bi-receipt"></i>
-                                </div>
-
-                                <p
-                                    class="mt-2 text-[9px]
-                                           font-semibold text-[#3A1B09]"
-                                >
-                                    Reçue
-                                </p>
-
-                            </div>
-
-
-                            {{-- CONFIRMÉE --}}
-
-                            <div class="text-center">
-
-                                <div
-                                    class="mx-auto flex h-9 w-9
-                                           items-center justify-center
-                                           rounded-full
-                                           bg-[#B84A0A]
-                                           text-white
-                                           ring-4 ring-[#B84A0A]/10"
-                                >
-                                    <i class="bi bi-hand-thumbs-up-fill"></i>
-                                </div>
-
-                                <p
-                                    class="mt-2 text-[9px]
-                                           font-bold text-[#B84A0A]"
-                                >
-                                    Confirmée
-                                </p>
-
-                            </div>
-
-
-                            {{-- PRÉPARATION --}}
-
-                            <div class="text-center">
-
-                                <div
-                                    class="mx-auto flex h-9 w-9
-                                           items-center justify-center
-                                           rounded-full
-                                           bg-[#F3F1EF]
-                                           text-[#C4BEB9]"
-                                >
-                                    <i class="bi bi-cup-hot"></i>
-                                </div>
-
-                                <p
-                                    class="mt-2 text-[9px]
-                                           font-medium text-[#B5ADA7]"
-                                >
-                                    Préparation
-                                </p>
-
-                            </div>
-
-
-                            {{-- LIVRAISON --}}
-
-                            <div class="text-center">
-
-                                <div
-                                    class="mx-auto flex h-9 w-9
-                                           items-center justify-center
-                                           rounded-full
-                                           bg-[#F3F1EF]
-                                           text-[#C4BEB9]"
-                                >
-                                    <i class="bi bi-bicycle"></i>
-                                </div>
-
-                                <p
-                                    class="mt-2 text-[9px]
-                                           font-medium text-[#B5ADA7]"
-                                >
-                                    Livraison
-                                </p>
-
-                            </div>
-
-
-                            {{-- LIVRÉE --}}
-
-                            <div class="text-center">
-
-                                <div
-                                    class="mx-auto flex h-9 w-9
-                                           items-center justify-center
-                                           rounded-full
-                                           bg-[#F3F1EF]
-                                           text-[#C4BEB9]"
-                                >
-                                    <i class="bi bi-house-check"></i>
-                                </div>
-
-                                <p
-                                    class="mt-2 text-[9px]
-                                           font-medium text-[#B5ADA7]"
-                                >
-                                    Livrée
-                                </p>
-
-                            </div>
+                            <p class="mt-0.5 text-[9px] text-[#A69C96]">
+                                Livraison incluse
+                            </p>
 
                         </div>
+
+
+                        <p class="text-xl font-extrabold text-[#B84A0A]">
+                            {{ number_format($order->total, 0, ',', ' ') }}
+                            FCFA
+                        </p>
 
                     </div>
 
 
-                    {{-- =================================================
-                         BOUTONS
-                    ================================================== --}}
+                    {{-- ================================================= --}}
+                    {{-- ACTIONS                                             --}}
+                    {{-- ================================================= --}}
 
-                    <div class="mt-7 grid gap-3 sm:grid-cols-2">
+                    <div class="mx-auto mt-6 flex max-w-sm flex-col gap-2.5 sm:flex-row">
 
-
-                        {{-- SUIVRE LA COMMANDE --}}
-
+                        {{-- Continuer les achats --}}
                         <a
-                            href="#"
-                            class="flex min-h-[64px]
-                                   items-center justify-center gap-3
-                                   rounded-full
-                                   bg-[#B84A0A]
-                                   px-5 py-3
-                                   text-center text-sm
-                                   font-bold text-white
-                                   shadow-[0_4px_10px_rgba(184,74,10,0.20)]
-                                   transition
-                                   hover:bg-[#593114]
-                                   hover:shadow-md"
+                            href="{{ route('plats.index') }}"
+                            class="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#E25F12] text-[11px] font-bold text-white shadow-md shadow-orange-100 transition hover:bg-[#D9570D]"
                         >
-
-                            <i class="bi bi-geo-alt text-base"></i>
-
-                            <span>
-                                Suivre ma<br class="sm:hidden">
-                                commande
-                            </span>
-
+                            <i class="bi bi-shop"></i>
+                            Continuer mes achats
                         </a>
 
 
-                        {{-- RETOUR ACCUEIL --}}
-
+                        {{-- Voir la commande --}}
                         <a
-                            href="{{ route('home') }}"
-                            class="flex min-h-[64px]
-                                   items-center justify-center gap-3
-                                   rounded-full
-                                   border-2 border-[#593114]
-                                   bg-white
-                                   px-5 py-3
-                                   text-center text-sm
-                                   font-semibold text-[#593114]
-                                   transition
-                                   hover:bg-[#593114]
-                                   hover:text-white"
+                            href="{{ route('commande.success', $order) }}"
+                            class="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-[#E2D8D0] bg-white text-[11px] font-semibold text-[#593114] transition hover:border-[#E25F12] hover:bg-[#FFF9F5]"
                         >
-
-                            <i class="bi bi-house text-base"></i>
-
-                            <span>
-                                Retour à<br class="sm:hidden">
-                                l'accueil
-                            </span>
-
+                            <i class="bi bi-receipt"></i>
+                            Voir ma commande
                         </a>
 
                     </div>
 
 
-                    {{-- =================================================
-                         MESSAGE FINAL
-                    ================================================== --}}
+                    {{-- ================================================= --}}
+                    {{-- RÉASSURANCE                                         --}}
+                    {{-- ================================================= --}}
 
-                    <p
-                        class="mt-5 text-center text-[10px]
-                               leading-4 text-[#9A918B]"
-                    >
-                        Un récapitulatif de votre commande vous sera
-                        également envoyé.
-                    </p>
+                    <div class="mx-auto mt-7 flex max-w-sm items-center justify-center gap-4 border-t border-[#F0EAE5] pt-4">
+
+                        <span class="flex items-center gap-1.5 text-[9px] text-[#918780]">
+                            <i class="bi bi-shield-check text-sm text-[#E25F12]"></i>
+                            Commande sécurisée
+                        </span>
+
+                        <span class="h-3 w-px bg-[#E8DED7]"></span>
+
+                        <span class="flex items-center gap-1.5 text-[9px] text-[#918780]">
+                            <i class="bi bi-envelope-check text-sm text-[#E25F12]"></i>
+                            Reçu envoyé
+                        </span>
+
+                    </div>
 
                 </div>
 
@@ -479,4 +230,4 @@
 
     </div>
 
-</x-app-layout>
+</x-blank-layout>

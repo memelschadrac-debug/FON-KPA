@@ -415,18 +415,11 @@
     <!-- HEADER                                                     -->
     <!-- ========================================================= -->
 
-    <!--
-        IMPORTANT :
-        Le bandeau et la navbar sont dans le même header sticky.
-        Ils restent donc tous les deux visibles pendant le scroll.
-    -->
-
     <header class="sticky top-0 z-50 bg-white">
 
 
         <!-- ===================================================== -->
         <!-- BANDEAU PROMOTIONNEL                                  -->
-        <!-- ALPINE.JS CONSERVÉ                                    -->
         <!-- ===================================================== -->
 
         <div
@@ -525,19 +518,6 @@
             aria-label="Navigation principale"
             class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         >
-
-            <!--
-                CORRECTION PRINCIPALE :
-
-                3 colonnes de largeur égale.
-
-                GAUCHE  = Logo
-                CENTRE  = Menu
-                DROITE  = Actions
-
-                Le menu est donc mathématiquement centré
-                par rapport à toute la navbar.
-            -->
 
             <div
                 class="grid h-16 grid-cols-2 items-center border-b border-gray-200
@@ -978,38 +958,65 @@
                     <!-- PANIER UNIQUE                                      -->
                     <!-- ================================================= -->
 
-                    <a
-                        href="{{ route('cart.index') }}"
-                        class="group relative ml-1 flex h-10 w-10 items-center
-                               justify-center rounded-full text-gray-500
-                               transition-all duration-200
-                               hover:bg-orange-50 hover:text-[#e25f12]"
-                        aria-label="Voir le panier"
+                    @php
+                        $cartCount = collect(session('cart', []))->sum('quantity');
+                    @endphp
+
+                    <div
+                        x-data="{
+                            cartCount: {{ $cartCount }}
+                        }"
+                        x-init="
+                            window.addEventListener(
+                                'fonkpa-cart-updated',
+                                (event) => {
+                                    cartCount = Number(event.detail.count || 0);
+                                }
+                            );
+                        "
                     >
 
-                        <!-- Icône panier -->
-                        <i
-                            class="bi bi-cart3 text-xl transition-transform
-                                   duration-200 group-hover:scale-105"
-                        ></i>
-
-
-                        <!-- Badge -->
-                        <span
-                            class="absolute -right-0.5 -top-0.5 flex h-5 min-w-5
-                                   items-center justify-center rounded-full
-                                   bg-[#e25f12] px-1 text-[10px] font-bold
-                                   leading-none text-white ring-2 ring-white"
+                        <a
+                            href="{{ route('cart.index') }}"
+                            class="group relative ml-1 flex h-10 w-10 items-center justify-center
+                                   rounded-full text-gray-500 transition-all duration-200
+                                   hover:bg-orange-50 hover:text-[#e25f12]"
+                            aria-label="Voir le panier"
                         >
-                            0
-                        </span>
+
+                            <i
+                                class="bi bi-cart3 text-xl transition-transform
+                                       duration-200 group-hover:scale-105"
+                            ></i>
 
 
-                        <span class="sr-only">
-                            0 article dans le panier
-                        </span>
+                            <!-- ================================================= -->
+                            <!-- BADGE PANIER                                      -->
+                            <!-- Toujours visible, même avec 0 article            -->
+                            <!-- ================================================= -->
 
-                    </a>
+                            <span
+                                x-text="cartCount"
+                                class="absolute -right-0.5 -top-0.5 flex h-5 min-w-5
+                                       items-center justify-center rounded-full
+                                       bg-[#e25f12] px-1 text-[10px] font-bold
+                                       leading-none text-white ring-2 ring-white"
+                            ></span>
+
+
+                            <span
+                                class="sr-only"
+                                x-text="
+                                    cartCount +
+                                    ' article' +
+                                    (cartCount > 1 ? 's' : '') +
+                                    ' dans le panier'
+                                "
+                            ></span>
+
+                        </a>
+
+                    </div>
 
                 </div>
 

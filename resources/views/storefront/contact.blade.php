@@ -1,5 +1,7 @@
 <x-app-layout>
-@section('title', 'FON-KPA — Contact')
+
+    @section('title', 'FON-KPA — Contact')
+
     {{-- =========================================================
          PAGE CONTACT
     ========================================================== --}}
@@ -341,10 +343,128 @@
                     </div>
 
 
-                    {{-- FORM --}}
+                    {{-- =================================================
+                         MESSAGE DE SUCCÈS
+                    ================================================== --}}
+                    @if (session('success'))
+
+                        <div
+                            x-data="{ show: true }"
+                            x-init="setTimeout(() => show = false, 7000)"
+                            x-show="show"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 translate-y-[-8px]"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-300"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 translate-y-[-8px]"
+                            role="alert"
+                            class="alert alert-success mt-6
+                                   rounded-xl border border-green-200
+                                   bg-green-50 px-4 py-4
+                                   text-green-800 shadow-sm"
+                        >
+
+                            {{-- Icône --}}
+                            <div
+                                class="flex h-10 w-10 shrink-0
+                                       items-center justify-center
+                                       rounded-full bg-green-100
+                                       text-green-600"
+                            >
+                                <i class="bi bi-check-lg text-xl"></i>
+                            </div>
+
+
+                            {{-- Contenu --}}
+                            <div class="min-w-0 flex-1">
+
+                                <h4
+                                    class="font-semibold text-green-800"
+                                >
+                                    Message envoyé avec succès
+                                </h4>
+
+                                <p
+                                    class="mt-0.5 text-sm leading-5
+                                           text-green-700"
+                                >
+                                    {{ session('success') }}
+                                </p>
+
+                            </div>
+
+
+                            {{-- Fermer --}}
+                            <button
+                                type="button"
+                                @click="show = false"
+                                class="btn btn-sm btn-circle
+                                       btn-ghost text-green-700
+                                       hover:bg-green-100"
+                                aria-label="Fermer"
+                            >
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+
+                        </div>
+
+                    @endif
+
+
+                    {{-- =================================================
+                         ERREURS DE VALIDATION
+                    ================================================== --}}
+                    @if ($errors->any())
+
+                        <div
+                            role="alert"
+                            class="alert alert-error mt-6
+                                   rounded-xl border border-red-200
+                                   bg-red-50 text-red-800 shadow-sm"
+                        >
+
+                            <div
+                                class="flex h-10 w-10 shrink-0
+                                       items-center justify-center
+                                       rounded-full bg-red-100
+                                       text-red-600"
+                            >
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                            </div>
+
+                            <div>
+
+                                <h4 class="font-semibold">
+                                    Vérifiez les informations saisies
+                                </h4>
+
+                                <ul class="mt-1 text-sm">
+
+                                    @foreach ($errors->all() as $error)
+
+                                        <li class="flex items-start gap-2">
+                                            <span>•</span>
+                                            <span>{{ $error }}</span>
+                                        </li>
+
+                                    @endforeach
+
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+                    @endif
+
+
+                    {{-- =================================================
+                         FORM
+                    ================================================== --}}
                     <form
                         method="POST"
-                        action="{{ route('contact') }}"
+                        action="{{ route('contact.store') }}"
                         @submit="submitForm"
                         class="mt-8"
                     >
@@ -380,6 +500,7 @@
                                         id="name"
                                         name="name"
                                         type="text"
+                                        value="{{ old('name') }}"
                                         x-model="form.name"
                                         placeholder="Votre nom"
                                         class="h-12 w-full rounded-xl
@@ -425,6 +546,7 @@
                                         id="email"
                                         name="email"
                                         type="email"
+                                        value="{{ old('email') }}"
                                         x-model="form.email"
                                         placeholder="votre@email.com"
                                         class="h-12 w-full rounded-xl
@@ -470,6 +592,7 @@
                                         id="phone"
                                         name="phone"
                                         type="tel"
+                                        value="{{ old('phone') }}"
                                         x-model="form.phone"
                                         placeholder="+225 00 00 00 00"
                                         class="h-12 w-full rounded-xl
@@ -528,7 +651,7 @@
                                                focus:ring-[#E25F12]/10"
                                     >
 
-                                        <option value="">
+                                        <option value="general">
                                             Information générale
                                         </option>
 
@@ -632,18 +755,7 @@
                                    sm:justify-between"
                         >
 
-                            <p
-                                x-show="sent"
-                                x-transition
-                                class="flex items-center gap-2
-                                       text-sm font-medium
-                                       text-green-600"
-                            >
-                                <i class="bi bi-check-circle-fill"></i>
-
-                                Message envoyé avec succès.
-                            </p>
-
+                            <div></div>
 
                             <button
                                 type="submit"
@@ -694,16 +806,16 @@
             ====================================================== --}}
             <div
                 class="mt-8 overflow-hidden rounded-2xl
-                    bg-white p-2
-                    shadow-[0_5px_25px_rgba(89,49,20,0.06)]
-                    ring-1 ring-black/[0.03]"
+                       bg-white p-2
+                       shadow-[0_5px_25px_rgba(89,49,20,0.06)]
+                       ring-1 ring-black/[0.03]"
             >
 
                 <div
                     class="relative h-[240px] overflow-hidden
-                        rounded-xl
-                        sm:h-[300px]
-                        lg:h-[360px]"
+                           rounded-xl
+                           sm:h-[300px]
+                           lg:h-[360px]"
                 >
 
                     {{-- GOOGLE MAPS --}}
@@ -719,24 +831,24 @@
                     {{-- MARQUEUR / INFORMATIONS --}}
                     <div
                         class="absolute left-1/2 top-1/2
-                            -translate-x-1/2
-                            -translate-y-1/2"
+                               -translate-x-1/2
+                               -translate-y-1/2"
                     >
 
                         <div
                             class="rounded-xl bg-white
-                                px-5 py-4 text-center
-                                shadow-xl"
+                                   px-5 py-4 text-center
+                                   shadow-xl"
                         >
 
                             <i
                                 class="bi bi-geo-alt-fill
-                                    text-xl text-[#E25F12]"
+                                       text-xl text-[#E25F12]"
                             ></i>
 
                             <p
                                 class="mt-1 text-sm font-bold
-                                    text-[#593114]"
+                                       text-[#593114]"
                             >
                                 FON-KPA
                             </p>
@@ -771,29 +883,17 @@
 
                 loading: false,
 
-                sent: false,
-
                 form: {
                     name: '',
                     email: '',
                     phone: '',
-                    subject: '',
+                    subject: 'general',
                     message: ''
                 },
 
-                submitForm(event) {
+                submitForm() {
 
                     this.loading = true;
-                    this.sent = false;
-
-                    event.preventDefault();
-
-                    setTimeout(() => {
-
-                        this.loading = false;
-                        this.sent = true;
-
-                    }, 1000);
 
                 }
 

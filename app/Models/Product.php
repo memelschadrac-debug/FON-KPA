@@ -41,6 +41,13 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
+    // Alias utilisé notamment pour charger facilement les images
+    // avec leur média : product -> images -> media.
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+
     // Un produit peut avoir plusieurs groupes d'options.
     // Exemple : "Accompagnement", "Suppléments", "Boisson".
     public function optionGroups(): HasMany

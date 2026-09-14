@@ -1,6 +1,7 @@
-{{-- resources/views/storefront/dishes/index.blade.php --}}
+{{-- resources/views/storefront/plats/index.blade.php --}}
 
 <x-app-layout>
+
     @section('title', 'FON-KPA — Nos plats')
 
     <div
@@ -10,7 +11,7 @@
     >
 
         {{-- ========================================================= --}}
-        {{-- HEADER --}}
+        {{-- HEADER                                                     --}}
         {{-- ========================================================= --}}
 
         <section class="border-b border-[#E9DED1] bg-[#FCF8F3]">
@@ -19,7 +20,6 @@
 
                 <div class="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
 
-                    {{-- Titre --}}
                     <div class="max-w-xl">
 
                         <div class="mb-3 flex items-center gap-2">
@@ -43,10 +43,13 @@
 
                     </div>
 
-                    {{-- Recherche / Tri --}}
+
+                    {{-- RECHERCHE / TRI --}}
+
                     <div class="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
 
                         {{-- Recherche --}}
+
                         <div class="relative">
 
                             <svg
@@ -72,7 +75,9 @@
 
                         </div>
 
+
                         {{-- Tri --}}
+
                         <div class="relative w-full sm:w-[190px]">
 
                             <svg
@@ -94,10 +99,21 @@
                                 aria-label="Trier les plats"
                                 class="h-11 w-full appearance-none rounded-xl border border-[#E8DCCE] bg-white pl-10 pr-10 text-xs font-medium text-[#593114] shadow-sm outline-none transition-all duration-200 hover:border-[#D8C6B5] hover:shadow-md focus:border-[#e25f12] focus:ring-4 focus:ring-[#e25f12]/10"
                             >
-                                <option value="popular">Plus populaires</option>
-                                <option value="price-low">Prix croissant</option>
-                                <option value="price-high">Prix décroissant</option>
-                                <option value="name">Nom A-Z</option>
+                                <option value="popular">
+                                    Plus populaires
+                                </option>
+
+                                <option value="price-low">
+                                    Prix croissant
+                                </option>
+
+                                <option value="price-high">
+                                    Prix décroissant
+                                </option>
+
+                                <option value="name">
+                                    Nom A-Z
+                                </option>
                             </select>
 
                             <svg
@@ -126,15 +142,16 @@
 
 
         {{-- ========================================================= --}}
-        {{-- CONTENU --}}
+        {{-- CONTENU                                                    --}}
         {{-- ========================================================= --}}
 
         <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
 
             <div class="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
 
+
                 {{-- ================================================= --}}
-                {{-- FILTRES DESKTOP --}}
+                {{-- FILTRES DESKTOP                                   --}}
                 {{-- ================================================= --}}
 
                 <aside class="hidden lg:block">
@@ -143,7 +160,6 @@
                         class="sticky top-6 rounded-2xl border border-[#E9DED1] bg-white p-6 shadow-[0_4px_20px_rgba(89,49,20,0.04)]"
                     >
 
-                        {{-- En-tête --}}
                         <div class="mb-7 flex items-start justify-between gap-4">
 
                             <div>
@@ -169,9 +185,7 @@
                         </div>
 
 
-                        {{-- ================================================= --}}
                         {{-- CATÉGORIES --}}
-                        {{-- ================================================= --}}
 
                         <div>
 
@@ -181,7 +195,8 @@
 
                             <div class="space-y-3">
 
-                                {{-- Tous --}}
+                                {{-- Tous les plats --}}
+
                                 <label class="flex cursor-pointer items-center justify-between text-xs text-[#6F655E]">
 
                                     <span class="flex items-center gap-2.5">
@@ -197,116 +212,54 @@
 
                                     </span>
 
-                                    <span class="text-[10px] text-[#A99D93]">
-                                        24
-                                    </span>
+                                    <span
+                                        class="text-[10px] text-[#A99D93]"
+                                        x-text="products.length"
+                                    ></span>
 
                                 </label>
 
 
-                                {{-- Garba --}}
-                                <label class="flex cursor-pointer items-center justify-between text-xs text-[#6F655E]">
+                                {{-- Catégories Laravel --}}
 
-                                    <span class="flex items-center gap-2.5">
+                                <template
+                                    x-for="item in categories"
+                                    :key="item.id"
+                                >
 
-                                        <input
-                                            type="radio"
-                                            value="garba"
-                                            x-model="category"
-                                            class="radio radio-xs border-[#D8C8B8] checked:bg-[#e25f12]"
-                                        >
+                                    <label class="flex cursor-pointer items-center justify-between text-xs text-[#6F655E]">
 
-                                        Garba
+                                        <span class="flex items-center gap-2.5">
 
-                                    </span>
+                                            <input
+                                                type="radio"
+                                                :value="item.slug"
+                                                x-model="category"
+                                                class="radio radio-xs border-[#D8C8B8] checked:bg-[#e25f12]"
+                                            >
 
-                                    <span class="text-[10px] text-[#A99D93]">
-                                        8
-                                    </span>
+                                            <span x-text="item.name"></span>
 
-                                </label>
+                                        </span>
 
+                                        <span
+                                            class="text-[10px] text-[#A99D93]"
+                                            x-text="item.products_count"
+                                        ></span>
 
-                                {{-- Grillades --}}
-                                <label class="flex cursor-pointer items-center justify-between text-xs text-[#6F655E]">
+                                    </label>
 
-                                    <span class="flex items-center gap-2.5">
-
-                                        <input
-                                            type="radio"
-                                            value="braise"
-                                            x-model="category"
-                                            class="radio radio-xs border-[#D8C8B8] checked:bg-[#e25f12]"
-                                        >
-
-                                        Grillades
-
-                                    </span>
-
-                                    <span class="text-[10px] text-[#A99D93]">
-                                        6
-                                    </span>
-
-                                </label>
-
-
-                                {{-- Accompagnements --}}
-                                <label class="flex cursor-pointer items-center justify-between text-xs text-[#6F655E]">
-
-                                    <span class="flex items-center gap-2.5">
-
-                                        <input
-                                            type="radio"
-                                            value="accompagnement"
-                                            x-model="category"
-                                            class="radio radio-xs border-[#D8C8B8] checked:bg-[#e25f12]"
-                                        >
-
-                                        Accompagnements
-
-                                    </span>
-
-                                    <span class="text-[10px] text-[#A99D93]">
-                                        5
-                                    </span>
-
-                                </label>
-
-
-                                {{-- Sauce --}}
-                                <label class="flex cursor-pointer items-center justify-between text-xs text-[#6F655E]">
-
-                                    <span class="flex items-center gap-2.5">
-
-                                        <input
-                                            type="radio"
-                                            value="sauce"
-                                            x-model="category"
-                                            class="radio radio-xs border-[#D8C8B8] checked:bg-[#e25f12]"
-                                        >
-
-                                        Plats en sauce
-
-                                    </span>
-
-                                    <span class="text-[10px] text-[#A99D93]">
-                                        5
-                                    </span>
-
-                                </label>
+                                </template>
 
                             </div>
 
                         </div>
 
 
-                        {{-- Séparateur --}}
                         <div class="my-7 border-t border-[#F0E7DE]"></div>
 
 
-                        {{-- ================================================= --}}
                         {{-- PRIX --}}
-                        {{-- ================================================= --}}
 
                         <div>
 
@@ -326,11 +279,11 @@
                                         type="number"
                                         x-model.number="minPrice"
                                         placeholder="0"
+                                        min="0"
                                         class="h-9 w-full rounded-lg border border-[#E8DCCE] bg-white px-3 text-[11px] text-[#593114] outline-none transition focus:border-[#e25f12] focus:ring-2 focus:ring-[#e25f12]/10"
                                     >
 
                                 </div>
-
 
                                 <div>
 
@@ -342,6 +295,7 @@
                                         type="number"
                                         x-model.number="maxPrice"
                                         placeholder="10000"
+                                        min="0"
                                         class="h-9 w-full rounded-lg border border-[#E8DCCE] bg-white px-3 text-[11px] text-[#593114] outline-none transition focus:border-[#e25f12] focus:ring-2 focus:ring-[#e25f12]/10"
                                     >
 
@@ -352,13 +306,10 @@
                         </div>
 
 
-                        {{-- Séparateur --}}
                         <div class="my-7 border-t border-[#F0E7DE]"></div>
 
 
-                        {{-- ================================================= --}}
                         {{-- DISPONIBILITÉ --}}
-                        {{-- ================================================= --}}
 
                         <label class="flex cursor-pointer items-center gap-2.5 text-xs text-[#6F655E]">
 
@@ -378,14 +329,13 @@
 
 
                 {{-- ================================================= --}}
-                {{-- PRODUITS --}}
+                {{-- PRODUITS                                          --}}
                 {{-- ================================================= --}}
 
-                <section class="min-w-0">
-
-                    {{-- ================================================= --}}
-                    {{-- BARRE D'INFORMATION --}}
-                    {{-- ================================================= --}}
+                <section
+                    id="products"
+                    class="min-w-0"
+                >
 
                     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
@@ -405,7 +355,8 @@
                         </div>
 
 
-                        {{-- Filtre mobile --}}
+                        {{-- FILTRES MOBILE --}}
+
                         <button
                             type="button"
                             onclick="filters_modal.showModal()"
@@ -434,7 +385,7 @@
 
 
                     {{-- ================================================= --}}
-                    {{-- GRILLE DES PLATS --}}
+                    {{-- GRILLE DES PRODUITS                              --}}
                     {{-- ================================================= --}}
 
                     <div class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
@@ -444,22 +395,24 @@
                             :key="product.id"
                         >
 
-                            <article class="group overflow-hidden rounded-2xl border border-[#EDE2D8] bg-white shadow-[0_3px_15px_rgba(89,49,20,0.04)]">
+                            <article
+                                class="group overflow-hidden rounded-2xl border border-[#EDE2D8] bg-white shadow-[0_3px_15px_rgba(89,49,20,0.04)]"
+                            >
 
-                                {{-- ================================================= --}}
                                 {{-- IMAGE --}}
-                                {{-- ================================================= --}}
 
                                 <figure class="relative aspect-[1.12/1] overflow-hidden bg-[#F3E8DC]">
 
                                     <img
-                                        :src="product.image"
+                                        :src="product.image || '{{ asset('images/garba.jpg') }}'"
                                         :alt="product.name"
                                         class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                                        loading="lazy"
                                     >
 
 
-                                    {{-- Badge --}}
+                                    {{-- BADGE --}}
+
                                     <template x-if="product.badge">
 
                                         <span
@@ -470,7 +423,8 @@
                                     </template>
 
 
-                                    {{-- Favoris --}}
+                                    {{-- FAVORIS --}}
+
                                     <button
                                         type="button"
                                         @click="toggleFavorite(product.id)"
@@ -500,9 +454,7 @@
                                 </figure>
 
 
-                                {{-- ================================================= --}}
                                 {{-- INFORMATIONS --}}
-                                {{-- ================================================= --}}
 
                                 <div class="bg-[#F8EBD9] p-3.5 sm:p-4">
 
@@ -513,7 +465,6 @@
                                             x-text="product.name"
                                         ></h3>
 
-
                                         <p
                                             class="mt-2 line-clamp-2 text-[10px] leading-4 text-[#746A63] sm:text-[11px]"
                                             x-text="product.description"
@@ -522,11 +473,9 @@
                                     </div>
 
 
-                                    {{-- Séparateur --}}
                                     <div class="my-3.5 border-t border-[#E5D3BD]"></div>
 
 
-                                    {{-- Prix / panier --}}
                                     <div class="flex items-center justify-between gap-3">
 
                                         <div>
@@ -543,11 +492,13 @@
                                         </div>
 
 
-                                        {{-- Panier --}}
+                                        {{-- PANIER --}}
+
                                         <button
                                             type="button"
                                             @click="addToCart(product)"
-                                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#593114] text-white transition-all duration-200 hover:scale-105 active:scale-95"
+                                            :disabled="!product.available"
+                                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#593114] text-white transition-all duration-200 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
                                             aria-label="Ajouter au panier"
                                         >
 
@@ -562,7 +513,7 @@
                                                 <path
                                                     stroke-linecap="round"
                                                     stroke-linejoin="round"
-                                                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75l3-9H5.106M7.5 14.25 5.106 5.272M7.5 14.25l-1.5 2.25h11.25M9 19.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm9 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                                                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75l3-9H5.106M7.5 14.25 5.106 5.272M7.5 14.25l-1.5 2.25h11.25M9 19.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm9 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1-1.5 0Z"
                                                 />
 
                                             </svg>
@@ -581,7 +532,7 @@
 
 
                     {{-- ================================================= --}}
-                    {{-- AUCUN RÉSULTAT --}}
+                    {{-- AUCUN RÉSULTAT                                   --}}
                     {{-- ================================================= --}}
 
                     <div
@@ -598,12 +549,14 @@
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
                             >
+
                                 <path
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="1.6"
                                     d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
                                 />
+
                             </svg>
 
                         </div>
@@ -628,7 +581,7 @@
 
 
                     {{-- ================================================= --}}
-                    {{-- PAGINATION --}}
+                    {{-- PAGINATION                                       --}}
                     {{-- ================================================= --}}
 
                     <div
@@ -639,7 +592,6 @@
 
                         <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
 
-                            {{-- Information --}}
                             <p class="text-[11px] text-[#8C8179]">
 
                                 Page
@@ -659,13 +611,13 @@
                             </p>
 
 
-                            {{-- Pagination --}}
                             <nav
                                 class="flex items-center gap-1.5"
                                 aria-label="Pagination"
                             >
 
-                                {{-- Précédent --}}
+                                {{-- PRÉCÉDENT --}}
+
                                 <button
                                     type="button"
                                     @click="previousPage()"
@@ -694,7 +646,8 @@
                                 </button>
 
 
-                                {{-- Numéros --}}
+                                {{-- NUMÉROS --}}
+
                                 <template
                                     x-for="number in visiblePages"
                                     :key="number"
@@ -715,7 +668,8 @@
                                 </template>
 
 
-                                {{-- Suivant --}}
+                                {{-- SUIVANT --}}
+
                                 <button
                                     type="button"
                                     @click="nextPage()"
@@ -757,7 +711,7 @@
 
 
         {{-- ========================================================= --}}
-        {{-- FILTRES MOBILE --}}
+        {{-- MODAL FILTRES MOBILE                                      --}}
         {{-- ========================================================= --}}
 
         <dialog id="filters_modal" class="modal">
@@ -793,7 +747,8 @@
 
                 <div class="mt-7 space-y-7">
 
-                    {{-- Catégories --}}
+                    {{-- CATÉGORIES --}}
+
                     <div>
 
                         <h4 class="mb-4 text-xs font-bold text-[#593114]">
@@ -803,61 +758,46 @@
                         <div class="space-y-3">
 
                             <label class="flex items-center gap-2.5 text-xs text-[#6F655E]">
+
                                 <input
                                     type="radio"
                                     value="all"
                                     x-model="category"
                                     class="radio radio-xs checked:bg-[#e25f12]"
                                 >
+
                                 Tous les plats
+
                             </label>
 
-                            <label class="flex items-center gap-2.5 text-xs text-[#6F655E]">
-                                <input
-                                    type="radio"
-                                    value="garba"
-                                    x-model="category"
-                                    class="radio radio-xs checked:bg-[#e25f12]"
-                                >
-                                Garba
-                            </label>
 
-                            <label class="flex items-center gap-2.5 text-xs text-[#6F655E]">
-                                <input
-                                    type="radio"
-                                    value="braise"
-                                    x-model="category"
-                                    class="radio radio-xs checked:bg-[#e25f12]"
-                                >
-                                Grillades
-                            </label>
+                            <template
+                                x-for="item in categories"
+                                :key="'mobile-' + item.id"
+                            >
 
-                            <label class="flex items-center gap-2.5 text-xs text-[#6F655E]">
-                                <input
-                                    type="radio"
-                                    value="accompagnement"
-                                    x-model="category"
-                                    class="radio radio-xs checked:bg-[#e25f12]"
-                                >
-                                Accompagnements
-                            </label>
+                                <label class="flex items-center gap-2.5 text-xs text-[#6F655E]">
 
-                            <label class="flex items-center gap-2.5 text-xs text-[#6F655E]">
-                                <input
-                                    type="radio"
-                                    value="sauce"
-                                    x-model="category"
-                                    class="radio radio-xs checked:bg-[#e25f12]"
-                                >
-                                Plats en sauce
-                            </label>
+                                    <input
+                                        type="radio"
+                                        :value="item.slug"
+                                        x-model="category"
+                                        class="radio radio-xs checked:bg-[#e25f12]"
+                                    >
+
+                                    <span x-text="item.name"></span>
+
+                                </label>
+
+                            </template>
 
                         </div>
 
                     </div>
 
 
-                    {{-- Prix --}}
+                    {{-- PRIX --}}
+
                     <div>
 
                         <h4 class="mb-4 text-xs font-bold text-[#593114]">
@@ -870,6 +810,7 @@
                                 type="number"
                                 x-model.number="minPrice"
                                 placeholder="Minimum"
+                                min="0"
                                 class="h-10 w-full rounded-lg border border-[#E8DCCE] bg-white px-3 text-xs outline-none focus:border-[#e25f12]"
                             >
 
@@ -877,6 +818,7 @@
                                 type="number"
                                 x-model.number="maxPrice"
                                 placeholder="Maximum"
+                                min="0"
                                 class="h-10 w-full rounded-lg border border-[#E8DCCE] bg-white px-3 text-xs outline-none focus:border-[#e25f12]"
                             >
 
@@ -885,7 +827,8 @@
                     </div>
 
 
-                    {{-- Disponibilité --}}
+                    {{-- DISPONIBILITÉ --}}
+
                     <label class="flex items-center gap-2.5 text-xs text-[#6F655E]">
 
                         <input
@@ -928,6 +871,7 @@
 
             </div>
 
+
             <form
                 method="dialog"
                 class="modal-backdrop"
@@ -939,551 +883,794 @@
 
 
         {{-- ========================================================= --}}
-        {{-- NOTIFICATION PANIER --}}
+        {{-- TOAST                                                      --}}
         {{-- ========================================================= --}}
 
         <div
-            x-show="notification"
-            x-transition
+            x-show="showCartToast"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 translate-y-3"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 translate-y-3"
             x-cloak
-            class="alert alert-success fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-xl px-4 py-3 text-white shadow-xl"
+            class="toast toast-end toast-bottom z-[9999]"
         >
 
-            <div class="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-xs">
-                ✓
-            </div>
+            <div class="alert border border-green-200 bg-white text-gray-700 shadow-lg">
 
-            <div>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 shrink-0 text-green-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
 
-                <p class="text-xs font-semibold">
-                    Plat ajouté au panier
-                </p>
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 13l4 4L19 7"
+                    />
 
-                <p class="mt-0.5 text-[10px] text-white/60">
-                    Votre sélection a été mise à jour.
-                </p>
+                </svg>
+
+                <div>
+
+                    <p class="font-semibold">
+                        Produit ajouté
+                    </p>
+
+                    <p class="text-xs text-gray-500">
+                        Le plat a bien été ajouté à votre panier.
+                    </p>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+
+        {{-- ========================================================= --}}
+        {{-- ALPINE.JS                                                 --}}
+        {{-- ========================================================= --}}
+
+        <script>
+
+            function dishCatalog() {
+
+                return {
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | DONNÉES FOURNIES PAR LARAVEL
+                    |--------------------------------------------------------------------------
+                    */
+
+                    products: @json($productsData),
+
+                    categories: @json($categoriesData),
 
 
-    {{-- ============================================================= --}}
-    {{-- ALPINE.JS --}}
-    {{-- ============================================================= --}}
+                    /*
+                    |--------------------------------------------------------------------------
+                    | FILTRES
+                    |--------------------------------------------------------------------------
+                    */
 
-    <script>
-        function dishCatalog() {
+                    search: '',
 
-            return {
+                    category: 'all',
 
-                /* ===================================================== */
-                /* ÉTAT */
-                /* ===================================================== */
+                    minPrice: null,
 
-                search: '',
+                    maxPrice: null,
 
-                category: 'all',
+                    availableOnly: false,
 
-                minPrice: null,
-
-                maxPrice: null,
-
-                availableOnly: false,
-
-                sort: 'popular',
-
-                page: 1,
-
-                perPage: 8,
-
-                favorites: [],
-
-                cart: [],
-
-                notification: false,
+                    sort: 'popular',
 
 
-                /* ===================================================== */
-                /* PRODUITS */
-                /* ===================================================== */
+                    /*
+                    |--------------------------------------------------------------------------
+                    | PAGINATION
+                    |--------------------------------------------------------------------------
+                    */
 
-                products: [
+                    page: 1,
 
-                    {
-                        id: 1,
-                        name: 'Garba Royal',
-                        category: 'garba',
-                        price: 3500,
-                        available: true,
-                        badge: 'Best Seller',
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Attiéké vapeur, thon frit croustillant, oignons, tomates fraîches et piment doux.'
-                    },
-
-                    {
-                        id: 2,
-                        name: 'Poulet Braisé Entier',
-                        category: 'braise',
-                        price: 5000,
-                        available: true,
-                        badge: 'Populaire',
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Poulet fermier mariné aux épices locales, braisé à la perfection.'
-                    },
-
-                    {
-                        id: 3,
-                        name: 'Poisson Braisé',
-                        category: 'braise',
-                        price: 6000,
-                        available: true,
-                        badge: 'Nouveau',
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Poisson frais mariné et braisé, accompagné de nos sauces maison.'
-                    },
-
-                    {
-                        id: 4,
-                        name: "Portion d'Aloco",
-                        category: 'accompagnement',
-                        price: 1000,
-                        available: true,
-                        badge: null,
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Bananes plantains douces, frites à la perfection.'
-                    },
-
-                    {
-                        id: 5,
-                        name: 'Attiéké Poisson',
-                        category: 'garba',
-                        price: 3000,
-                        available: true,
-                        badge: null,
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Attiéké traditionnel accompagné de poisson frais et légumes.'
-                    },
-
-                    {
-                        id: 6,
-                        name: 'Poulet Kedjenou',
-                        category: 'braise',
-                        price: 5500,
-                        available: true,
-                        badge: 'Tradition',
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Poulet mijoté avec tomates, oignons et épices ivoiriennes.'
-                    },
-
-                    {
-                        id: 7,
-                        name: 'Foutou Sauce Graine',
-                        category: 'sauce',
-                        price: 4000,
-                        available: true,
-                        badge: null,
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Foutou banane accompagné de notre sauce graine traditionnelle.'
-                    },
-
-                    {
-                        id: 8,
-                        name: 'Igname Frit',
-                        category: 'accompagnement',
-                        price: 1500,
-                        available: false,
-                        badge: null,
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Bâtonnets d’igname croustillants servis avec une sauce maison.'
-                    },
-
-                    {
-                        id: 9,
-                        name: 'Placali Sauce Gombo',
-                        category: 'sauce',
-                        price: 4000,
-                        available: true,
-                        badge: null,
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Placali traditionnel accompagné d’une délicieuse sauce gombo.'
-                    },
-
-                    {
-                        id: 10,
-                        name: 'Brochettes de Poulet',
-                        category: 'braise',
-                        price: 2500,
-                        available: true,
-                        badge: 'Populaire',
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Tendres morceaux de poulet grillés aux épices et légèrement fumés.'
-                    },
-
-                    {
-                        id: 11,
-                        name: 'Alloco Garni',
-                        category: 'accompagnement',
-                        price: 2000,
-                        available: true,
-                        badge: null,
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Alloco doré accompagné d’oignons, tomates et sauce maison.'
-                    },
-
-                    {
-                        id: 12,
-                        name: 'Garba Tradition',
-                        category: 'garba',
-                        price: 2500,
-                        available: true,
-                        badge: null,
-                        image: "{{ asset('images/garba.jpg') }}",
-                        description:
-                            'Le classique ivoirien avec attiéké, thon frit et condiments frais.'
-                    }
-
-                ],
+                    perPage: 8,
 
 
-                /* ===================================================== */
-                /* INITIALISATION */
-                /* ===================================================== */
+                    /*
+                    |--------------------------------------------------------------------------
+                    | FAVORIS
+                    |--------------------------------------------------------------------------
+                    */
 
-                init() {
-
-                    this.$watch('search', () => {
-                        this.page = 1;
-                    });
-
-                    this.$watch('category', () => {
-                        this.page = 1;
-                    });
-
-                    this.$watch('minPrice', () => {
-                        this.page = 1;
-                    });
-
-                    this.$watch('maxPrice', () => {
-                        this.page = 1;
-                    });
-
-                    this.$watch('availableOnly', () => {
-                        this.page = 1;
-                    });
-
-                    this.$watch('sort', () => {
-                        this.page = 1;
-                    });
-
-                },
+                    favorites: [],
 
 
-                /* ===================================================== */
-                /* FILTRES */
-                /* ===================================================== */
+                    /*
+                    |--------------------------------------------------------------------------
+                    | PANIER
+                    |--------------------------------------------------------------------------
+                    */
 
-                get filteredProducts() {
+                    cartCount: 0,
 
-                    let result = this.products.filter(product => {
+                    showCartToast: false,
 
-                        const searchTerm =
-                            this.search.trim().toLowerCase();
 
-                        const matchesSearch =
-                            product.name
-                                .toLowerCase()
-                                .includes(searchTerm);
+                    /*
+                    |--------------------------------------------------------------------------
+                    | INITIALISATION
+                    |--------------------------------------------------------------------------
+                    */
 
-                        const matchesCategory =
-                            this.category === 'all' ||
-                            product.category === this.category;
+                    init() {
 
-                        const matchesMin =
-                            !this.minPrice ||
-                            product.price >= Number(this.minPrice);
+                        /*
+                        | À chaque changement de filtre,
+                        | on revient automatiquement à la première page.
+                        */
 
-                        const matchesMax =
-                            !this.maxPrice ||
-                            product.price <= Number(this.maxPrice);
+                        this.$watch('search', () => {
+                            this.page = 1;
+                        });
 
-                        const matchesAvailability =
-                            !this.availableOnly ||
-                            product.available;
+                        this.$watch('category', () => {
+                            this.page = 1;
+                        });
 
-                        return (
-                            matchesSearch &&
-                            matchesCategory &&
-                            matchesMin &&
-                            matchesMax &&
-                            matchesAvailability
+                        this.$watch('minPrice', () => {
+                            this.page = 1;
+                        });
+
+                        this.$watch('maxPrice', () => {
+                            this.page = 1;
+                        });
+
+                        this.$watch('availableOnly', () => {
+                            this.page = 1;
+                        });
+
+                        this.$watch('sort', () => {
+                            this.page = 1;
+                        });
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Synchronisation avec le panier
+                        |--------------------------------------------------------------------------
+                        */
+
+                        window.addEventListener(
+                            'fonkpa-cart-updated',
+                            (event) => {
+
+                                if (
+                                    event.detail &&
+                                    typeof event.detail.count !== 'undefined'
+                                ) {
+
+                                    this.cartCount =
+                                        Number(event.detail.count);
+
+                                }
+
+                            }
                         );
 
-                    });
-
-
-                    /* Tri par prix */
-                    if (this.sort === 'price-low') {
-
-                        result.sort(
-                            (a, b) => a.price - b.price
-                        );
-
-                    }
-
-
-                    /* Tri par prix décroissant */
-                    if (this.sort === 'price-high') {
-
-                        result.sort(
-                            (a, b) => b.price - a.price
-                        );
-
-                    }
-
-
-                    /* Tri alphabétique */
-                    if (this.sort === 'name') {
-
-                        result.sort(
-                            (a, b) =>
-                                a.name.localeCompare(
-                                    b.name,
-                                    'fr'
-                                )
-                        );
-
-                    }
-
-
-                    return result;
-
-                },
-
-
-                /* ===================================================== */
-                /* PAGINATION */
-                /* ===================================================== */
-
-                get totalPages() {
-
-                    return Math.ceil(
-                        this.filteredProducts.length /
-                        this.perPage
-                    );
-
-                },
-
-
-                get paginatedProducts() {
-
-                    const start =
-                        (this.page - 1) *
-                        this.perPage;
-
-                    return this.filteredProducts.slice(
-                        start,
-                        start + this.perPage
-                    );
-
-                },
-
-
-                get visiblePages() {
-
-                    const total = this.totalPages;
-
-                    if (total <= 5) {
-
-                        return Array.from(
-                            { length: total },
-                            (_, index) => index + 1
-                        );
-
-                    }
-
-
-                    if (this.page <= 3) {
-
-                        return [1, 2, 3, 4, 5];
-
-                    }
-
-
-                    if (this.page >= total - 2) {
-
-                        return [
-                            total - 4,
-                            total - 3,
-                            total - 2,
-                            total - 1,
-                            total
-                        ];
-
-                    }
-
-
-                    return [
-                        this.page - 2,
-                        this.page - 1,
-                        this.page,
-                        this.page + 1,
-                        this.page + 2
-                    ];
-
-                },
-
-
-                goToPage(number) {
-
-                    if (
-                        number >= 1 &&
-                        number <= this.totalPages
-                    ) {
-
-                        this.page = number;
-
-                        this.scrollToProducts();
-
-                    }
-
-                },
-
-
-                previousPage() {
-
-                    if (this.page > 1) {
-
-                        this.page--;
-
-                        this.scrollToProducts();
-
-                    }
-
-                },
-
-
-                nextPage() {
-
-                    if (this.page < this.totalPages) {
-
-                        this.page++;
-
-                        this.scrollToProducts();
-
-                    }
-
-                },
-
-
-                scrollToProducts() {
-
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-
-                },
-
-
-                /* ===================================================== */
-                /* PRIX */
-                /* ===================================================== */
-
-                formatPrice(price) {
-
-                    return new Intl.NumberFormat('fr-FR')
-                        .format(price);
-
-                },
-
-
-                /* ===================================================== */
-                /* FAVORIS */
-                /* ===================================================== */
-
-                toggleFavorite(id) {
-
-                    if (this.favorites.includes(id)) {
-
-                        this.favorites =
-                            this.favorites.filter(
-                                item => item !== id
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | PRODUITS FILTRÉS
+                    |--------------------------------------------------------------------------
+                    */
+
+                    get filteredProducts() {
+
+                        let result = [...this.products];
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | RECHERCHE
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (this.search.trim() !== '') {
+
+                            const search =
+                                this.search
+                                    .toLowerCase()
+                                    .trim();
+
+                            result = result.filter((product) => {
+
+                                const name =
+                                    product.name
+                                        ? product.name.toLowerCase()
+                                        : '';
+
+                                const description =
+                                    product.description
+                                        ? product.description.toLowerCase()
+                                        : '';
+
+                                return (
+                                    name.includes(search) ||
+                                    description.includes(search)
+                                );
+
+                            });
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | CATÉGORIE
+                        |--------------------------------------------------------------------------
+                        | "all" signifie tous les plats.
+                        |
+                        | Les autres valeurs correspondent directement
+                        | aux slugs Laravel :
+                        |
+                        | accompagnement
+                        | boisson
+                        | sauce
+                        | grillade
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            this.category &&
+                            this.category !== 'all'
+                        ) {
+
+                            result = result.filter(
+                                (product) =>
+                                    product.category === this.category
                             );
 
-                    } else {
+                        }
 
-                        this.favorites.push(id);
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | PRIX MINIMUM
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            this.minPrice !== null &&
+                            this.minPrice !== ''
+                        ) {
+
+                            result = result.filter(
+                                (product) =>
+                                    Number(product.price) >=
+                                    Number(this.minPrice)
+                            );
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | PRIX MAXIMUM
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            this.maxPrice !== null &&
+                            this.maxPrice !== ''
+                        ) {
+
+                            result = result.filter(
+                                (product) =>
+                                    Number(product.price) <=
+                                    Number(this.maxPrice)
+                            );
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | DISPONIBILITÉ
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (this.availableOnly) {
+
+                            result = result.filter(
+                                (product) =>
+                                    product.available === true
+                            );
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | TRI
+                        |--------------------------------------------------------------------------
+                        */
+
+                        switch (this.sort) {
+
+                            case 'price-low':
+
+                                result.sort(
+                                    (a, b) =>
+                                        Number(a.price) -
+                                        Number(b.price)
+                                );
+
+                                break;
+
+
+                            case 'price-high':
+
+                                result.sort(
+                                    (a, b) =>
+                                        Number(b.price) -
+                                        Number(a.price)
+                                );
+
+                                break;
+
+
+                            case 'name':
+
+                                result.sort(
+                                    (a, b) =>
+                                        a.name.localeCompare(
+                                            b.name,
+                                            'fr'
+                                        )
+                                );
+
+                                break;
+
+
+                            case 'popular':
+
+                            default:
+
+                                /*
+                                | Laravel fournit déjà les produits
+                                | dans l'ordre de popularité.
+                                */
+
+                                break;
+
+                        }
+
+
+                        return result;
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | NOMBRE TOTAL DE PAGES
+                    |--------------------------------------------------------------------------
+                    */
+
+                    get totalPages() {
+
+                        return Math.max(
+                            1,
+                            Math.ceil(
+                                this.filteredProducts.length /
+                                this.perPage
+                            )
+                        );
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | PRODUITS DE LA PAGE
+                    |--------------------------------------------------------------------------
+                    */
+
+                    get paginatedProducts() {
+
+                        /*
+                        | Sécurité : si un filtre réduit le nombre
+                        | de pages, on remet automatiquement la page
+                        | sur une page valide.
+                        */
+
+                        if (this.page > this.totalPages) {
+                            this.page = this.totalPages;
+                        }
+
+                        const start =
+                            (this.page - 1) *
+                            this.perPage;
+
+                        return this.filteredProducts.slice(
+                            start,
+                            start + this.perPage
+                        );
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | PAGES VISIBLES
+                    |--------------------------------------------------------------------------
+                    */
+
+                    get visiblePages() {
+
+                        const pages = [];
+
+                        const start =
+                            Math.max(
+                                1,
+                                this.page - 2
+                            );
+
+                        const end =
+                            Math.min(
+                                this.totalPages,
+                                this.page + 2
+                            );
+
+                        for (
+                            let i = start;
+                            i <= end;
+                            i++
+                        ) {
+
+                            pages.push(i);
+
+                        }
+
+                        return pages;
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | ALLER À UNE PAGE
+                    |--------------------------------------------------------------------------
+                    */
+
+                    goToPage(page) {
+
+                        if (
+                            page >= 1 &&
+                            page <= this.totalPages
+                        ) {
+
+                            this.page = page;
+
+                            this.scrollToProducts();
+
+                        }
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | PAGE PRÉCÉDENTE
+                    |--------------------------------------------------------------------------
+                    */
+
+                    previousPage() {
+
+                        if (this.page > 1) {
+
+                            this.page--;
+
+                            this.scrollToProducts();
+
+                        }
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | PAGE SUIVANTE
+                    |--------------------------------------------------------------------------
+                    */
+
+                    nextPage() {
+
+                        if (
+                            this.page <
+                            this.totalPages
+                        ) {
+
+                            this.page++;
+
+                            this.scrollToProducts();
+
+                        }
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SCROLL VERS LES PRODUITS
+                    |--------------------------------------------------------------------------
+                    */
+
+                    scrollToProducts() {
+
+                        this.$nextTick(() => {
+
+                            const element =
+                                document.getElementById(
+                                    'products'
+                                );
+
+                            if (element) {
+
+                                element.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
+                                });
+
+                            }
+
+                        });
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | FORMATAGE DU PRIX
+                    |--------------------------------------------------------------------------
+                    */
+
+                    formatPrice(price) {
+
+                        return new Intl.NumberFormat(
+                            'fr-FR'
+                        ).format(
+                            Number(price)
+                        );
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | FAVORIS
+                    |--------------------------------------------------------------------------
+                    */
+
+                    toggleFavorite(productId) {
+
+                        if (
+                            this.favorites.includes(productId)
+                        ) {
+
+                            this.favorites =
+                                this.favorites.filter(
+                                    (id) =>
+                                        id !== productId
+                                );
+
+                        } else {
+
+                            this.favorites.push(
+                                productId
+                            );
+
+                        }
+
+                    },
+
+
+                    isFavorite(productId) {
+
+                        return this.favorites.includes(
+                            productId
+                        );
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | AJOUT AU PANIER
+                    |--------------------------------------------------------------------------
+                    */
+
+                    async addToCart(product) {
+
+                        /*
+                        | Protection côté frontend.
+                        | Le backend vérifie également.
+                        */
+
+                        if (!product.available) {
+                            return;
+                        }
+
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    `/panier/${product.id}`,
+                                    {
+                                        method: 'POST',
+
+                                        headers: {
+
+                                            'X-CSRF-TOKEN':
+                                                '{{ csrf_token() }}',
+
+                                            'Accept':
+                                                'application/json',
+
+                                            'Content-Type':
+                                                'application/json'
+
+                                        }
+
+                                    }
+                                );
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Gestion des erreurs HTTP
+                            |--------------------------------------------------------------------------
+                            */
+
+                            if (!response.ok) {
+
+                                const errorText =
+                                    await response.text();
+
+                                console.error(
+                                    'Erreur Laravel :',
+                                    errorText
+                                );
+
+                                throw new Error(
+                                    `Erreur HTTP ${response.status}`
+                                );
+
+                            }
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Réponse JSON
+                            |--------------------------------------------------------------------------
+                            */
+
+                            const data =
+                                await response.json();
+
+
+                            if (!data.success) {
+
+                                throw new Error(
+                                    data.message ||
+                                    'Impossible d’ajouter le produit au panier.'
+                                );
+
+                            }
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Mise à jour du compteur
+                            |--------------------------------------------------------------------------
+                            */
+
+                            this.cartCount =
+                                Number(
+                                    data.count || 0
+                                );
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Notification globale
+                            |--------------------------------------------------------------------------
+                            */
+
+                            window.dispatchEvent(
+                                new CustomEvent(
+                                    'fonkpa-cart-updated',
+                                    {
+                                        detail: {
+                                            count:
+                                                this.cartCount
+                                        }
+                                    }
+                                )
+                            );
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Toast
+                            |--------------------------------------------------------------------------
+                            */
+
+                            this.showCartToast = true;
+
+
+                            setTimeout(() => {
+
+                                this.showCartToast =
+                                    false;
+
+                            }, 2500);
+
+
+                        } catch (error) {
+
+                            console.error(
+                                'Erreur lors de l’ajout au panier :',
+                                error
+                            );
+
+                        }
+
+                    },
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | RÉINITIALISER LES FILTRES
+                    |--------------------------------------------------------------------------
+                    */
+
+                    resetFilters() {
+
+                        this.search = '';
+
+                        this.category = 'all';
+
+                        this.minPrice = null;
+
+                        this.maxPrice = null;
+
+                        this.availableOnly = false;
+
+                        this.sort = 'popular';
+
+                        this.page = 1;
 
                     }
 
-                },
+                };
 
+            }
 
-                isFavorite(id) {
+        </script>
 
-                    return this.favorites.includes(id);
-
-                },
-
-
-                /* ===================================================== */
-                /* PANIER */
-                /* ===================================================== */
-
-                addToCart(product) {
-
-                    this.cart.push(product);
-
-                    this.notification = true;
-
-                    setTimeout(() => {
-
-                        this.notification = false;
-
-                    }, 2500);
-
-                },
-
-
-                /* ===================================================== */
-                /* RESET */
-                /* ===================================================== */
-
-                resetFilters() {
-
-                    this.search = '';
-
-                    this.category = 'all';
-
-                    this.minPrice = null;
-
-                    this.maxPrice = null;
-
-                    this.availableOnly = false;
-
-                    this.sort = 'popular';
-
-                    this.page = 1;
-
-                }
-
-            };
-
-        }
-    </script>
+    </div>
 
 </x-app-layout>

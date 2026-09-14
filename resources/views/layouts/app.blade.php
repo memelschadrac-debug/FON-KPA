@@ -40,5 +40,34 @@
              
             <x-storefront.footer />
         </div>
+
+        {{-- =========================================================
+     NOTIFICATION PANIER
+========================================================== --}}
+<div
+    x-data="{
+        show: false,
+        message: ''
+    }"
+    x-on:cart-success.window="
+        message = $event.detail.message;
+        show = true;
+
+        setTimeout(() => {
+            show = false;
+        }, 3000);
+    "
+    class="toast toast-top toast-end z-[9999]"
+>
+    <div
+        x-show="show"
+        x-transition
+        class="alert alert-success shadow-lg"
+    >
+        <i class="bi bi-check-circle-fill text-lg"></i>
+
+        <span x-text="message"></span>
+    </div>
+</div>
     </body>
 </html>
