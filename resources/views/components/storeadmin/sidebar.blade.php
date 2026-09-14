@@ -1,3 +1,30 @@
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | État actif du catalogue
+    |--------------------------------------------------------------------------
+    | Le catalogue s'ouvre automatiquement lorsqu'une de ses pages est active.
+    */
+
+    $catalogueActive =
+        request()->routeIs('admin.products.*') ||
+        request()->routeIs('admin.categories.*') ||
+        request()->routeIs('admin.media.*') ||
+        request()->routeIs('admin.option-groups.*') ||
+        request()->routeIs('admin.option-choices.*');
+
+    /*
+    |--------------------------------------------------------------------------
+    | État actif des options
+    |--------------------------------------------------------------------------
+    */
+
+    $optionsActive =
+        request()->routeIs('admin.option-groups.*') ||
+        request()->routeIs('admin.option-choices.*');
+@endphp
+
+
 <aside
     class="
         fixed
@@ -83,7 +110,10 @@
 
         <nav class="space-y-1">
 
-            {{-- Dashboard --}}
+            {{-- ============================= --}}
+            {{-- DASHBOARD --}}
+            {{-- ============================= --}}
+
             <a
                 href="{{ route('admin.dashboard') }}"
                 class="
@@ -117,6 +147,7 @@
                             : 'bg-gray-50 text-gray-400 group-hover:bg-[#593114]/10 group-hover:text-[#593114]' }}
                     "
                 >
+
                     <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -129,6 +160,7 @@
                         <rect x="3" y="14" width="7" height="7" rx="1.5"/>
                         <rect x="14" y="14" width="7" height="7" rx="1.5"/>
                     </svg>
+
                 </span>
 
                 <span>
@@ -138,45 +170,56 @@
             </a>
 
 
-            {{-- ============================= --}}
-            {{-- CATÉGORIES --}}
-            {{-- ============================= --}}
+            {{-- ========================================================= --}}
+            {{-- CATALOGUE --}}
+            {{-- ========================================================= --}}
 
-            @if (Route::has('admin.categories.index'))
+            <div
+                x-data="{ open: {{ $catalogueActive ? 'true' : 'false' }} }"
+            >
 
-                <a
-                    href="{{ route('admin.categories.index') }}"
+                {{-- Bouton Catalogue --}}
+
+                <button
+                    type="button"
+                    @click="open = !open"
                     class="
                         group
                         flex
+                        w-full
                         items-center
                         gap-3
                         rounded-xl
                         px-3
                         py-2.5
+                        text-left
                         text-[12px]
-                        font-medium
+                        font-semibold
                         transition
-                        {{ request()->routeIs('admin.categories.*')
-                            ? 'bg-[#593114]/[0.07] font-semibold text-[#593114]'
+                        {{ $catalogueActive
+                            ? 'bg-[#593114]/[0.07] text-[#593114]'
                             : 'text-gray-500 hover:bg-[#593114]/[0.05] hover:text-[#593114]' }}
                     "
                 >
+
+                    {{-- Icône Catalogue --}}
 
                     <span
                         class="
                             flex
                             h-7
                             w-7
+                            shrink-0
                             items-center
                             justify-center
                             rounded-lg
                             transition
-                            {{ request()->routeIs('admin.categories.*')
+                            {{ $catalogueActive
                                 ? 'bg-[#593114] text-white'
                                 : 'bg-gray-50 text-gray-400 group-hover:bg-[#593114]/10 group-hover:text-[#593114]' }}
                         "
                     >
+
                         <svg
                             viewBox="0 0 24 24"
                             fill="none"
@@ -184,24 +227,266 @@
                             stroke-width="1.7"
                             class="h-4 w-4"
                         >
-                            <path d="M4 5h16v14H4z"/>
-                            <path d="M4 9h16"/>
-                            <path d="M9 5v4"/>
+                            <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5a2.5 2.5 0 0 0-2.5-2.5H4z"/>
+                            <path d="M4 5.5v13A2.5 2.5 0 0 0 6.5 21H20"/>
+                            <path d="M8 7h8"/>
+                            <path d="M8 11h6"/>
                         </svg>
+
                     </span>
 
-                    <span>
+
+                    {{-- Texte --}}
+
+                    <span class="flex-1">
+                        Catalogue
+                    </span>
+
+
+                    {{-- Chevron --}}
+
+                    <svg
+                        class="
+                            h-4
+                            w-4
+                            shrink-0
+                            text-gray-400
+                            transition-transform
+                            duration-300
+                            ease-out
+                        "
+                        :class="{ 'rotate-180 text-[#593114]': open }"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    >
+                        <path
+                            d="m6 9 6 6 6-6"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+
+                </button>
+
+
+                {{-- ===================================================== --}}
+                {{-- SOUS-MENU CATALOGUE --}}
+                {{-- ===================================================== --}}
+
+                <div
+                    x-show="open"
+                    x-collapse
+                    class="ml-10 space-y-1 border-l border-gray-100 pl-3"
+                >
+
+                    {{-- ============================= --}}
+                    {{-- PLATS --}}
+                    {{-- ============================= --}}
+
+                    <a
+                        href="{{ Route::has('admin.products.index') ? route('admin.products.index') : '#' }}"
+                        class="
+                            block
+                            rounded-lg
+                            px-3
+                            py-2
+                            text-[11px]
+                            font-medium
+                            transition
+                            {{ request()->routeIs('admin.products.*')
+                                ? 'bg-[#593114]/[0.07] font-semibold text-[#593114]'
+                                : 'text-gray-500 hover:bg-[#593114]/[0.05] hover:text-[#593114]' }}
+                        "
+                    >
+                        Plats
+                    </a>
+
+
+                    {{-- ============================= --}}
+                    {{-- CATÉGORIES --}}
+                    {{-- ============================= --}}
+
+                    <a
+                        href="{{ Route::has('admin.categories.index') ? route('admin.categories.index') : '#' }}"
+                        class="
+                            block
+                            rounded-lg
+                            px-3
+                            py-2
+                            text-[11px]
+                            font-medium
+                            transition
+                            {{ request()->routeIs('admin.categories.*')
+                                ? 'bg-[#593114]/[0.07] font-semibold text-[#593114]'
+                                : 'text-gray-500 hover:bg-[#593114]/[0.05] hover:text-[#593114]' }}
+                        "
+                    >
                         Catégories
-                    </span>
-
-                </a>
-
-            @endif
+                    </a>
 
 
-            {{-- Commandes --}}
+                    {{-- ============================= --}}
+                    {{-- MÉDIAS --}}
+                    {{-- ============================= --}}
+
+                    <a
+                        href="{{ Route::has('admin.media.index') ? route('admin.media.index') : '#' }}"
+                        class="
+                            block
+                            rounded-lg
+                            px-3
+                            py-2
+                            text-[11px]
+                            font-medium
+                            transition
+                            {{ request()->routeIs('admin.media.*')
+                                ? 'bg-[#593114]/[0.07] font-semibold text-[#593114]'
+                                : 'text-gray-500 hover:bg-[#593114]/[0.05] hover:text-[#593114]' }}
+                        "
+                    >
+                        Médias
+                    </a>
+
+
+                    {{-- ================================================= --}}
+                    {{-- OPTIONS --}}
+                    {{-- ================================================= --}}
+
+                    <div
+                        x-data="{ openOptions: {{ $optionsActive ? 'true' : 'false' }} }"
+                    >
+
+                        {{-- Bouton Options --}}
+
+                        <button
+                            type="button"
+                            @click="openOptions = !openOptions"
+                            class="
+                                group
+                                flex
+                                w-full
+                                items-center
+                                rounded-lg
+                                px-3
+                                py-2
+                                text-left
+                                text-[11px]
+                                font-medium
+                                transition
+                                {{ $optionsActive
+                                    ? 'font-semibold text-[#593114]'
+                                    : 'text-gray-500 hover:bg-[#593114]/[0.05] hover:text-[#593114]' }}
+                            "
+                        >
+
+                            <span class="flex-1">
+                                Options
+                            </span>
+
+
+                            {{-- Chevron Options --}}
+
+                            <svg
+                                class="
+                                    h-3.5
+                                    w-3.5
+                                    shrink-0
+                                    text-gray-400
+                                    transition-transform
+                                    duration-300
+                                    ease-out
+                                "
+                                :class="{ 'rotate-180 text-[#593114]': openOptions }"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                            >
+                                <path
+                                    d="m6 9 6 6 6-6"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+
+                        </button>
+
+
+                        {{-- ================================================= --}}
+                        {{-- SOUS-MENU OPTIONS --}}
+                        {{-- ================================================= --}}
+
+                        <div
+                            x-show="openOptions"
+                            x-collapse
+                            class="
+                                ml-3
+                                mt-1
+                                space-y-1
+                                border-l
+                                border-gray-100
+                                pl-3
+                            "
+                        >
+
+                            {{-- Groupes --}}
+
+                            <a
+                                href="{{ Route::has('admin.option-groups.index') ? route('admin.option-groups.index') : '#' }}"
+                                class="
+                                    block
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[10.5px]
+                                    font-medium
+                                    transition
+                                    {{ request()->routeIs('admin.option-groups.*')
+                                        ? 'bg-[#593114]/[0.07] font-semibold text-[#593114]'
+                                        : 'text-gray-500 hover:bg-[#593114]/[0.05] hover:text-[#593114]' }}
+                                "
+                            >
+                                Groupes
+                            </a>
+
+
+                            {{-- Choix --}}
+
+                            <a
+                                href="{{ Route::has('admin.option-choices.index') ? route('admin.option-choices.index') : '#' }}"
+                                class="
+                                    block
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[10.5px]
+                                    font-medium
+                                    transition
+                                    {{ request()->routeIs('admin.option-choices.*')
+                                        ? 'bg-[#593114]/[0.07] font-semibold text-[#593114]'
+                                        : 'text-gray-500 hover:bg-[#593114]/[0.05] hover:text-[#593114]' }}
+                                "
+                            >
+                                Choix
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {{-- ========================================================= --}}
+            {{-- COMMANDES --}}
+            {{-- ========================================================= --}}
+
             <a
-                href="#"
+                href="{{ route('admin.orders.index') }}"
                 class="
                     group
                     flex
@@ -212,10 +497,10 @@
                     py-2.5
                     text-[12px]
                     font-medium
-                    text-gray-500
                     transition
-                    hover:bg-[#593114]/[0.05]
-                    hover:text-[#593114]
+                    {{ request()->routeIs('admin.orders.*')
+                        ? 'bg-[#593114]/[0.07] font-semibold text-[#593114]'
+                        : 'text-gray-500 hover:bg-[#593114]/[0.05] hover:text-[#593114]' }}
                 "
             >
 
@@ -227,12 +512,13 @@
                         items-center
                         justify-center
                         rounded-lg
-                        bg-gray-50
-                        text-gray-400
-                        group-hover:bg-[#593114]/10
-                        group-hover:text-[#593114]
+                        transition
+                        {{ request()->routeIs('admin.orders.*')
+                            ? 'bg-[#593114] text-white'
+                            : 'bg-gray-50 text-gray-400 group-hover:bg-[#593114]/10 group-hover:text-[#593114]' }}
                     "
                 >
+
                     <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -245,6 +531,7 @@
                         <path d="M9 11h6"/>
                         <path d="M9 15h4"/>
                     </svg>
+
                 </span>
 
                 <span>
@@ -269,9 +556,12 @@
             </a>
 
 
-            {{-- Utilisateurs --}}
+            {{-- ========================================================= --}}
+            {{-- UTILISATEURS --}}
+            {{-- ========================================================= --}}
+
             <a
-                href="#"
+                href="{{ route('admin.users.index') }}"
                 class="
                     group
                     flex
@@ -303,6 +593,7 @@
                         group-hover:text-[#593114]
                     "
                 >
+
                     <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -315,6 +606,7 @@
                         <path d="M16 11a3 3 0 1 0 0-6"/>
                         <path d="M16 14.5a5 5 0 0 1 4.5 4.5"/>
                     </svg>
+
                 </span>
 
                 <span>
@@ -324,9 +616,12 @@
             </a>
 
 
-            {{-- Messages --}}
+            {{-- ========================================================= --}}
+            {{-- MESSAGES --}}
+            {{-- ========================================================= --}}
+
             <a
-                href="#"
+                href="{{ route('admin.messages.index') }}"
                 class="
                     group
                     flex
@@ -358,6 +653,7 @@
                         group-hover:text-[#593114]
                     "
                 >
+
                     <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -368,6 +664,7 @@
                         <rect x="3" y="5" width="18" height="14" rx="2"/>
                         <path d="m4 7 8 6 8-6"/>
                     </svg>
+
                 </span>
 
                 <span>
@@ -424,6 +721,7 @@
         >
 
             {{-- Bouton Contenu du site --}}
+
             <button
                 type="button"
                 @click="open = !open"
@@ -458,6 +756,7 @@
                         text-[#593114]
                     "
                 >
+
                     <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -470,6 +769,7 @@
                         <path d="M8 13h6"/>
                         <path d="M8 17h4"/>
                     </svg>
+
                 </span>
 
                 <span class="flex-1">
@@ -502,13 +802,13 @@
 
 
             {{-- Sous-menu Contenu du site --}}
+
             <div
                 x-show="open"
                 x-collapse
                 class="ml-10 space-y-1 border-l border-gray-100 pl-3"
             >
 
-                {{-- Accueil --}}
                 <a
                     href="#"
                     class="
@@ -527,8 +827,6 @@
                     Accueil
                 </a>
 
-
-                {{-- Nos plats --}}
                 <a
                     href="#"
                     class="
@@ -547,8 +845,6 @@
                     Nos plats
                 </a>
 
-
-                {{-- À propos --}}
                 <a
                     href="#"
                     class="
@@ -567,8 +863,6 @@
                     À propos
                 </a>
 
-
-                {{-- Contact --}}
                 <a
                     href="#"
                     class="
@@ -587,8 +881,6 @@
                     Contact
                 </a>
 
-
-                {{-- Textes & boutons --}}
                 <a
                     href="#"
                     class="
@@ -607,8 +899,6 @@
                     Textes & boutons
                 </a>
 
-
-                {{-- Bannières --}}
                 <a
                     href="#"
                     class="
@@ -633,7 +923,7 @@
 
 
         {{-- ============================= --}}
-        {{-- CONFIGURATION --}}
+        {{-- GÉNÉRAL --}}
         {{-- ============================= --}}
 
         <p
@@ -655,6 +945,7 @@
         <nav class="space-y-1">
 
             {{-- Paramètres --}}
+
             <a
                 href="#"
                 class="
@@ -688,6 +979,7 @@
                         group-hover:text-[#593114]
                     "
                 >
+
                     <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -698,6 +990,7 @@
                         <circle cx="12" cy="12" r="3"/>
                         <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 1.7-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.1h-2.4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L8 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H6.7v-2.4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L8 8.6l1.7-1.7.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.1h2.4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.7 1.7-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1V14h-.1a1.7 1.7 0 0 0-1.6 1Z"/>
                     </svg>
+
                 </span>
 
                 <span>
@@ -708,6 +1001,7 @@
 
 
             {{-- Déconnexion --}}
+
             <form method="POST" action="{{ route('logout') }}">
 
                 @csrf
@@ -747,6 +1041,7 @@
                             group-hover:text-red-500
                         "
                     >
+
                         <svg
                             viewBox="0 0 24 24"
                             fill="none"
@@ -758,6 +1053,7 @@
                             <path d="M15 12H3"/>
                             <path d="M21 3v18"/>
                         </svg>
+
                     </span>
 
                     <span>
