@@ -22,6 +22,74 @@
 
     </div>
 
+    {{-- ============================= --}}
+    {{-- COMPTE DÉSACTIVÉ --}}
+    {{-- ============================= --}}
+
+    @if ($errors->has('email') && old('email'))
+
+        <div
+            class="
+                mb-5
+                flex
+                items-start
+                gap-3
+                rounded-md
+                border
+                border-red-100
+                bg-red-50
+                px-3.5
+                py-3
+            "
+        >
+
+            {{-- Icône --}}
+            <div class="mt-0.5 shrink-0 text-red-500">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    class="h-[17px] w-[17px]"
+                    aria-hidden="true"
+                >
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                    />
+
+                    <path
+                        d="M12 8v4"
+                        stroke-linecap="round"
+                    />
+
+                    <path
+                        d="M12 15.5h.01"
+                        stroke-linecap="round"
+                    />
+                </svg>
+
+            </div>
+
+            {{-- Message --}}
+            <div class="min-w-0">
+
+                <p class="text-[11px] font-semibold text-red-600">
+                    Compte désactivé
+                </p>
+
+                <p class="mt-0.5 text-[11px] leading-[1.5] text-red-500">
+                    {{ $errors->first('email') }}
+                </p>
+
+            </div>
+
+        </div>
+
+    @endif
+
 
     {{-- ============================= --}}
     {{-- FORMULAIRE --}}
