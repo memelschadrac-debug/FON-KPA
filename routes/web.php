@@ -14,8 +14,11 @@ Route::view('/', 'storefront.home')
 Route::get('/nos-plats', [DishesController::class, 'index'])
     ->name('plats.index');
 
-//Route::view('/nos-plats', 'storefront.plats.index')
-//    ->name('plats.index');
+Route::get('/nos-plats/data', [DishesController::class, 'data'])
+    ->name('storefront.plats.data');
+
+// Route::view('/nos-plats', 'storefront.plats.index')
+//     ->name('plats.index');
 
 Route::view('/categories', 'storefront.categories.index')
     ->name('categories.index');
@@ -23,8 +26,9 @@ Route::view('/categories', 'storefront.categories.index')
 Route::view('/a-propos', 'storefront.about')
     ->name('about');
 
+
 // =========================================================
-// Contact
+// CONTACT
 // =========================================================
 
 Route::view('/contact', 'storefront.contact')
@@ -133,27 +137,34 @@ Route::middleware('auth')->group(function () {
     // CONFIRMATION
     // ---------------------------------------------------------
 
-    Route::get('/commande/{order}/confirmee', function (\App\Models\Order $order) {
+    Route::get(
+        '/commande/{order}/confirmee',
+        function (\App\Models\Order $order) {
 
-        $order->load([
-            'user',
-            'items.product',
-        ]);
+            $order->load([
+                'user',
+                'items.product',
+            ]);
 
-        return view(
-            'storefront.commande.success',
-            compact('order')
-        );
+            return view(
+                'storefront.commande.success',
+                compact('order')
+            );
 
-    })->name('commande.success');
+        }
+    )->name('commande.success');
 
 });
+
+
 // =========================================================
 // DASHBOARD
 // =========================================================
 
 Route::get('/dashboard', function () {
+
     return view('admin.dashboard');
+
 })
     ->middleware(['auth', 'verified', 'admin'])
     ->name('dashboard');
@@ -173,6 +184,7 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+
 });
 
 
@@ -180,11 +192,11 @@ Route::middleware('auth')->group(function () {
 // AUTHENTIFICATION
 // =========================================================
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 
 // =========================================================
 // ADMINISTRATION
 // =========================================================
 
-require __DIR__.'/admin.php';
+require __DIR__ . '/admin.php';

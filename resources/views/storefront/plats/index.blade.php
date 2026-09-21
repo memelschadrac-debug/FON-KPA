@@ -7,128 +7,115 @@
     <div
         x-data="dishCatalog()"
         x-init="init()"
-        class="min-h-screen bg-[#FBF9F8]"
+        @keydown.escape.window="customizationOpen && closeCustomization()"
+        class="min-h-screen overflow-hidden bg-[#FCFAF7] text-[#3D1F0D]"
     >
 
         {{-- ========================================================= --}}
-        {{-- HEADER                                                     --}}
+        {{-- HEADER + RECHERCHE / TRI                                  --}}
         {{-- ========================================================= --}}
 
-        <section class="border-b border-[#E9DED1] bg-[#FCF8F3]">
+        <section class="relative mt-10 overflow-hidden bg-[#FCFAF7] lg:mt-10">
 
-            <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+            {{-- Décors --}}
+            <div class="pointer-events-none absolute -left-40 top-10 h-80 w-80 rounded-full bg-[#F4C451]/10 blur-3xl"></div>
 
-                <div class="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
+            <div class="pointer-events-none absolute -right-40 top-0 h-[500px] w-[500px] rounded-full bg-[#E25F12]/[0.035] blur-3xl"></div>
 
-                    <div class="max-w-xl">
+            <div class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)]">
 
-                        <div class="mb-3 flex items-center gap-2">
+                <div class="relative py-14 sm:py-16 lg:py-20">
 
-                            <span class="h-1.5 w-1.5 rounded-full bg-[#e25f12]"></span>
+                    {{-- ================================================= --}}
+                    {{-- TITRE + RECHERCHE + TRI                         --}}
+                    {{-- ================================================= --}}
 
-                            <span class="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#e25f12]">
-                                Notre cuisine
+                    <div class="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
+
+                        {{-- TITRE --}}
+                        <div class="max-w-2xl">
+
+                            <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-[#E25F12]">
+                                Les incontournables
                             </span>
 
-                        </div>
+                            <h2 class="mt-2 text-3xl font-black tracking-[-0.04em] text-[#3B200F] sm:text-4xl">
+                                Plats populaires
+                            </h2>
 
-                        <h2 class="text-3xl font-bold tracking-tight text-[#593114] sm:text-4xl">
-                            Nos plats
-                        </h2>
-
-                        <p class="mt-3 text-sm leading-6 text-[#766C64]">
-                            Découvrez les saveurs authentiques de la cuisine ivoirienne,
-                            préparées avec passion et servies avec générosité.
-                        </p>
-
-                    </div>
-
-
-                    {{-- RECHERCHE / TRI --}}
-
-                    <div class="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
-
-                        {{-- Recherche --}}
-
-                        <div class="relative">
-
-                            <svg
-                                class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9B8D82]"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
-                                />
-                            </svg>
-
-                            <input
-                                type="search"
-                                x-model="search"
-                                placeholder="Rechercher un plat"
-                                class="h-11 w-full rounded-xl border border-[#E8DCCE] bg-white pl-10 pr-4 text-xs text-[#593114] outline-none transition placeholder:text-[#A99D93] focus:border-[#e25f12] focus:ring-2 focus:ring-[#e25f12]/10 sm:w-64"
-                            >
+                            <p class="mt-3 max-w-lg text-xs leading-6 text-[#887A70] sm:text-sm">
+                                Les recettes qui font revenir nos clients,
+                                encore et encore.
+                            </p>
 
                         </div>
 
+                        {{-- RECHERCHE + TRI --}}
+                        <div class="flex w-full flex-col gap-3 sm:flex-row lg:w-auto lg:shrink-0">
 
-                        {{-- Tri --}}
+                            {{-- Recherche --}}
+                            <div class="relative w-full sm:w-[280px]">
 
-                        <div class="relative w-full sm:w-[190px]">
+                                <i
+                                    class="bi bi-search pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-[#9B8D82]"
+                                ></i>
 
-                            <svg
-                                class="pointer-events-none absolute left-3.5 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-[#8C8179]"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M3 6h18M6 12h12m-9 6h6"
-                                />
-                            </svg>
+                                <input
+                                    type="search"
+                                    x-model="search"
+                                    placeholder="Rechercher un plat..."
+                                    class="h-11 w-full rounded-full border border-[#E7DCD3] bg-[#FCFAF7] pl-11 pr-10 text-xs font-medium text-[#593114] outline-none transition-all duration-200 placeholder:text-[#A99D93] focus:border-[#E25F12] focus:bg-white focus:ring-4 focus:ring-[#E25F12]/10"
+                                >
 
-                            <select
-                                x-model="sort"
-                                aria-label="Trier les plats"
-                                class="h-11 w-full appearance-none rounded-xl border border-[#E8DCCE] bg-white pl-10 pr-10 text-xs font-medium text-[#593114] shadow-sm outline-none transition-all duration-200 hover:border-[#D8C6B5] hover:shadow-md focus:border-[#e25f12] focus:ring-4 focus:ring-[#e25f12]/10"
-                            >
-                                <option value="popular">
-                                    Plus populaires
-                                </option>
+                                <button
+                                    type="button"
+                                    x-show="search !== ''"
+                                    x-cloak
+                                    @click="search = ''"
+                                    class="absolute right-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-[#F1E5DB] text-[#593114] transition hover:bg-[#E25F12] hover:text-white"
+                                    aria-label="Effacer la recherche"
+                                >
+                                    <i class="bi bi-x text-xs"></i>
+                                </button>
 
-                                <option value="price-low">
-                                    Prix croissant
-                                </option>
+                            </div>
 
-                                <option value="price-high">
-                                    Prix décroissant
-                                </option>
+                            {{-- Tri --}}
+                            <div class="relative w-full sm:w-[190px]">
 
-                                <option value="name">
-                                    Nom A-Z
-                                </option>
-                            </select>
+                                <i
+                                    class="bi bi-sliders pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-sm text-[#8C8179]"
+                                ></i>
 
-                            <svg
-                                class="pointer-events-none absolute right-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#8C8179]"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="m6 9 6 6 6-6"
-                                />
-                            </svg>
+                                <select
+                                    x-model="sort"
+                                    aria-label="Trier les plats"
+                                    class="h-11 w-full appearance-none rounded-full border border-[#E7DCD3] bg-[#FCFAF7] pl-11 pr-10 text-xs font-semibold text-[#593114] outline-none transition-all duration-200 hover:border-[#D8C6B5] focus:border-[#E25F12] focus:bg-white focus:ring-4 focus:ring-[#E25F12]/10"
+                                >
+
+                                    <option value="popular">
+                                        Plus populaires
+                                    </option>
+
+                                    <option value="price-low">
+                                        Prix croissant
+                                    </option>
+
+                                    <option value="price-high">
+                                        Prix décroissant
+                                    </option>
+
+                                    <option value="name">
+                                        Nom A-Z
+                                    </option>
+
+                                </select>
+
+                                <i
+                                    class="bi bi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-[#8C8179]"
+                                ></i>
+
+                            </div>
 
                         </div>
 
@@ -142,33 +129,39 @@
 
 
         {{-- ========================================================= --}}
-        {{-- CONTENU                                                    --}}
+        {{-- CONTENU PRINCIPAL                                         --}}
         {{-- ========================================================= --}}
 
-        <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <main class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)] pb-20 pt-5 lg:pb-28">
 
-            <div class="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
-
+            <div class="grid gap-8 lg:grid-cols-[250px_minmax(0,1fr)]">
 
                 {{-- ================================================= --}}
-                {{-- FILTRES DESKTOP                                   --}}
+                {{-- SIDEBAR FILTRES                                    --}}
                 {{-- ================================================= --}}
 
                 <aside class="hidden lg:block">
 
-                    <div
-                        class="sticky top-6 rounded-2xl border border-[#E9DED1] bg-white p-6 shadow-[0_4px_20px_rgba(89,49,20,0.04)]"
-                    >
+                    <div class="sticky top-6 rounded-[1.5rem] border border-[#E9DED5] bg-white p-5 shadow-[0_12px_40px_rgba(89,49,20,0.05)]">
 
-                        <div class="mb-7 flex items-start justify-between gap-4">
+                        {{-- Header --}}
+                        <div class="flex items-start justify-between">
 
                             <div>
 
-                                <h3 class="text-sm font-bold text-[#593114]">
-                                    Filtres
-                                </h3>
+                                <div class="flex items-center gap-2">
 
-                                <p class="mt-1 text-[11px] text-[#9B8D82]">
+                                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F8EBD9] text-[#593114]">
+                                        <i class="bi bi-sliders2 text-xs"></i>
+                                    </div>
+
+                                    <h3 class="text-sm font-black text-[#593114]">
+                                        Filtres
+                                    </h3>
+
+                                </div>
+
+                                <p class="mt-2 pl-10 text-[9px] leading-4 text-[#A09288]">
                                     Affinez votre sélection
                                 </p>
 
@@ -177,27 +170,35 @@
                             <button
                                 type="button"
                                 @click="resetFilters()"
-                                class="shrink-0 text-[11px] font-semibold text-[#e25f12] transition hover:opacity-70"
+                                class="text-[9px] font-bold text-[#E25F12] transition hover:opacity-60"
                             >
                                 Réinitialiser
                             </button>
 
                         </div>
 
+                        <div class="my-6 border-t border-[#F0E7DE]"></div>
 
                         {{-- CATÉGORIES --}}
-
                         <div>
 
-                            <h3 class="mb-4 text-xs font-semibold text-[#593114]">
-                                Catégories
-                            </h3>
+                            <div class="mb-4 flex items-center justify-between">
 
-                            <div class="space-y-3">
+                                <h4 class="text-[10px] font-black uppercase tracking-[0.15em] text-[#593114]">
+                                    Catégories
+                                </h4>
 
-                                {{-- Tous les plats --}}
+                                <i class="bi bi-grid text-[10px] text-[#C2B3A8]"></i>
 
-                                <label class="flex cursor-pointer items-center justify-between text-xs text-[#6F655E]">
+                            </div>
+
+                            <div class="space-y-1">
+
+                                {{-- Tous --}}
+                                <label
+                                    class="flex cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 text-[10px] transition hover:bg-[#FCF8F3]"
+                                    :class="category === 'all' ? 'bg-[#F8EBD9] text-[#593114]' : 'text-[#746A63]'"
+                                >
 
                                     <span class="flex items-center gap-2.5">
 
@@ -205,7 +206,7 @@
                                             type="radio"
                                             value="all"
                                             x-model="category"
-                                            class="radio radio-xs border-[#D8C8B8] checked:bg-[#e25f12]"
+                                            class="radio radio-xs border-[#D8C8B8] checked:border-[#E25F12] checked:bg-[#E25F12]"
                                         >
 
                                         Tous les plats
@@ -213,21 +214,23 @@
                                     </span>
 
                                     <span
-                                        class="text-[10px] text-[#A99D93]"
+                                        class="text-[9px]"
+                                        :class="category === 'all' ? 'font-bold text-[#E25F12]' : 'text-[#A99D93]'"
                                         x-text="products.length"
                                     ></span>
 
                                 </label>
 
-
-                                {{-- Catégories Laravel --}}
-
+                                {{-- Laravel categories --}}
                                 <template
                                     x-for="item in categories"
                                     :key="item.id"
                                 >
 
-                                    <label class="flex cursor-pointer items-center justify-between text-xs text-[#6F655E]">
+                                    <label
+                                        class="flex cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 text-[10px] transition hover:bg-[#FCF8F3]"
+                                        :class="category === item.slug ? 'bg-[#F8EBD9] text-[#593114]' : 'text-[#746A63]'"
+                                    >
 
                                         <span class="flex items-center gap-2.5">
 
@@ -235,7 +238,7 @@
                                                 type="radio"
                                                 :value="item.slug"
                                                 x-model="category"
-                                                class="radio radio-xs border-[#D8C8B8] checked:bg-[#e25f12]"
+                                                class="radio radio-xs border-[#D8C8B8] checked:border-[#E25F12] checked:bg-[#E25F12]"
                                             >
 
                                             <span x-text="item.name"></span>
@@ -243,7 +246,8 @@
                                         </span>
 
                                         <span
-                                            class="text-[10px] text-[#A99D93]"
+                                            class="text-[9px]"
+                                            :class="category === item.slug ? 'font-bold text-[#E25F12]' : 'text-[#A99D93]'"
                                             x-text="item.products_count"
                                         ></span>
 
@@ -255,23 +259,26 @@
 
                         </div>
 
-
-                        <div class="my-7 border-t border-[#F0E7DE]"></div>
-
+                        <div class="my-6 border-t border-[#F0E7DE]"></div>
 
                         {{-- PRIX --}}
-
                         <div>
 
-                            <h3 class="mb-4 text-xs font-semibold text-[#593114]">
-                                Fourchette de prix
-                            </h3>
+                            <div class="mb-4 flex items-center justify-between">
 
-                            <div class="grid grid-cols-2 gap-3">
+                                <h4 class="text-[10px] font-black uppercase tracking-[0.15em] text-[#593114]">
+                                    Prix
+                                </h4>
+
+                                <i class="bi bi-cash-stack text-[10px] text-[#C2B3A8]"></i>
+
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2.5">
 
                                 <div>
 
-                                    <label class="mb-1.5 block text-[11px] text-[#A99D93]">
+                                    <label class="mb-1.5 block text-[9px] text-[#A09288]">
                                         Minimum
                                     </label>
 
@@ -280,14 +287,14 @@
                                         x-model.number="minPrice"
                                         placeholder="0"
                                         min="0"
-                                        class="h-9 w-full rounded-lg border border-[#E8DCCE] bg-white px-3 text-[11px] text-[#593114] outline-none transition focus:border-[#e25f12] focus:ring-2 focus:ring-[#e25f12]/10"
+                                        class="h-9 w-full rounded-lg border border-[#E8DCCE] bg-[#FCFAF7] px-2.5 text-[10px] text-[#593114] outline-none transition focus:border-[#E25F12] focus:bg-white focus:ring-2 focus:ring-[#E25F12]/10"
                                     >
 
                                 </div>
 
                                 <div>
 
-                                    <label class="mb-1.5 block text-[11px] text-[#A99D93]">
+                                    <label class="mb-1.5 block text-[9px] text-[#A09288]">
                                         Maximum
                                     </label>
 
@@ -296,7 +303,7 @@
                                         x-model.number="maxPrice"
                                         placeholder="10000"
                                         min="0"
-                                        class="h-9 w-full rounded-lg border border-[#E8DCCE] bg-white px-3 text-[11px] text-[#593114] outline-none transition focus:border-[#e25f12] focus:ring-2 focus:ring-[#e25f12]/10"
+                                        class="h-9 w-full rounded-lg border border-[#E8DCCE] bg-[#FCFAF7] px-2.5 text-[10px] text-[#593114] outline-none transition focus:border-[#E25F12] focus:bg-white focus:ring-2 focus:ring-[#E25F12]/10"
                                     >
 
                                 </div>
@@ -305,21 +312,28 @@
 
                         </div>
 
-
-                        <div class="my-7 border-t border-[#F0E7DE]"></div>
-
+                        <div class="my-6 border-t border-[#F0E7DE]"></div>
 
                         {{-- DISPONIBILITÉ --}}
-
-                        <label class="flex cursor-pointer items-center gap-2.5 text-xs text-[#6F655E]">
+                        <label class="flex cursor-pointer items-start gap-3 rounded-xl bg-[#FCFAF7] p-3">
 
                             <input
                                 type="checkbox"
                                 x-model="availableOnly"
-                                class="checkbox checkbox-xs rounded border-[#D8C8B8] checked:border-[#e25f12] checked:bg-[#e25f12]"
+                                class="checkbox checkbox-xs mt-0.5 rounded border-[#D8C8B8] checked:border-[#E25F12] checked:bg-[#E25F12]"
                             >
 
-                            Plats disponibles uniquement
+                            <span>
+
+                                <span class="block text-[10px] font-semibold text-[#593114]">
+                                    Disponibles uniquement
+                                </span>
+
+                                <span class="mt-1 block text-[8px] leading-4 text-[#9B8D82]">
+                                    Masquer les plats indisponibles
+                                </span>
+
+                            </span>
 
                         </label>
 
@@ -337,58 +351,27 @@
                     class="min-w-0"
                 >
 
-                    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    {{-- En-tête produits --}}
+                    <div class="mb-6 flex items-center justify-between gap-4">
 
-                        <div>
-
-                            <p class="text-xs text-[#8C8179]">
-
-                                <span
-                                    x-text="filteredProducts.length"
-                                    class="font-semibold text-[#593114]"
-                                ></span>
-
-                                plats disponibles
-
-                            </p>
-
-                        </div>
-
-
-                        {{-- FILTRES MOBILE --}}
-
+                        {{-- Mobile filtres --}}
                         <button
                             type="button"
                             onclick="filters_modal.showModal()"
-                            class="flex w-fit items-center gap-2 rounded-xl border border-[#E8DCCE] bg-white px-3.5 py-2.5 text-xs font-semibold text-[#593114] transition hover:border-[#e25f12] lg:hidden"
+                            class="flex h-10 items-center gap-2 rounded-full border border-[#E5D9D0] bg-white px-4 text-[9px] font-bold text-[#593114] shadow-sm transition hover:border-[#E25F12] hover:text-[#E25F12] lg:hidden"
                         >
-
-                            <svg
-                                class="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M3 5h18M6 12h12m-8 7h4"
-                                />
-                            </svg>
-
+                            <i class="bi bi-sliders2 text-xs"></i>
                             Filtres
-
                         </button>
 
                     </div>
 
 
                     {{-- ================================================= --}}
-                    {{-- GRILLE DES PRODUITS                              --}}
+                    {{-- GRILLE PRODUITS                                  --}}
                     {{-- ================================================= --}}
 
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
 
                         <template
                             x-for="product in paginatedProducts"
@@ -396,39 +379,49 @@
                         >
 
                             <article
-                                class="group overflow-hidden rounded-2xl border border-[#EDE2D8] bg-white shadow-[0_3px_15px_rgba(89,49,20,0.04)]"
+                                class="group overflow-hidden rounded-[1.4rem] border border-[#EDE3DB] bg-white shadow-[0_6px_25px_rgba(89,49,20,0.035)] transition-all duration-300 hover:-translate-y-1 hover:border-[#E5D4C5] hover:shadow-[0_18px_45px_rgba(89,49,20,0.09)]"
                             >
 
                                 {{-- IMAGE --}}
-
-                                <figure class="relative aspect-[1.12/1] overflow-hidden bg-[#F3E8DC]">
+                                <figure class="relative aspect-[1.18/1] overflow-hidden bg-[#F5ECE4]">
 
                                     <img
                                         :src="product.image || '{{ asset('images/garba.jpg') }}'"
                                         :alt="product.name"
-                                        class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                                        class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                                         loading="lazy"
                                     >
 
+                                    {{-- Overlay léger --}}
+                                    <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#2B1609]/10 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
 
-                                    {{-- BADGE --}}
+                                    {{-- Badge --}}
+                                    <span
+                                        class="absolute left-3 top-3 rounded-full border px-3 py-1.5 text-[8px] font-bold uppercase tracking-[0.08em] shadow-sm backdrop-blur-md"
+                                        :class="{
+                                            'border-[#D8E8DC] bg-[#F0F8F2]/95 text-[#3B7650]':
+                                                product.badge?.toLowerCase() === 'nouveau',
 
-                                    <template x-if="product.badge">
+                                            'border-[#F0DDB5] bg-[#FFF8E8]/95 text-[#A66A08]':
+                                                product.badge?.toLowerCase() === 'populaire',
 
-                                        <span
-                                            class="absolute left-2.5 top-2.5 rounded-full bg-[#F5B82E] px-2 py-1 text-[8px] font-bold uppercase tracking-wide text-[#593114]"
-                                            x-text="product.badge"
-                                        ></span>
+                                            'border-[#F1D1C3] bg-[#FFF1EC]/95 text-[#B94B20]':
+                                                product.badge?.toLowerCase() === 'best-seller',
 
-                                    </template>
+                                            'border-[#E5DCD5] bg-white/95 text-[#715F52]':
+                                                !['nouveau', 'populaire', 'best-seller'].includes(
+                                                    product.badge?.toLowerCase()
+                                                )
+                                        }"
+                                        x-text="product.badge"
+                                        x-show="product.badge"
+                                    ></span>
 
-
-                                    {{-- FAVORIS --}}
-
+                                    {{-- Favoris --}}
                                     <button
                                         type="button"
                                         @click="toggleFavorite(product.id)"
-                                        class="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-[#593114] shadow-sm backdrop-blur transition-transform duration-200 hover:scale-105"
+                                        class="btn btn-circle absolute right-3 top-3 h-9 min-h-9 w-9 border border-white/80 bg-white/95 text-[#593114] shadow-sm backdrop-blur transition-all duration-200 hover:scale-105 hover:bg-[#593114] hover:text-white"
                                         aria-label="Ajouter aux favoris"
                                     >
 
@@ -451,72 +444,92 @@
 
                                     </button>
 
+                                    {{-- Indisponible --}}
+                                    <template x-if="!product.available">
+
+                                        <div class="absolute inset-0 flex items-center justify-center bg-[#2B1609]/35 backdrop-blur-[1px]">
+
+                                            <span class="rounded-full bg-white px-4 py-2 text-[9px] font-bold text-[#593114] shadow-lg">
+                                                Indisponible
+                                            </span>
+
+                                        </div>
+
+                                    </template>
+
                                 </figure>
 
 
                                 {{-- INFORMATIONS --}}
+                                <div class="p-4 sm:p-5">
 
-                                <div class="bg-[#F8EBD9] p-3.5 sm:p-4">
+                                    {{-- Nom --}}
+                                    <div class="min-h-[68px]">
 
-                                    <div class="min-h-[100px]">
+                                        <div class="flex items-start justify-between gap-3">
 
-                                        <h3
-                                            class="line-clamp-2 text-sm font-bold leading-5 text-[#593114]"
-                                            x-text="product.name"
-                                        ></h3>
+                                            <h3
+                                                class="line-clamp-2 text-sm font-black leading-5 text-[#593114] sm:text-[15px]"
+                                                x-text="product.name"
+                                            ></h3>
+
+                                            <span class="mt-1 flex shrink-0 gap-0.5 text-[#F4B72E]">
+
+                                                <i class="bi bi-star-fill text-[7px]"></i>
+                                                <i class="bi bi-star-fill text-[7px]"></i>
+                                                <i class="bi bi-star-fill text-[7px]"></i>
+                                                <i class="bi bi-star-fill text-[7px]"></i>
+                                                <i class="bi bi-star-fill text-[7px]"></i>
+
+                                            </span>
+
+                                        </div>
 
                                         <p
-                                            class="mt-2 line-clamp-2 text-[10px] leading-4 text-[#746A63] sm:text-[11px]"
+                                            class="mt-2 line-clamp-2 text-[9px] leading-4 text-[#8A7B71] sm:text-[12px]"
                                             x-text="product.description"
                                         ></p>
 
                                     </div>
 
-
-                                    <div class="my-3.5 border-t border-[#E5D3BD]"></div>
-
-
-                                    <div class="flex items-center justify-between gap-3">
+                                    {{-- Bottom --}}
+                                    <div class="mt-3 flex items-center justify-between border-t border-[#EDE3DB] pt-3">
 
                                         <div>
 
-                                            <span
-                                                class="text-sm font-bold text-[#A84B0B] sm:text-[15px]"
-                                                x-text="formatPrice(product.price)"
-                                            ></span>
+                                            <p class="text-[8px] uppercase tracking-[0.12em] text-[#A09288]">
+                                                À partir de
+                                            </p>
 
-                                            <span class="ml-0.5 text-[8px] text-[#8C8179]">
-                                                FCFA
-                                            </span>
+                                            <div class="mt-0.5 flex items-baseline gap-1">
+
+                                                <span
+                                                    class="text-base font-black tracking-tight text-[#A84B0B]"
+                                                    x-text="formatPrice(product.price)"
+                                                ></span>
+
+                                                <span class="text-[8px] font-semibold text-[#8C8179]">
+                                                    FCFA
+                                                </span>
+
+                                            </div>
 
                                         </div>
 
-
-                                        {{-- PANIER --}}
-
+                                        {{-- Panier --}}
                                         <button
                                             type="button"
                                             @click="addToCart(product)"
                                             :disabled="!product.available"
-                                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#593114] text-white transition-all duration-200 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+                                            class="group/cart flex h-9 items-center gap-2 rounded-full bg-[#593114] px-3.5 text-[9px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#E25F12] hover:shadow-lg hover:shadow-[#E25F12]/15 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0 disabled:hover:bg-[#593114] disabled:hover:shadow-none"
                                             aria-label="Ajouter au panier"
                                         >
 
-                                            <svg
-                                                class="h-4 w-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                stroke-width="1.7"
-                                            >
+                                            <i class="bi bi-basket2 text-[11px] transition-transform duration-200 group-hover/cart:scale-110"></i>
 
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75l3-9H5.106M7.5 14.25 5.106 5.272M7.5 14.25l-1.5 2.25h11.25M9 19.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm9 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1-1.5 0Z"
-                                                />
-
-                                            </svg>
+                                            <span class="hidden sm:inline">
+                                                Ajouter
+                                            </span>
 
                                         </button>
 
@@ -532,47 +545,32 @@
 
 
                     {{-- ================================================= --}}
-                    {{-- AUCUN RÉSULTAT                                   --}}
+                    {{-- AUCUN RÉSULTAT                                  --}}
                     {{-- ================================================= --}}
 
                     <div
                         x-show="filteredProducts.length === 0"
                         x-cloak
-                        class="rounded-2xl border border-dashed border-[#DCCDBE] bg-white px-6 py-16 text-center"
+                        class="rounded-[1.5rem] border border-dashed border-[#DCCDBE] bg-white px-6 py-20 text-center"
                     >
 
-                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#F8EBD9] text-[#593114]">
-
-                            <svg
-                                class="h-5 w-5"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="1.6"
-                                    d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
-                                />
-
-                            </svg>
-
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#F8EBD9] text-[#593114]">
+                            <i class="bi bi-search text-lg"></i>
                         </div>
 
-                        <h3 class="mt-4 text-sm font-bold text-[#593114]">
+                        <h3 class="mt-5 text-base font-black text-[#593114]">
                             Aucun plat trouvé
                         </h3>
 
-                        <p class="mt-1 text-xs text-[#8C8179]">
-                            Essayez de modifier vos critères de recherche.
+                        <p class="mx-auto mt-2 max-w-sm text-[10px] leading-5 text-[#8C8179]">
+                            Aucun résultat ne correspond à vos critères.
+                            Essayez une autre recherche ou réinitialisez les filtres.
                         </p>
 
                         <button
                             type="button"
                             @click="resetFilters()"
-                            class="mt-5 rounded-lg bg-[#593114] px-4 py-2 text-[11px] font-semibold text-white transition hover:bg-[#e25f12]"
+                            class="mt-6 rounded-full bg-[#593114] px-5 py-2.5 text-[9px] font-bold text-white transition hover:bg-[#E25F12]"
                         >
                             Réinitialiser les filtres
                         </button>
@@ -581,63 +579,49 @@
 
 
                     {{-- ================================================= --}}
-                    {{-- PAGINATION                                       --}}
+                    {{-- PAGINATION                                      --}}
                     {{-- ================================================= --}}
 
                     <div
                         x-show="totalPages > 1"
                         x-cloak
-                        class="mt-10"
+                        class="mt-12 border-t border-[#EDE3DB] pt-7"
                     >
 
-                        <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+                        <div class="flex flex-col items-center justify-between gap-5 sm:flex-row">
 
-                            <p class="text-[11px] text-[#8C8179]">
+                            <p class="text-[9px] text-[#8C8179]">
 
                                 Page
 
                                 <span
                                     x-text="page"
-                                    class="font-semibold text-[#593114]"
+                                    class="font-bold text-[#593114]"
                                 ></span>
 
                                 sur
 
                                 <span
                                     x-text="totalPages"
-                                    class="font-semibold text-[#593114]"
+                                    class="font-bold text-[#593114]"
                                 ></span>
 
                             </p>
-
 
                             <nav
                                 class="flex items-center gap-1.5"
                                 aria-label="Pagination"
                             >
 
-                                {{-- PRÉCÉDENT --}}
-
+                                {{-- Précédent --}}
                                 <button
                                     type="button"
                                     @click="previousPage()"
                                     :disabled="page === 1"
-                                    class="flex h-9 items-center gap-1.5 rounded-lg border border-[#E8DCCE] bg-white px-3 text-[10px] font-semibold text-[#593114] transition hover:border-[#e25f12] hover:text-[#e25f12] disabled:cursor-not-allowed disabled:opacity-35"
+                                    class="flex h-9 items-center gap-1.5 rounded-full border border-[#E5DAD1] bg-white px-3 text-[9px] font-bold text-[#593114] transition hover:border-[#E25F12] hover:text-[#E25F12] disabled:cursor-not-allowed disabled:opacity-30"
                                 >
 
-                                    <svg
-                                        class="h-3.5 w-3.5"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="1.8"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M15 19l-7-7 7-7"
-                                        />
-                                    </svg>
+                                    <i class="bi bi-arrow-left text-[10px]"></i>
 
                                     <span class="hidden sm:inline">
                                         Précédent
@@ -645,9 +629,7 @@
 
                                 </button>
 
-
-                                {{-- NUMÉROS --}}
-
+                                {{-- Numéros --}}
                                 <template
                                     x-for="number in visiblePages"
                                     :key="number"
@@ -656,44 +638,30 @@
                                     <button
                                         type="button"
                                         @click="goToPage(number)"
-                                        class="flex h-9 min-w-9 items-center justify-center rounded-lg px-2 text-[11px] font-semibold transition"
+                                        class="flex h-9 min-w-9 items-center justify-center rounded-full px-2 text-[10px] font-bold transition"
                                         :class="
                                             page === number
-                                                ? 'bg-[#593114] text-white'
-                                                : 'border border-[#E8DCCE] bg-white text-[#593114] hover:border-[#e25f12] hover:text-[#e25f12]'
+                                                ? 'bg-[#593114] text-white shadow-md shadow-[#593114]/10'
+                                                : 'border border-[#E5DAD1] bg-white text-[#593114] hover:border-[#E25F12] hover:text-[#E25F12]'
                                         "
                                         x-text="number"
                                     ></button>
 
                                 </template>
 
-
-                                {{-- SUIVANT --}}
-
+                                {{-- Suivant --}}
                                 <button
                                     type="button"
                                     @click="nextPage()"
                                     :disabled="page === totalPages"
-                                    class="flex h-9 items-center gap-1.5 rounded-lg border border-[#E8DCCE] bg-white px-3 text-[10px] font-semibold text-[#593114] transition hover:border-[#e25f12] hover:text-[#e25f12] disabled:cursor-not-allowed disabled:opacity-35"
+                                    class="flex h-9 items-center gap-1.5 rounded-full border border-[#E5DAD1] bg-white px-3 text-[9px] font-bold text-[#593114] transition hover:border-[#E25F12] hover:text-[#E25F12] disabled:cursor-not-allowed disabled:opacity-30"
                                 >
 
                                     <span class="hidden sm:inline">
                                         Suivant
                                     </span>
 
-                                    <svg
-                                        class="h-3.5 w-3.5"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="1.8"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M9 5l7 7-7 7"
-                                        />
-                                    </svg>
+                                    <i class="bi bi-arrow-right text-[10px]"></i>
 
                                 </button>
 
@@ -711,81 +679,117 @@
 
 
         {{-- ========================================================= --}}
-        {{-- MODAL FILTRES MOBILE                                      --}}
+        {{-- MODAL FILTRES MOBILE                                     --}}
         {{-- ========================================================= --}}
 
-        <dialog id="filters_modal" class="modal">
+        <dialog
+            id="filters_modal"
+            class="modal"
+        >
 
-            <div class="modal-box max-w-sm bg-[#FCF8F3]">
+            <div class="modal-box w-[calc(100%-1.5rem)] max-w-md rounded-[1.5rem] bg-[#FCF8F3] p-0">
 
-                <div class="flex items-start justify-between">
+                <div class="border-b border-[#E9DED1] bg-white px-5 py-4">
 
-                    <div>
+                    <div class="flex items-start justify-between gap-4">
 
-                        <h3 class="font-bold text-[#593114]">
-                            Filtres
-                        </h3>
+                        <div>
 
-                        <p class="mt-1 text-[11px] text-[#8C8179]">
-                            Affinez votre sélection
-                        </p>
+                            <div class="flex items-center gap-2">
+
+                                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F8EBD9] text-[#593114]">
+                                    <i class="bi bi-sliders2 text-xs"></i>
+                                </div>
+
+                                <h3 class="text-sm font-black text-[#593114]">
+                                    Filtres
+                                </h3>
+
+                            </div>
+
+                            <p class="mt-2 text-[9px] text-[#8C8179]">
+                                Affinez votre sélection
+                            </p>
+
+                        </div>
+
+                        <form method="dialog">
+
+                            <button
+                                type="submit"
+                                class="flex h-8 w-8 items-center justify-center rounded-full bg-[#F8EBD9] text-[#593114] transition hover:bg-[#EAD8C5]"
+                            >
+                                <i class="bi bi-x text-sm"></i>
+                            </button>
+
+                        </form>
 
                     </div>
 
-                    <form method="dialog">
-
-                        <button
-                            class="flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#593114]"
-                        >
-                            ✕
-                        </button>
-
-                    </form>
-
                 </div>
 
-
-                <div class="mt-7 space-y-7">
-
-                    {{-- CATÉGORIES --}}
+                <div class="max-h-[65vh] overflow-y-auto px-5 py-6">
 
                     <div>
 
-                        <h4 class="mb-4 text-xs font-bold text-[#593114]">
+                        <h4 class="mb-4 text-[10px] font-black uppercase tracking-[0.15em] text-[#593114]">
                             Catégorie
                         </h4>
 
-                        <div class="space-y-3">
+                        <div class="space-y-1">
 
-                            <label class="flex items-center gap-2.5 text-xs text-[#6F655E]">
+                            <label
+                                class="flex cursor-pointer items-center justify-between rounded-xl px-3 py-3 text-[10px]"
+                                :class="category === 'all' ? 'bg-[#F8EBD9]' : ''"
+                            >
 
-                                <input
-                                    type="radio"
-                                    value="all"
-                                    x-model="category"
-                                    class="radio radio-xs checked:bg-[#e25f12]"
-                                >
+                                <span class="flex items-center gap-2.5">
 
-                                Tous les plats
+                                    <input
+                                        type="radio"
+                                        value="all"
+                                        x-model="category"
+                                        class="radio radio-xs border-[#D8C8B8] checked:border-[#E25F12] checked:bg-[#E25F12]"
+                                    >
+
+                                    Tous les plats
+
+                                </span>
+
+                                <span
+                                    class="text-[9px] text-[#A99D93]"
+                                    x-text="products.length"
+                                ></span>
 
                             </label>
-
 
                             <template
                                 x-for="item in categories"
                                 :key="'mobile-' + item.id"
                             >
 
-                                <label class="flex items-center gap-2.5 text-xs text-[#6F655E]">
+                                <label
+                                    class="flex cursor-pointer items-center justify-between rounded-xl px-3 py-3 text-[10px]"
+                                    :class="category === item.slug ? 'bg-[#F8EBD9]' : ''"
+                                >
 
-                                    <input
-                                        type="radio"
-                                        :value="item.slug"
-                                        x-model="category"
-                                        class="radio radio-xs checked:bg-[#e25f12]"
-                                    >
+                                    <span class="flex items-center gap-2.5">
 
-                                    <span x-text="item.name"></span>
+                                        <input
+                                            type="radio"
+                                            :value="item.slug"
+                                            x-model="category"
+                                            class="radio radio-xs border-[#D8C8B8] checked:border-[#E25F12] checked:bg-[#E25F12]"
+                                        >
+
+                                        <span x-text="item.name"></span>
+
+                                    </span>
+
+                                    <span
+                                        class="text-[9px] text-[#A99D93]"
+                                        x-text="item.products_count"
+                                    ></span>
 
                                 </label>
 
@@ -795,12 +799,11 @@
 
                     </div>
 
-
-                    {{-- PRIX --}}
+                    <div class="my-6 border-t border-[#E9DED1]"></div>
 
                     <div>
 
-                        <h4 class="mb-4 text-xs font-bold text-[#593114]">
+                        <h4 class="mb-4 text-[10px] font-black uppercase tracking-[0.15em] text-[#593114]">
                             Fourchette de prix
                         </h4>
 
@@ -811,7 +814,7 @@
                                 x-model.number="minPrice"
                                 placeholder="Minimum"
                                 min="0"
-                                class="h-10 w-full rounded-lg border border-[#E8DCCE] bg-white px-3 text-xs outline-none focus:border-[#e25f12]"
+                                class="h-10 w-full rounded-xl border border-[#E8DCCE] bg-white px-3 text-[10px] text-[#593114] outline-none focus:border-[#E25F12] focus:ring-2 focus:ring-[#E25F12]/10"
                             >
 
                             <input
@@ -819,58 +822,70 @@
                                 x-model.number="maxPrice"
                                 placeholder="Maximum"
                                 min="0"
-                                class="h-10 w-full rounded-lg border border-[#E8DCCE] bg-white px-3 text-xs outline-none focus:border-[#e25f12]"
+                                class="h-10 w-full rounded-xl border border-[#E8DCCE] bg-white px-3 text-[10px] text-[#593114] outline-none focus:border-[#E25F12] focus:ring-2 focus:ring-[#E25F12]/10"
                             >
 
                         </div>
 
                     </div>
 
+                    <div class="my-6 border-t border-[#E9DED1]"></div>
 
-                    {{-- DISPONIBILITÉ --}}
-
-                    <label class="flex items-center gap-2.5 text-xs text-[#6F655E]">
+                    <label class="flex cursor-pointer items-start gap-3 rounded-xl bg-white p-3">
 
                         <input
                             type="checkbox"
                             x-model="availableOnly"
-                            class="checkbox checkbox-xs checked:bg-[#e25f12]"
+                            class="checkbox checkbox-xs mt-0.5 rounded border-[#D8C8B8] checked:border-[#E25F12] checked:bg-[#E25F12]"
                         >
 
-                        Plats disponibles uniquement
+                        <span>
+
+                            <span class="block text-[10px] font-semibold text-[#593114]">
+                                Plats disponibles uniquement
+                            </span>
+
+                            <span class="mt-1 block text-[8px] leading-4 text-[#9B8D82]">
+                                Masquer les plats indisponibles
+                            </span>
+
+                        </span>
 
                     </label>
 
                 </div>
 
+                <div class="border-t border-[#E9DED1] bg-white px-5 py-4">
 
-                <div class="mt-8 flex gap-3">
-
-                    <button
-                        type="button"
-                        @click="resetFilters()"
-                        class="flex-1 rounded-xl border border-[#E8DCCE] bg-white py-3 text-xs font-semibold text-[#593114]"
-                    >
-                        Réinitialiser
-                    </button>
-
-                    <form
-                        method="dialog"
-                        class="flex-1"
-                    >
+                    <div class="flex gap-3">
 
                         <button
-                            class="w-full rounded-xl bg-[#593114] py-3 text-xs font-semibold text-white transition hover:bg-[#e25f12]"
+                            type="button"
+                            @click="resetFilters()"
+                            class="flex-1 rounded-full border border-[#E8DCCE] bg-white py-3 text-[9px] font-bold text-[#593114] transition hover:border-[#E25F12]"
                         >
-                            Afficher les plats
+                            Réinitialiser
                         </button>
 
-                    </form>
+                        <form
+                            method="dialog"
+                            class="flex-1"
+                        >
+
+                            <button
+                                type="submit"
+                                class="w-full rounded-full bg-[#593114] py-3 text-[9px] font-bold text-white transition hover:bg-[#E25F12]"
+                            >
+                                Afficher les plats
+                            </button>
+
+                        </form>
+
+                    </div>
 
                 </div>
 
             </div>
-
 
             <form
                 method="dialog"
@@ -883,7 +898,469 @@
 
 
         {{-- ========================================================= --}}
-        {{-- TOAST                                                      --}}
+        {{-- MODAL PERSONNALISATION                                    --}}
+        {{-- ========================================================= --}}
+
+        <div
+            x-show="customizationOpen"
+            x-cloak
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-[9998] flex items-end justify-center bg-[#241108]/55 p-0 backdrop-blur-[6px] sm:items-center sm:p-5"
+            @click.self="closeCustomization()"
+        >
+
+            <div
+                x-show="customizationOpen"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="translate-y-8 scale-[0.98] opacity-0"
+                x-transition:enter-end="translate-y-0 scale-100 opacity-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="translate-y-0 scale-100 opacity-100"
+                x-transition:leave-end="translate-y-5 scale-[0.98] opacity-0"
+                class="relative flex max-h-[94vh] w-full max-w-[620px] flex-col overflow-hidden rounded-t-[2rem] bg-[#FCFAF7] shadow-[0_30px_100px_rgba(43,22,9,0.25)] sm:max-h-[90vh] sm:rounded-[2rem]"
+                @click.stop
+            >
+
+                {{-- ================================================= --}}
+                {{-- MODAL HEADER                                      --}}
+                {{-- ================================================= --}}
+
+                <div class="relative shrink-0 border-b border-[#EDE1D7] bg-white">
+
+                    {{-- Petite ligne décorative --}}
+                    <div class="absolute left-1/2 top-0 h-1 w-14 -translate-x-1/2 rounded-b-full bg-[#E25F12]"></div>
+
+                    <div class="flex items-center justify-between gap-4 px-5 pb-4 pt-5 sm:px-7 sm:pb-5 sm:pt-6">
+
+                        <div class="flex min-w-0 items-center gap-3">
+
+                            {{-- Image produit --}}
+                            <div class="h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-[#F4E9DF] shadow-sm">
+
+                                <img
+                                    x-show="selectedProduct?.image"
+                                    :src="selectedProduct?.image"
+                                    :alt="selectedProduct?.name || ''"
+                                    class="h-full w-full object-cover"
+                                >
+
+                                <div
+                                    x-show="!selectedProduct?.image"
+                                    class="flex h-full w-full items-center justify-center text-[#B9A79A]"
+                                >
+                                    <i class="bi bi-image text-lg"></i>
+                                </div>
+
+                            </div>
+
+                            <div class="min-w-0">
+
+                                <p class="text-[8px] font-bold uppercase tracking-[0.18em] text-[#E25F12]">
+                                    Personnalisez votre plat
+                                </p>
+
+                                <h3
+                                    class="mt-1 truncate text-base font-black tracking-[-0.02em] text-[#593114] sm:text-lg"
+                                    x-text="selectedProduct?.name || ''"
+                                ></h3>
+
+                                <p class="mt-0.5 text-[9px] text-[#95877D]">
+                                    Choisissez vos options selon vos envies.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            @click="closeCustomization()"
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#E8DCD3] bg-[#FCFAF7] text-[#593114] transition-all hover:border-[#E25F12] hover:bg-[#E25F12] hover:text-white"
+                            aria-label="Fermer"
+                        >
+                            <i class="bi bi-x-lg text-[11px]"></i>
+                        </button>
+
+                    </div>
+
+                    {{-- Prix --}}
+                    <div class="flex items-center justify-between border-t border-[#F1E8E1] bg-[#FFFCF9] px-5 py-3 sm:px-7">
+
+                        <div class="flex items-center gap-2">
+
+                            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-[#F8EBD9] text-[#593114]">
+                                <i class="bi bi-receipt text-[10px]"></i>
+                            </span>
+
+                            <span class="text-[9px] font-medium text-[#8C8179]">
+                                Total
+                            </span>
+
+                        </div>
+
+                        <div class="flex items-baseline gap-1">
+
+                            <span
+                                class="text-lg font-black tracking-tight text-[#593114]"
+                                x-text="formatPrice(customizationTotal())"
+                            ></span>
+
+                            <span class="text-[9px] font-bold text-[#8C8179]">
+                                FCFA
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- ================================================= --}}
+                {{-- CONTENU OPTIONS                                   --}}
+                {{-- ================================================= --}}
+
+                <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-7 sm:py-6">
+
+                    {{-- Erreurs --}}
+                    <div
+                        x-show="customizationErrors.length > 0"
+                        x-transition
+                        class="mb-5 overflow-hidden rounded-2xl border border-[#F0CFC3] bg-[#FFF7F4]"
+                    >
+
+                        <div class="flex gap-3 p-3.5">
+
+                            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#FBE3DA] text-[#B94B20]">
+                                <i class="bi bi-exclamation-circle text-sm"></i>
+                            </div>
+
+                            <div class="pt-0.5">
+
+                                <p class="text-[9px] font-black text-[#8F3D20]">
+                                    Vérifiez votre sélection
+                                </p>
+
+                                <ul class="mt-1 space-y-1">
+
+                                    <template x-for="error in customizationErrors" :key="error">
+
+                                        <li
+                                            class="text-[8px] leading-4 text-[#A45B42]"
+                                            x-text="error"
+                                        ></li>
+
+                                    </template>
+
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- Aucun groupe --}}
+                    <template x-if="selectedProduct && selectedProduct.option_groups && selectedProduct.option_groups.length === 0">
+
+                        <div class="flex min-h-[250px] items-center justify-center">
+
+                            <div class="text-center">
+
+                                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F8EBD9] text-[#593114]">
+                                    <i class="bi bi-check2-circle text-xl"></i>
+                                </div>
+
+                                <h4 class="mt-4 text-sm font-black text-[#593114]">
+                                    Votre plat est prêt
+                                </h4>
+
+                                <p class="mt-2 max-w-xs text-[9px] leading-5 text-[#8C8179]">
+                                    Aucune personnalisation supplémentaire n'est nécessaire.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </template>
+
+
+                    {{-- Groupes dynamiques --}}
+                    <div class="space-y-7">
+
+                        <template
+                            x-for="(group, groupIndex) in selectedProduct?.option_groups || []"
+                            :key="group.id"
+                        >
+
+                            <section>
+
+                                {{-- Header groupe --}}
+                                <div class="mb-3 flex items-end justify-between gap-4">
+
+                                    <div>
+
+                                        <div class="flex items-center gap-2">
+
+                                            <span
+                                                class="flex h-6 w-6 items-center justify-center rounded-lg bg-[#593114] text-[8px] font-black text-white"
+                                                x-text="String(groupIndex + 1).padStart(2, '0')"
+                                            ></span>
+
+                                            <h4
+                                                class="text-[11px] font-black text-[#593114] sm:text-xs"
+                                                x-text="group.name"
+                                            ></h4>
+
+                                        </div>
+
+                                        <p
+                                            x-show="group.is_required || Number(group.min_choices) > 0"
+                                            class="mt-1 pl-8 text-[8px] text-[#95877D]"
+                                        >
+
+                                            <template x-if="Number(group.max_choices) === 1">
+                                                <span>
+                                                    Sélectionnez une option
+                                                </span>
+                                            </template>
+
+                                            <template x-if="Number(group.max_choices) > 1 && Number(group.min_choices) > 0">
+                                                <span>
+                                                    <span x-text="Number(group.min_choices)"></span>
+                                                    à
+                                                    <span x-text="Number(group.max_choices)"></span>
+                                                    choix
+                                                </span>
+                                            </template>
+
+                                            <template x-if="Number(group.max_choices) === 0 && Number(group.min_choices) > 0">
+                                                <span>
+                                                    Au moins
+                                                    <span x-text="Number(group.min_choices)"></span>
+                                                    choix
+                                                </span>
+                                            </template>
+
+                                        </p>
+
+                                    </div>
+
+                                    {{-- Compteur --}}
+                                    <span
+                                        class="shrink-0 rounded-full bg-[#F5ECE4] px-2.5 py-1 text-[8px] font-bold text-[#8C8179]"
+                                    >
+                                        <span x-text="groupSelectedCount(group)"></span>
+                                        <span
+                                            x-show="Number(group.max_choices) > 0"
+                                            x-text="' / ' + Number(group.max_choices)"
+                                        ></span>
+                                    </span>
+
+                                </div>
+
+
+                                {{-- Choix --}}
+                                <div
+                                    class="grid gap-2.5"
+                                    :class="Number(group.max_choices) === 1 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'"
+                                >
+
+                                    <template
+                                        x-for="choice in group.choices"
+                                        :key="choice.id"
+                                    >
+
+                                        <button
+                                            type="button"
+                                            @click="toggleChoice(group, choice.id)"
+                                            :disabled="!choice.available"
+                                            class="group/choice relative flex min-h-[62px] items-center justify-between gap-3 rounded-2xl border bg-white px-3.5 py-3 text-left transition-all duration-200"
+                                            :class="[
+                                                !choice.available
+                                                    ? 'cursor-not-allowed border-[#EDE6E1] bg-[#F7F4F1] opacity-55'
+                                                    : isChoiceSelected(group.id, choice.id)
+                                                        ? 'border-[#E25F12] bg-[#FFF8F2] shadow-[0_8px_25px_rgba(226,95,18,0.10)]'
+                                                        : 'border-[#E9DED5] hover:border-[#D8C2B2] hover:bg-[#FFFCF9]'
+                                            ]"
+                                        >
+
+                                            <div class="flex min-w-0 items-center gap-3">
+
+                                                {{-- Indicateur radio / checkbox --}}
+                                                <span
+                                                    class="flex h-5 w-5 shrink-0 items-center justify-center border transition-all duration-200"
+                                                    :class="[
+                                                        Number(group.max_choices) === 1
+                                                            ? 'rounded-full'
+                                                            : 'rounded-md',
+
+                                                        isChoiceSelected(group.id, choice.id)
+                                                            ? 'border-[#E25F12] bg-[#E25F12] text-white'
+                                                            : 'border-[#D8C8B8] bg-white text-transparent'
+                                                    ]"
+                                                >
+
+                                                    <i
+                                                        class="bi text-[9px]"
+                                                        :class="Number(group.max_choices) === 1 ? 'bi-circle-fill' : 'bi-check-lg'"
+                                                    ></i>
+
+                                                </span>
+
+                                                <span class="min-w-0">
+
+                                                    <span
+                                                        class="block truncate text-[10px] font-bold text-[#593114]"
+                                                        x-text="choice.name"
+                                                    ></span>
+
+                                                    <span
+                                                        x-show="!choice.available"
+                                                        class="mt-0.5 block text-[7px] font-semibold uppercase tracking-[0.08em] text-[#B17D67]"
+                                                    >
+                                                        Indisponible
+                                                    </span>
+
+                                                </span>
+
+                                            </div>
+
+
+                                            {{-- Prix option --}}
+                                            <span
+                                                class="shrink-0 text-[9px] font-black"
+                                                :class="[
+                                                    !choice.available
+                                                        ? 'text-[#A99D93]'
+                                                        : Number(choice.price_modifier) > 0
+                                                            ? 'text-[#E25F12]'
+                                                            : 'text-[#6F7E73]'
+                                                ]"
+                                            >
+
+                                                <template x-if="Number(choice.price_modifier) > 0">
+
+                                                    <span>
+                                                        + <span x-text="formatPrice(choice.price_modifier)"></span>
+                                                    </span>
+
+                                                </template>
+
+                                                <template x-if="Number(choice.price_modifier) === 0">
+
+                                                    <span>
+                                                        Inclus
+                                                    </span>
+
+                                                </template>
+
+                                            </span>
+
+                                        </button>
+
+                                    </template>
+
+                                </div>
+
+                            </section>
+
+                        </template>
+
+                    </div>
+
+                </div>
+
+
+                {{-- ================================================= --}}
+                {{-- FOOTER MODAL                                      --}}
+                {{-- ================================================= --}}
+
+                <div class="shrink-0 border-t border-[#E9DED5] bg-white px-5 py-4 sm:px-7 sm:py-5">
+
+                    <div class="flex items-center justify-between gap-4">
+
+                        <div class="hidden sm:block">
+
+                            <p class="text-[8px] uppercase tracking-[0.14em] text-[#A09288]">
+                                Votre sélection
+                            </p>
+
+                            <p class="mt-1 text-[9px] font-bold text-[#593114]">
+
+                                <span x-text="selectedChoiceCount()"></span>
+
+                                option(s)
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="flex w-full gap-2.5 sm:w-auto">
+
+                            <button
+                                type="button"
+                                @click="closeCustomization()"
+                                :disabled="submittingCustomization"
+                                class="flex-1 rounded-full border border-[#E5D9D0] bg-white px-4 py-3 text-[9px] font-bold text-[#593114] transition hover:border-[#D5BBA9] hover:bg-[#FCFAF7] disabled:opacity-50 sm:flex-none sm:min-w-[120px]"
+                            >
+                                Annuler
+                            </button>
+
+                            <button
+                                type="button"
+                                @click="submitCustomization()"
+                                :disabled="submittingCustomization"
+                                class="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#593114] px-5 py-3 text-[9px] font-bold text-white shadow-[0_8px_25px_rgba(89,49,20,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#E25F12] hover:shadow-[0_12px_30px_rgba(226,95,18,0.20)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 sm:flex-none sm:min-w-[190px]"
+                            >
+
+                                <template x-if="!submittingCustomization">
+
+                                    <span class="flex items-center gap-2">
+
+                                        <i class="bi bi-basket2 text-[11px]"></i>
+
+                                        Ajouter au panier
+
+                                    </span>
+
+                                </template>
+
+                                <template x-if="submittingCustomization">
+
+                                    <span class="flex items-center gap-2">
+
+                                        <span class="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white"></span>
+
+                                        Ajout...
+
+                                    </span>
+
+                                </template>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- ========================================================= --}}
+        {{-- TOAST                                                     --}}
         {{-- ========================================================= --}}
 
         <div
@@ -898,34 +1375,61 @@
             class="toast toast-end toast-bottom z-[9999]"
         >
 
-            <div class="alert border border-green-200 bg-white text-gray-700 shadow-lg">
+            <div class="alert rounded-2xl border border-[#E9DED5] bg-white px-4 py-3 text-[#593114] shadow-[0_15px_40px_rgba(89,49,20,0.12)]">
 
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6 shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                >
-
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M5 13l4 4L19 7"
-                    />
-
-                </svg>
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EAF6ED] text-[#3B8D52]">
+                    <i class="bi bi-check-lg text-sm"></i>
+                </div>
 
                 <div>
 
-                    <p class="font-semibold">
+                    <p class="text-[10px] font-black">
                         Produit ajouté
                     </p>
 
-                    <p class="text-xs text-gray-500">
+                    <p class="mt-0.5 text-[9px] text-[#8C8179]">
                         Le plat a bien été ajouté à votre panier.
                     </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- ========================================================= --}}
+        {{-- TOAST ERREUR                                              --}}
+        {{-- ========================================================= --}}
+
+        <div
+            x-show="showCartError"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 translate-y-3"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 translate-y-3"
+            x-cloak
+            class="toast toast-end toast-bottom z-[9999] mb-16"
+        >
+
+            <div class="alert rounded-2xl border border-[#F0D5CB] bg-white px-4 py-3 text-[#593114] shadow-[0_15px_40px_rgba(89,49,20,0.12)]">
+
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FFF0EB] text-[#B94B20]">
+                    <i class="bi bi-exclamation-circle text-sm"></i>
+                </div>
+
+                <div>
+
+                    <p class="text-[10px] font-black">
+                        Impossible d'ajouter le plat
+                    </p>
+
+                    <p
+                        class="mt-0.5 max-w-[260px] text-[9px] leading-4 text-[#8C8179]"
+                        x-text="cartErrorMessage"
+                    ></p>
 
                 </div>
 
@@ -940,736 +1444,1619 @@
 
         <script>
 
-            function dishCatalog() {
+    function dishCatalog() {
 
-                return {
+        return {
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | DONNÉES FOURNIES PAR LARAVEL
-                    |--------------------------------------------------------------------------
-                    */
+            /*
+            |--------------------------------------------------------------------------
+            | DONNÉES
+            |--------------------------------------------------------------------------
+            */
 
-                    products: @json($productsData),
+            products: @json($productsData),
 
-                    categories: @json($categoriesData),
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | FILTRES
-                    |--------------------------------------------------------------------------
-                    */
-
-                    search: '',
-
-                    category: 'all',
-
-                    minPrice: null,
-
-                    maxPrice: null,
-
-                    availableOnly: false,
-
-                    sort: 'popular',
+            categories: @json($categoriesData),
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | PAGINATION
-                    |--------------------------------------------------------------------------
-                    */
+            /*
+            |--------------------------------------------------------------------------
+            | FILTRES
+            |--------------------------------------------------------------------------
+            */
 
-                    page: 1,
+            search: '',
 
-                    perPage: 8,
+            category: 'all',
 
+            minPrice: null,
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | FAVORIS
-                    |--------------------------------------------------------------------------
-                    */
+            maxPrice: null,
 
-                    favorites: [],
+            availableOnly: false,
 
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | PANIER
-                    |--------------------------------------------------------------------------
-                    */
-
-                    cartCount: 0,
-
-                    showCartToast: false,
+            sort: 'popular',
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | INITIALISATION
-                    |--------------------------------------------------------------------------
-                    */
+            /*
+            |--------------------------------------------------------------------------
+            | PAGINATION
+            |--------------------------------------------------------------------------
+            */
 
-                    init() {
+            page: 1,
 
-                        /*
-                        | À chaque changement de filtre,
-                        | on revient automatiquement à la première page.
-                        */
-
-                        this.$watch('search', () => {
-                            this.page = 1;
-                        });
-
-                        this.$watch('category', () => {
-                            this.page = 1;
-                        });
-
-                        this.$watch('minPrice', () => {
-                            this.page = 1;
-                        });
-
-                        this.$watch('maxPrice', () => {
-                            this.page = 1;
-                        });
-
-                        this.$watch('availableOnly', () => {
-                            this.page = 1;
-                        });
-
-                        this.$watch('sort', () => {
-                            this.page = 1;
-                        });
+            perPage: 8,
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Synchronisation avec le panier
-                        |--------------------------------------------------------------------------
-                        */
+            /*
+            |--------------------------------------------------------------------------
+            | FAVORIS
+            |--------------------------------------------------------------------------
+            */
 
-                        window.addEventListener(
-                            'fonkpa-cart-updated',
-                            (event) => {
+            favorites: [],
 
-                                if (
-                                    event.detail &&
-                                    typeof event.detail.count !== 'undefined'
-                                ) {
 
-                                    this.cartCount =
-                                        Number(event.detail.count);
+            /*
+            |--------------------------------------------------------------------------
+            | PANIER
+            |--------------------------------------------------------------------------
+            */
 
-                                }
+            cartCount: 0,
 
+            showCartToast: false,
+
+            showCartError: false,
+
+            cartErrorMessage: '',
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PERSONNALISATION
+            |--------------------------------------------------------------------------
+            */
+
+            customizationOpen: false,
+
+            selectedProduct: null,
+
+            selectedOptions: {},
+
+            customizationErrors: [],
+
+            submittingCustomization: false,
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | ACTUALISATION AUTOMATIQUE
+            |--------------------------------------------------------------------------
+            */
+
+            refreshInterval: null,
+
+            refreshingProducts: false,
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | INITIALISATION
+            |--------------------------------------------------------------------------
+            */
+
+            init() {
+
+                this.$watch('search', () => {
+                    this.page = 1;
+                });
+
+                this.$watch('category', () => {
+                    this.page = 1;
+                });
+
+                this.$watch('minPrice', () => {
+                    this.page = 1;
+                });
+
+                this.$watch('maxPrice', () => {
+                    this.page = 1;
+                });
+
+                this.$watch('availableOnly', () => {
+                    this.page = 1;
+                });
+
+                this.$watch('sort', () => {
+                    this.page = 1;
+                });
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | COMPTEUR DU PANIER
+                |--------------------------------------------------------------------------
+                */
+
+                window.addEventListener(
+                    'fonkpa-cart-updated',
+                    (event) => {
+
+                        if (
+                            event.detail &&
+                            typeof event.detail.count !== 'undefined'
+                        ) {
+
+                            this.cartCount =
+                                Number(event.detail.count);
+
+                        }
+
+                    }
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | PREMIÈRE SYNCHRONISATION
+                |--------------------------------------------------------------------------
+                */
+
+                this.refreshProducts();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | ACTUALISATION AUTOMATIQUE
+                |--------------------------------------------------------------------------
+                |
+                | Toutes les 15 secondes.
+                |
+                | Cela permet de détecter :
+                | - nouveau produit
+                | - modification du produit
+                | - nouvelle image
+                | - suppression
+                | - disponibilité
+                | - prix
+                | - options
+                |
+                |--------------------------------------------------------------------------
+                */
+
+                this.refreshInterval = setInterval(() => {
+
+                    this.refreshProducts();
+
+                }, 15000);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | ACTUALISATION QUAND L'UTILISATEUR REVIENT SUR LA PAGE
+                |--------------------------------------------------------------------------
+                */
+
+                window.addEventListener(
+                    'focus',
+                    () => {
+
+                        this.refreshProducts();
+
+                    }
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | ACTUALISATION QUAND L'ONGLET REDEVient VISIBLE
+                |--------------------------------------------------------------------------
+                */
+
+                document.addEventListener(
+                    'visibilitychange',
+                    () => {
+
+                        if (
+                            document.visibilityState === 'visible'
+                        ) {
+
+                            this.refreshProducts();
+
+                        }
+
+                    }
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | NETTOYAGE
+                |--------------------------------------------------------------------------
+                */
+
+                window.addEventListener(
+                    'beforeunload',
+                    () => {
+
+                        if (this.refreshInterval) {
+
+                            clearInterval(
+                                this.refreshInterval
+                            );
+
+                        }
+
+                    }
+                );
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SYNCHRONISATION DES PRODUITS
+            |--------------------------------------------------------------------------
+            */
+
+            async refreshProducts() {
+
+                /*
+                |--------------------------------------------------------------------------
+                | Évite plusieurs requêtes simultanées
+                |--------------------------------------------------------------------------
+                */
+
+                if (this.refreshingProducts) {
+                    return false;
+                }
+
+                this.refreshingProducts = true;
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            '{{ route('storefront.plats.data') }}',
+                            {
+                                method: 'GET',
+
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                },
+
+                                cache: 'no-store'
                             }
                         );
 
-                    },
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            `Erreur HTTP ${response.status}`
+                        );
+
+                    }
+
+
+                    const data =
+                        await response.json();
 
 
                     /*
                     |--------------------------------------------------------------------------
-                    | PRODUITS FILTRÉS
+                    | PRODUITS
                     |--------------------------------------------------------------------------
                     */
 
-                    get filteredProducts() {
+                    if (
+                        Array.isArray(data.products)
+                    ) {
 
-                        let result = [...this.products];
+                        /*
+                        |--------------------------------------------------------------------------
+                        | On conserve le produit actuellement ouvert
+                        | dans la modal si nécessaire.
+                        |--------------------------------------------------------------------------
+                        */
+
+                        const selectedProductId =
+                            this.selectedProduct?.id || null;
+
+
+                        this.products =
+                            data.products;
 
 
                         /*
                         |--------------------------------------------------------------------------
-                        | RECHERCHE
+                        | Si une modal est ouverte, on actualise
+                        | également son produit.
                         |--------------------------------------------------------------------------
                         */
 
-                        if (this.search.trim() !== '') {
+                        if (selectedProductId) {
 
-                            const search =
-                                this.search
-                                    .toLowerCase()
-                                    .trim();
+                            const updatedProduct =
+                                this.products.find(
+                                    (product) =>
+                                        Number(product.id) ===
+                                        Number(selectedProductId)
+                                );
 
-                            result = result.filter((product) => {
+
+                            if (updatedProduct) {
+
+                                this.selectedProduct =
+                                    updatedProduct;
+
+                            }
+
+                        }
+
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | CATÉGORIES
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        Array.isArray(data.categories)
+                    ) {
+
+                        this.categories =
+                            data.categories;
+
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SÉCURITÉ PAGINATION
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        this.page >
+                        this.totalPages
+                    ) {
+
+                        this.page =
+                            this.totalPages;
+
+                    }
+
+
+                    return true;
+
+
+                } catch (error) {
+
+                    console.error(
+                        'Impossible d’actualiser les produits FON-KPA :',
+                        error
+                    );
+
+
+                    return false;
+
+
+                } finally {
+
+                    this.refreshingProducts =
+                        false;
+
+                }
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PRODUITS FILTRÉS
+            |--------------------------------------------------------------------------
+            */
+
+            get filteredProducts() {
+
+                let result = [
+                    ...this.products
+                ];
+
+
+                if (
+                    this.search.trim() !== ''
+                ) {
+
+                    const search =
+                        this.search
+                            .toLowerCase()
+                            .trim();
+
+
+                    result =
+                        result.filter(
+                            (product) => {
 
                                 const name =
                                     product.name
                                         ? product.name.toLowerCase()
                                         : '';
 
+
                                 const description =
                                     product.description
                                         ? product.description.toLowerCase()
                                         : '';
+
 
                                 return (
                                     name.includes(search) ||
                                     description.includes(search)
                                 );
 
-                            });
-
-                        }
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | CATÉGORIE
-                        |--------------------------------------------------------------------------
-                        | "all" signifie tous les plats.
-                        |
-                        | Les autres valeurs correspondent directement
-                        | aux slugs Laravel :
-                        |
-                        | accompagnement
-                        | boisson
-                        | sauce
-                        | grillade
-                        |--------------------------------------------------------------------------
-                        */
-
-                        if (
-                            this.category &&
-                            this.category !== 'all'
-                        ) {
-
-                            result = result.filter(
-                                (product) =>
-                                    product.category === this.category
-                            );
-
-                        }
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | PRIX MINIMUM
-                        |--------------------------------------------------------------------------
-                        */
-
-                        if (
-                            this.minPrice !== null &&
-                            this.minPrice !== ''
-                        ) {
-
-                            result = result.filter(
-                                (product) =>
-                                    Number(product.price) >=
-                                    Number(this.minPrice)
-                            );
-
-                        }
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | PRIX MAXIMUM
-                        |--------------------------------------------------------------------------
-                        */
-
-                        if (
-                            this.maxPrice !== null &&
-                            this.maxPrice !== ''
-                        ) {
-
-                            result = result.filter(
-                                (product) =>
-                                    Number(product.price) <=
-                                    Number(this.maxPrice)
-                            );
-
-                        }
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | DISPONIBILITÉ
-                        |--------------------------------------------------------------------------
-                        */
-
-                        if (this.availableOnly) {
-
-                            result = result.filter(
-                                (product) =>
-                                    product.available === true
-                            );
-
-                        }
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | TRI
-                        |--------------------------------------------------------------------------
-                        */
-
-                        switch (this.sort) {
-
-                            case 'price-low':
-
-                                result.sort(
-                                    (a, b) =>
-                                        Number(a.price) -
-                                        Number(b.price)
-                                );
-
-                                break;
-
-
-                            case 'price-high':
-
-                                result.sort(
-                                    (a, b) =>
-                                        Number(b.price) -
-                                        Number(a.price)
-                                );
-
-                                break;
-
-
-                            case 'name':
-
-                                result.sort(
-                                    (a, b) =>
-                                        a.name.localeCompare(
-                                            b.name,
-                                            'fr'
-                                        )
-                                );
-
-                                break;
-
-
-                            case 'popular':
-
-                            default:
-
-                                /*
-                                | Laravel fournit déjà les produits
-                                | dans l'ordre de popularité.
-                                */
-
-                                break;
-
-                        }
-
-
-                        return result;
-
-                    },
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | NOMBRE TOTAL DE PAGES
-                    |--------------------------------------------------------------------------
-                    */
-
-                    get totalPages() {
-
-                        return Math.max(
-                            1,
-                            Math.ceil(
-                                this.filteredProducts.length /
-                                this.perPage
-                            )
-                        );
-
-                    },
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | PRODUITS DE LA PAGE
-                    |--------------------------------------------------------------------------
-                    */
-
-                    get paginatedProducts() {
-
-                        /*
-                        | Sécurité : si un filtre réduit le nombre
-                        | de pages, on remet automatiquement la page
-                        | sur une page valide.
-                        */
-
-                        if (this.page > this.totalPages) {
-                            this.page = this.totalPages;
-                        }
-
-                        const start =
-                            (this.page - 1) *
-                            this.perPage;
-
-                        return this.filteredProducts.slice(
-                            start,
-                            start + this.perPage
-                        );
-
-                    },
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | PAGES VISIBLES
-                    |--------------------------------------------------------------------------
-                    */
-
-                    get visiblePages() {
-
-                        const pages = [];
-
-                        const start =
-                            Math.max(
-                                1,
-                                this.page - 2
-                            );
-
-                        const end =
-                            Math.min(
-                                this.totalPages,
-                                this.page + 2
-                            );
-
-                        for (
-                            let i = start;
-                            i <= end;
-                            i++
-                        ) {
-
-                            pages.push(i);
-
-                        }
-
-                        return pages;
-
-                    },
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ALLER À UNE PAGE
-                    |--------------------------------------------------------------------------
-                    */
-
-                    goToPage(page) {
-
-                        if (
-                            page >= 1 &&
-                            page <= this.totalPages
-                        ) {
-
-                            this.page = page;
-
-                            this.scrollToProducts();
-
-                        }
-
-                    },
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | PAGE PRÉCÉDENTE
-                    |--------------------------------------------------------------------------
-                    */
-
-                    previousPage() {
-
-                        if (this.page > 1) {
-
-                            this.page--;
-
-                            this.scrollToProducts();
-
-                        }
-
-                    },
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | PAGE SUIVANTE
-                    |--------------------------------------------------------------------------
-                    */
-
-                    nextPage() {
-
-                        if (
-                            this.page <
-                            this.totalPages
-                        ) {
-
-                            this.page++;
-
-                            this.scrollToProducts();
-
-                        }
-
-                    },
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SCROLL VERS LES PRODUITS
-                    |--------------------------------------------------------------------------
-                    */
-
-                    scrollToProducts() {
-
-                        this.$nextTick(() => {
-
-                            const element =
-                                document.getElementById(
-                                    'products'
-                                );
-
-                            if (element) {
-
-                                element.scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'start'
-                                });
-
                             }
+                        );
 
+                }
+
+
+                if (
+                    this.category &&
+                    this.category !== 'all'
+                ) {
+
+                    result =
+                        result.filter(
+                            (product) =>
+                                product.category ===
+                                this.category
+                        );
+
+                }
+
+
+                if (
+                    this.minPrice !== null &&
+                    this.minPrice !== ''
+                ) {
+
+                    result =
+                        result.filter(
+                            (product) =>
+                                Number(product.price) >=
+                                Number(this.minPrice)
+                        );
+
+                }
+
+
+                if (
+                    this.maxPrice !== null &&
+                    this.maxPrice !== ''
+                ) {
+
+                    result =
+                        result.filter(
+                            (product) =>
+                                Number(product.price) <=
+                                Number(this.maxPrice)
+                        );
+
+                }
+
+
+                if (this.availableOnly) {
+
+                    result =
+                        result.filter(
+                            (product) =>
+                                product.available === true
+                        );
+
+                }
+
+
+                switch (this.sort) {
+
+                    case 'price-low':
+
+                        result.sort(
+                            (a, b) =>
+                                Number(a.price) -
+                                Number(b.price)
+                        );
+
+                        break;
+
+
+                    case 'price-high':
+
+                        result.sort(
+                            (a, b) =>
+                                Number(b.price) -
+                                Number(a.price)
+                        );
+
+                        break;
+
+
+                    case 'name':
+
+                        result.sort(
+                            (a, b) =>
+                                a.name.localeCompare(
+                                    b.name,
+                                    'fr'
+                                )
+                        );
+
+                        break;
+
+
+                    case 'popular':
+
+                    default:
+
+                        break;
+
+                }
+
+
+                return result;
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PAGINATION
+            |--------------------------------------------------------------------------
+            */
+
+            get totalPages() {
+
+                return Math.max(
+                    1,
+                    Math.ceil(
+                        this.filteredProducts.length /
+                        this.perPage
+                    )
+                );
+
+            },
+
+
+            get paginatedProducts() {
+
+                if (
+                    this.page >
+                    this.totalPages
+                ) {
+
+                    this.page =
+                        this.totalPages;
+
+                }
+
+
+                const start =
+                    (this.page - 1) *
+                    this.perPage;
+
+
+                return this.filteredProducts.slice(
+                    start,
+                    start + this.perPage
+                );
+
+            },
+
+
+            get visiblePages() {
+
+                const pages = [];
+
+
+                const start =
+                    Math.max(
+                        1,
+                        this.page - 2
+                    );
+
+
+                const end =
+                    Math.min(
+                        this.totalPages,
+                        this.page + 2
+                    );
+
+
+                for (
+                    let i = start;
+                    i <= end;
+                    i++
+                ) {
+
+                    pages.push(i);
+
+                }
+
+
+                return pages;
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PAGINATION ACTIONS
+            |--------------------------------------------------------------------------
+            */
+
+            goToPage(page) {
+
+                if (
+                    page >= 1 &&
+                    page <= this.totalPages
+                ) {
+
+                    this.page =
+                        page;
+
+                    this.scrollToProducts();
+
+                }
+
+            },
+
+
+            previousPage() {
+
+                if (
+                    this.page > 1
+                ) {
+
+                    this.page--;
+
+                    this.scrollToProducts();
+
+                }
+
+            },
+
+
+            nextPage() {
+
+                if (
+                    this.page <
+                    this.totalPages
+                ) {
+
+                    this.page++;
+
+                    this.scrollToProducts();
+
+                }
+
+            },
+
+
+            scrollToProducts() {
+
+                this.$nextTick(() => {
+
+                    const element =
+                        document.getElementById(
+                            'products'
+                        );
+
+
+                    if (element) {
+
+                        element.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
                         });
 
-                    },
+                    }
+
+                });
+
+            },
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | FORMATAGE DU PRIX
-                    |--------------------------------------------------------------------------
-                    */
+            /*
+            |--------------------------------------------------------------------------
+            | FORMATAGE PRIX
+            |--------------------------------------------------------------------------
+            */
 
-                    formatPrice(price) {
+            formatPrice(price) {
 
-                        return new Intl.NumberFormat(
-                            'fr-FR'
-                        ).format(
-                            Number(price)
+                return new Intl.NumberFormat(
+                    'fr-FR'
+                ).format(
+                    Number(price) || 0
+                );
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | FAVORIS
+            |--------------------------------------------------------------------------
+            */
+
+            toggleFavorite(productId) {
+
+                if (
+                    this.favorites.includes(
+                        productId
+                    )
+                ) {
+
+                    this.favorites =
+                        this.favorites.filter(
+                            (id) =>
+                                id !== productId
                         );
 
-                    },
+                } else {
+
+                    this.favorites.push(
+                        productId
+                    );
+
+                }
+
+            },
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | FAVORIS
-                    |--------------------------------------------------------------------------
-                    */
+            isFavorite(productId) {
 
-                    toggleFavorite(productId) {
+                return this.favorites.includes(
+                    productId
+                );
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PERSONNALISATION
+            |--------------------------------------------------------------------------
+            */
+
+            hasOptions(product) {
+
+                return (
+                    Array.isArray(
+                        product.option_groups
+                    ) &&
+                    product.option_groups.some(
+                        (group) =>
+                            Array.isArray(
+                                group.choices
+                            ) &&
+                            group.choices.length > 0
+                    )
+                );
+
+            },
+
+
+            openCustomization(product) {
+
+                this.selectedProduct =
+                    product;
+
+                this.selectedOptions =
+                    {};
+
+                this.customizationErrors =
+                    [];
+
+                this.submittingCustomization =
+                    false;
+
+
+                (
+                    product.option_groups ||
+                    []
+                ).forEach(
+                    (group) => {
+
+                        this.selectedOptions[
+                            group.id
+                        ] = [];
+
+                    }
+                );
+
+
+                this.customizationOpen =
+                    true;
+
+
+                document.body.classList.add(
+                    'overflow-hidden'
+                );
+
+            },
+
+
+            closeCustomization() {
+
+                if (
+                    this.submittingCustomization
+                ) {
+
+                    return;
+
+                }
+
+
+                this.customizationOpen =
+                    false;
+
+                this.customizationErrors =
+                    [];
+
+                this.selectedProduct =
+                    null;
+
+                this.selectedOptions =
+                    {};
+
+
+                document.body.classList.remove(
+                    'overflow-hidden'
+                );
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CHOIX OPTION
+            |--------------------------------------------------------------------------
+            */
+
+            toggleChoice(
+                group,
+                choiceId
+            ) {
+
+                const numericGroupId =
+                    Number(group.id);
+
+
+                const numericChoiceId =
+                    Number(choiceId);
+
+
+                const choice =
+                    (
+                        group.choices ||
+                        []
+                    ).find(
+                        (item) =>
+                            Number(item.id) ===
+                            numericChoiceId
+                    );
+
+
+                if (
+                    !choice ||
+                    !choice.available
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    !Array.isArray(
+                        this.selectedOptions[
+                            numericGroupId
+                        ]
+                    )
+                ) {
+
+                    this.selectedOptions[
+                        numericGroupId
+                    ] = [];
+
+                }
+
+
+                const current =
+                    this.selectedOptions[
+                        numericGroupId
+                    ];
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | CHOIX UNIQUE
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    Number(group.max_choices) === 1
+                ) {
+
+                    if (
+                        current.includes(
+                            numericChoiceId
+                        )
+                    ) {
+
+                        this.selectedOptions[
+                            numericGroupId
+                        ] = [];
+
+                    } else {
+
+                        this.selectedOptions[
+                            numericGroupId
+                        ] = [
+                            numericChoiceId
+                        ];
+
+                    }
+
+
+                    this.customizationErrors =
+                        [];
+
+
+                    return;
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | CHOIX MULTIPLES
+                |--------------------------------------------------------------------------
+                */
+
+                const index =
+                    current.indexOf(
+                        numericChoiceId
+                    );
+
+
+                if (
+                    index !== -1
+                ) {
+
+                    current.splice(
+                        index,
+                        1
+                    );
+
+
+                    this.customizationErrors =
+                        [];
+
+
+                    return;
+
+                }
+
+
+                const maxChoices =
+                    Number(
+                        group.max_choices
+                    );
+
+
+                if (
+                    maxChoices > 0 &&
+                    current.length >= maxChoices
+                ) {
+
+                    this.customizationErrors = [
+                        `Vous pouvez sélectionner au maximum ${maxChoices} option(s) dans « ${group.name} ».`
+                    ];
+
+
+                    return;
+
+                }
+
+
+                current.push(
+                    numericChoiceId
+                );
+
+
+                this.customizationErrors =
+                    [];
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | OPTION SÉLECTIONNÉE ?
+            |--------------------------------------------------------------------------
+            */
+
+            isChoiceSelected(
+                groupId,
+                choiceId
+            ) {
+
+                const selected =
+                    this.selectedOptions[
+                        Number(groupId)
+                    ] || [];
+
+
+                return selected.includes(
+                    Number(choiceId)
+                );
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | COMPTEUR GROUPE
+            |--------------------------------------------------------------------------
+            */
+
+            groupSelectedCount(group) {
+
+                return (
+                    this.selectedOptions[
+                        Number(group.id)
+                    ] || []
+                ).length;
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | COMPTEUR OPTIONS
+            |--------------------------------------------------------------------------
+            */
+
+            selectedChoiceCount() {
+
+                return Object.values(
+                    this.selectedOptions
+                ).reduce(
+                    (
+                        total,
+                        choices
+                    ) =>
+                        total +
+                        (
+                            Array.isArray(
+                                choices
+                            )
+                                ? choices.length
+                                : 0
+                        ),
+                    0
+                );
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | TOTAL PERSONNALISATION
+            |--------------------------------------------------------------------------
+            */
+
+            customizationTotal() {
+
+                if (
+                    !this.selectedProduct
+                ) {
+
+                    return 0;
+
+                }
+
+
+                let total =
+                    Number(
+                        this.selectedProduct.price
+                    ) || 0;
+
+
+                const groups =
+                    this.selectedProduct
+                        .option_groups || [];
+
+
+                groups.forEach(
+                    (group) => {
+
+                        const selected =
+                            this.selectedOptions[
+                                Number(group.id)
+                            ] || [];
+
+
+                        selected.forEach(
+                            (choiceId) => {
+
+                                const choice =
+                                    (
+                                        group.choices ||
+                                        []
+                                    ).find(
+                                        (item) =>
+                                            Number(item.id) ===
+                                            Number(choiceId)
+                                    );
+
+
+                                if (choice) {
+
+                                    total +=
+                                        Number(
+                                            choice.price_modifier
+                                        ) || 0;
+
+                                }
+
+                            }
+                        );
+
+                    }
+                );
+
+
+                return total;
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | VALIDATION
+            |--------------------------------------------------------------------------
+            */
+
+            validateCustomization() {
+
+                const errors = [];
+
+
+                const groups =
+                    this.selectedProduct
+                        ?.option_groups || [];
+
+
+                groups.forEach(
+                    (group) => {
+
+                        const count =
+                            this.groupSelectedCount(
+                                group
+                            );
+
+
+                        const min =
+                            Number(
+                                group.min_choices
+                            ) || 0;
+
+
+                        const max =
+                            Number(
+                                group.max_choices
+                            ) || 0;
+
 
                         if (
-                            this.favorites.includes(productId)
+                            group.is_required &&
+                            count === 0
                         ) {
 
-                            this.favorites =
-                                this.favorites.filter(
-                                    (id) =>
-                                        id !== productId
-                                );
+                            errors.push(
+                                `Veuillez sélectionner une option dans « ${group.name} ».`
+                            );
 
-                        } else {
 
-                            this.favorites.push(
-                                productId
+                            return;
+
+                        }
+
+
+                        if (
+                            count < min
+                        ) {
+
+                            errors.push(
+                                `Veuillez sélectionner au moins ${min} option(s) dans « ${group.name} ».`
                             );
 
                         }
 
-                    },
+
+                        if (
+                            max > 0 &&
+                            count > max
+                        ) {
+
+                            errors.push(
+                                `Vous pouvez sélectionner au maximum ${max} option(s) dans « ${group.name} ».`
+                            );
+
+                        }
+
+                    }
+                );
 
 
-                    isFavorite(productId) {
+                this.customizationErrors =
+                    errors;
 
-                        return this.favorites.includes(
-                            productId
+
+                return errors.length === 0;
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | IDS OPTIONS
+            |--------------------------------------------------------------------------
+            */
+
+            getSelectedChoiceIds() {
+
+                return Object.values(
+                    this.selectedOptions
+                )
+                    .flat()
+                    .map(
+                        (id) =>
+                            Number(id)
+                    )
+                    .filter(
+                        (
+                            id,
+                            index,
+                            array
+                        ) =>
+                            array.indexOf(id) ===
+                            index
+                    );
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | AJOUT PANIER
+            |--------------------------------------------------------------------------
+            */
+
+            async addToCart(product) {
+
+                if (
+                    !product.available
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    this.hasOptions(product)
+                ) {
+
+                    this.openCustomization(
+                        product
+                    );
+
+
+                    return;
+
+                }
+
+
+                await this.sendToCart(
+                    product,
+                    []
+                );
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | ENVOI PANIER
+            |--------------------------------------------------------------------------
+            */
+
+            async sendToCart(
+                product,
+                optionIds = []
+            ) {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/panier/${product.id}`,
+                            {
+                                method: 'POST',
+
+                                headers: {
+
+                                    'X-CSRF-TOKEN':
+                                        '{{ csrf_token() }}',
+
+                                    'Accept':
+                                        'application/json',
+
+                                    'Content-Type':
+                                        'application/json'
+
+                                },
+
+                                body: JSON.stringify({
+                                    options:
+                                        optionIds
+                                })
+
+                            }
                         );
 
-                    },
 
+                    if (
+                        !response.ok
+                    ) {
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | AJOUT AU PANIER
-                    |--------------------------------------------------------------------------
-                    */
-
-                    async addToCart(product) {
-
-                        /*
-                        | Protection côté frontend.
-                        | Le backend vérifie également.
-                        */
-
-                        if (!product.available) {
-                            return;
-                        }
+                        let message =
+                            `Erreur HTTP ${response.status}`;
 
 
                         try {
 
-                            const response =
-                                await fetch(
-                                    `/panier/${product.id}`,
-                                    {
-                                        method: 'POST',
-
-                                        headers: {
-
-                                            'X-CSRF-TOKEN':
-                                                '{{ csrf_token() }}',
-
-                                            'Accept':
-                                                'application/json',
-
-                                            'Content-Type':
-                                                'application/json'
-
-                                        }
-
-                                    }
-                                );
-
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Gestion des erreurs HTTP
-                            |--------------------------------------------------------------------------
-                            */
-
-                            if (!response.ok) {
-
-                                const errorText =
-                                    await response.text();
-
-                                console.error(
-                                    'Erreur Laravel :',
-                                    errorText
-                                );
-
-                                throw new Error(
-                                    `Erreur HTTP ${response.status}`
-                                );
-
-                            }
-
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Réponse JSON
-                            |--------------------------------------------------------------------------
-                            */
-
-                            const data =
+                            const errorData =
                                 await response.json();
 
 
-                            if (!data.success) {
+                            if (
+                                errorData.message
+                            ) {
 
-                                throw new Error(
-                                    data.message ||
-                                    'Impossible d’ajouter le produit au panier.'
-                                );
+                                message =
+                                    errorData.message;
 
                             }
-
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Mise à jour du compteur
-                            |--------------------------------------------------------------------------
-                            */
-
-                            this.cartCount =
-                                Number(
-                                    data.count || 0
-                                );
-
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Notification globale
-                            |--------------------------------------------------------------------------
-                            */
-
-                            window.dispatchEvent(
-                                new CustomEvent(
-                                    'fonkpa-cart-updated',
-                                    {
-                                        detail: {
-                                            count:
-                                                this.cartCount
-                                        }
-                                    }
-                                )
-                            );
-
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Toast
-                            |--------------------------------------------------------------------------
-                            */
-
-                            this.showCartToast = true;
-
-
-                            setTimeout(() => {
-
-                                this.showCartToast =
-                                    false;
-
-                            }, 2500);
-
 
                         } catch (error) {
 
                             console.error(
-                                'Erreur lors de l’ajout au panier :',
+                                'Réponse serveur invalide :',
                                 error
                             );
 
                         }
 
-                    },
 
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | RÉINITIALISER LES FILTRES
-                    |--------------------------------------------------------------------------
-                    */
-
-                    resetFilters() {
-
-                        this.search = '';
-
-                        this.category = 'all';
-
-                        this.minPrice = null;
-
-                        this.maxPrice = null;
-
-                        this.availableOnly = false;
-
-                        this.sort = 'popular';
-
-                        this.page = 1;
+                        throw new Error(
+                            message
+                        );
 
                     }
 
-                };
+
+                    const data =
+                        await response.json();
+
+
+                    if (
+                        !data.success
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            'Impossible d’ajouter le produit au panier.'
+                        );
+
+                    }
+
+
+                    this.cartCount =
+                        Number(
+                            data.count || 0
+                        );
+
+
+                    window.dispatchEvent(
+                        new CustomEvent(
+                            'fonkpa-cart-updated',
+                            {
+                                detail: {
+                                    count:
+                                        this.cartCount
+                                }
+                            }
+                        )
+                    );
+
+
+                    this.showCartToast =
+                        true;
+
+
+                    setTimeout(() => {
+
+                        this.showCartToast =
+                            false;
+
+                    }, 2500);
+
+
+                    return true;
+
+
+                } catch (error) {
+
+                    console.error(
+                        'Erreur lors de l’ajout au panier :',
+                        error
+                    );
+
+
+                    this.cartErrorMessage =
+                        error.message ||
+                        'Une erreur est survenue.';
+
+
+                    this.showCartError =
+                        true;
+
+
+                    setTimeout(() => {
+
+                        this.showCartError =
+                            false;
+
+                    }, 3500);
+
+
+                    return false;
+
+                }
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SOUMISSION PERSONNALISATION
+            |--------------------------------------------------------------------------
+            */
+
+            async submitCustomization() {
+
+                if (
+                    !this.selectedProduct ||
+                    this.submittingCustomization
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    !this.validateCustomization()
+                ) {
+
+                    this.$nextTick(() => {
+
+                        const content =
+                            document.querySelector(
+                                '[x-show="customizationOpen"] .overflow-y-auto'
+                            );
+
+
+                        if (content) {
+
+                            content.scrollTo({
+                                top: 0,
+                                behavior: 'smooth'
+                            });
+
+                        }
+
+                    });
+
+
+                    return;
+
+                }
+
+
+                this.submittingCustomization =
+                    true;
+
+
+                const product =
+                    this.selectedProduct;
+
+
+                const optionIds =
+                    this.getSelectedChoiceIds();
+
+
+                const success =
+                    await this.sendToCart(
+                        product,
+                        optionIds
+                    );
+
+
+                this.submittingCustomization =
+                    false;
+
+
+                if (success) {
+
+                    this.closeCustomization();
+
+                }
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RESET
+            |--------------------------------------------------------------------------
+            */
+
+            resetFilters() {
+
+                this.search = '';
+
+                this.category = 'all';
+
+                this.minPrice = null;
+
+                this.maxPrice = null;
+
+                this.availableOnly = false;
+
+                this.sort = 'popular';
+
+                this.page = 1;
 
             }
 
-        </script>
+        };
+
+    }
+
+</script>
 
     </div>
 
