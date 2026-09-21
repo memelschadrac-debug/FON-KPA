@@ -128,14 +128,25 @@
                                         ->first();
 
                                     $media = $primaryImage?->media;
+
+                                    $imageUrl = null;
+
+                                    if ($media && $media->path) {
+                                        $disk = $media->disk ?: 'public';
+
+                                        if (\Illuminate\Support\Facades\Storage::disk($disk)->exists($media->path)) {
+                                            $imageUrl = \Illuminate\Support\Facades\Storage::disk($disk)->url($media->path);
+                                        }
+                                    }
                                 @endphp
 
-                                @if ($media && $media->path)
+                                @if ($imageUrl)
 
                                     <img
-                                        src="{{ asset($media->path) }}"
-                                        alt="{{ $product->name }}"
+                                        src="{{ $imageUrl }}"
+                                        alt="{{ $media->alt ?? $product->name }}"
                                         class="aspect-[4/3] h-full w-full object-cover"
+                                        loading="lazy"
                                     >
 
                                 @else

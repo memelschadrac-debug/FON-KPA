@@ -22,11 +22,21 @@
 
     </div>
 
+
     {{-- ============================= --}}
     {{-- COMPTE DÉSACTIVÉ --}}
     {{-- ============================= --}}
 
-    @if ($errors->has('email') && old('email'))
+    {{--
+        IMPORTANT :
+        Ce bloc ne s'affiche QUE lorsque LoginRequest
+        renvoie explicitement l'erreur "account_disabled".
+
+        Il ne dépend plus de l'erreur "email".
+        Ainsi, un mauvais mot de passe ne pourra jamais
+        afficher "Compte désactivé".
+    --}}
+    @if ($errors->has('account_disabled'))
 
         <div
             class="
@@ -73,6 +83,7 @@
 
             </div>
 
+
             {{-- Message --}}
             <div class="min-w-0">
 
@@ -81,7 +92,7 @@
                 </p>
 
                 <p class="mt-0.5 text-[11px] leading-[1.5] text-red-500">
-                    {{ $errors->first('email') }}
+                    {{ $errors->first('account_disabled') }}
                 </p>
 
             </div>
@@ -122,6 +133,7 @@
             >
                 Adresse e-mail
             </label>
+
 
             <div class="relative">
 
@@ -565,7 +577,6 @@
                     <path
                         d="M3 3l18 18"
                         stroke-linecap="round"
-                        stroke-linejoin="round"
                     />
 
                     <path

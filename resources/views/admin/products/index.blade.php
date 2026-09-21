@@ -313,18 +313,29 @@
                                                 ?? $product->productImages->first();
 
                                             $media = $primaryImage?->media;
+
+                                            $imageUrl = null;
+
+                                            if ($media && $media->path) {
+                                                $disk = $media->disk ?: 'public';
+
+                                                if (\Illuminate\Support\Facades\Storage::disk($disk)->exists($media->path)) {
+                                                    $imageUrl = \Illuminate\Support\Facades\Storage::disk($disk)->url($media->path);
+                                                }
+                                            }
                                         @endphp
 
 
                                         <div class="flex items-center gap-3">
 
                                             {{-- Image --}}
-                                            @if ($media)
+                                            @if ($imageUrl)
 
                                                 <img
-                                                    src="{{ asset($media->path) }}"
+                                                    src="{{ $imageUrl }}"
                                                     alt="{{ $media->alt ?? $product->name }}"
                                                     class="h-10 w-10 rounded-md object-cover"
+                                                    loading="lazy"
                                                 >
 
                                             @else

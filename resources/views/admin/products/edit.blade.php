@@ -453,17 +453,27 @@
                                     ->first();
 
                                 $currentMedia = $currentImage?->media;
+
+                                $currentImageUrl = null;
+
+                                if ($currentMedia && $currentMedia->path) {
+                                    $disk = $currentMedia->disk ?: 'public';
+
+                                    if (\Illuminate\Support\Facades\Storage::disk($disk)->exists($currentMedia->path)) {
+                                        $currentImageUrl = \Illuminate\Support\Facades\Storage::disk($disk)->url($currentMedia->path);
+                                    }
+                                }
                             @endphp
 
                             {{-- IMAGE ACTUELLE --}}
-                            @if ($currentMedia)
+                            @if ($currentImageUrl)
                                 <div
                                     id="current-product-image"
                                     class="mb-3 overflow-hidden rounded-md border border-gray-200 bg-white"
                                 >
                                     <div class="relative">
                                         <img
-                                            src="{{ asset($currentMedia->path) }}"
+                                            src="{{ $currentImageUrl }}"
                                             alt="{{ $currentMedia->alt ?? $product->name }}"
                                             class="h-48 w-full object-cover"
                                         >
