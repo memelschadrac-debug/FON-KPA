@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OrderItem extends Model
 {
@@ -19,7 +20,7 @@ class OrderItem extends Model
     ];
 
     /**
-     * Cette ligne appartient à une commande.
+     * Une ligne appartient à une commande.
      */
     public function order(): BelongsTo
     {
@@ -27,10 +28,18 @@ class OrderItem extends Model
     }
 
     /**
-     * Cette ligne appartient à un produit.
+     * Une ligne appartient à un produit.
      */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Une ligne peut avoir plusieurs options.
+     */
+    public function options(): HasMany
+    {
+        return $this->hasMany(OrderItemOption::class);
     }
 }

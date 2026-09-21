@@ -33,6 +33,7 @@ Route::view('/contact', 'storefront.contact')
 Route::post('/contact', [ContactController::class, 'store'])
     ->name('contact.store');
 
+
 // =========================================================
 // PANIER
 // =========================================================
@@ -40,17 +41,56 @@ Route::post('/contact', [ContactController::class, 'store'])
 Route::get('/panier', [CartController::class, 'index'])
     ->name('cart.index');
 
+/*
+|--------------------------------------------------------------------------
+| Ajouter un produit au panier
+|--------------------------------------------------------------------------
+|
+| Ici, on conserve {product} car on ajoute encore un produit.
+| Les options sont envoyées dans la requête POST.
+|
+*/
 Route::post('/panier/{product}', [CartController::class, 'store'])
     ->name('cart.store');
 
-Route::patch('/panier/{product}/quantity', [CartController::class, 'update'])
+
+/*
+|--------------------------------------------------------------------------
+| Modifier une ligne du panier
+|--------------------------------------------------------------------------
+|
+| IMPORTANT :
+| On utilise maintenant {line} et non {product}.
+|
+| Une même fiche produit peut avoir plusieurs lignes :
+|
+| Garba + Attiéké + Poisson
+| Garba + Alloco + Poulet
+|
+| Chaque configuration possède sa propre clé.
+|
+*/
+Route::patch('/panier/{line}/quantity', [CartController::class, 'update'])
     ->name('cart.update');
 
-Route::delete('/panier/{product}', [CartController::class, 'destroy'])
+
+/*
+|--------------------------------------------------------------------------
+| Supprimer une ligne du panier
+|--------------------------------------------------------------------------
+*/
+Route::delete('/panier/{line}', [CartController::class, 'destroy'])
     ->name('cart.destroy');
 
+
+/*
+|--------------------------------------------------------------------------
+| Vider complètement le panier
+|--------------------------------------------------------------------------
+*/
 Route::delete('/panier', [CartController::class, 'clear'])
     ->name('cart.clear');
+
 
 // =========================================================
 // COMMANDE
@@ -69,7 +109,7 @@ Route::middleware('auth')->group(function () {
         $totalArticles = collect($cart)->sum('quantity');
 
         $subtotal = collect($cart)->sum(function ($item) {
-            return $item['price'] * $item['quantity'];
+            return (float) $item['price'] * (int) $item['quantity'];
         });
 
         return view('storefront.commande.index', [
