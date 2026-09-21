@@ -8,6 +8,7 @@ use App\Models\Media;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -28,7 +29,6 @@ class ProductController extends Controller
         return view('admin.products.index', compact('products'));
     }
 
-
     /**
      * Affiche le formulaire de création d'un plat.
      */
@@ -40,7 +40,6 @@ class ProductController extends Controller
 
         return view('admin.products.create', compact('categories'));
     }
-
 
     /**
      * Enregistre un nouveau plat.
@@ -113,7 +112,6 @@ class ProductController extends Controller
             ],
         ]);
 
-
         /*
         |--------------------------------------------------------------------------
         | SLUG
@@ -121,9 +119,10 @@ class ProductController extends Controller
         */
 
         if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['name']);
+            $validated['slug'] = Str::slug(
+                $validated['name']
+            );
         }
-
 
         /*
         |--------------------------------------------------------------------------
@@ -131,10 +130,11 @@ class ProductController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $validated['is_available'] = $request->boolean('is_available');
+        $validated['is_available'] =
+            $request->boolean('is_available');
 
-        $validated['is_featured'] = $request->boolean('is_featured');
-
+        $validated['is_featured'] =
+            $request->boolean('is_featured');
 
         /*
         |--------------------------------------------------------------------------
@@ -144,7 +144,6 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
-
         /*
         |--------------------------------------------------------------------------
         | IMAGE DU PLAT
@@ -152,55 +151,79 @@ class ProductController extends Controller
         */
 
         if ($request->hasFile('image')) {
-
             $file = $request->file('image');
 
             /*
             |--------------------------------------------------------------------------
             | INFORMATIONS DU FICHIER
             |--------------------------------------------------------------------------
-            | IMPORTANT :
-            | On récupère ces informations AVANT move().
             */
 
             $mimeType = $file->getMimeType();
             $fileSize = $file->getSize();
-            $extension = $file->getClientOriginalExtension();
+            $extension = strtolower(
+                $file->getClientOriginalExtension()
+            );
 
+            /*
+            |--------------------------------------------------------------------------
+            | DIMENSIONS
+            |--------------------------------------------------------------------------
+            */
+
+            $imageSize = getimagesize(
+                $file->getRealPath()
+            );
+
+            $width = $imageSize[0] ?? null;
+            $height = $imageSize[1] ?? null;
 
             /*
             |--------------------------------------------------------------------------
             | NOM UNIQUE
             |--------------------------------------------------------------------------
+            |
+            | UUID = très faible risque de collision.
+            |
             */
 
-            $filename = Str::uuid() . '.' . $extension;
-
+            $filename = Str::uuid()
+                .toString()
+                . '.'
+                . $extension;
 
             /*
             |--------------------------------------------------------------------------
-            | DOSSIER LOCAL
+            | STOCKAGE
             |--------------------------------------------------------------------------
+            |
+            | storage/app/public/images/products/
+            |
             */
 
-            $directory = public_path('images/products');
-
-            if (!is_dir($directory)) {
-                mkdir($directory, 0755, true);
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | DÉPLACEMENT DU FICHIER
-            |--------------------------------------------------------------------------
-            */
-
-            $file->move(
-                $directory,
+            $path = Storage::disk('public')->putFileAs(
+                'images/products',
+                $file,
                 $filename
             );
 
+            /*
+            |--------------------------------------------------------------------------
+            | VÉRIFICATION
+            |--------------------------------------------------------------------------
+            */
+
+            if (!$path) {
+                $product->delete();
+
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with(
+                        'error',
+                        'Impossible d’enregistrer l’image du plat.'
+                    );
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -210,16 +233,15 @@ class ProductController extends Controller
 
             $media = Media::create([
                 'disk' => 'public',
-                'path' => 'images/products/' . $filename,
+                'path' => $path,
                 'filename' => $filename,
                 'mime_type' => $mimeType,
                 'size' => $fileSize,
-                'width' => null,
-                'height' => null,
+                'width' => $width,
+                'height' => $height,
                 'alt' => $product->name,
                 'caption' => null,
             ]);
-
 
             /*
             |--------------------------------------------------------------------------
@@ -236,7 +258,6 @@ class ProductController extends Controller
             ]);
         }
 
-
         /*
         |--------------------------------------------------------------------------
         | REDIRECTION
@@ -245,9 +266,11 @@ class ProductController extends Controller
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', 'Le plat a été ajouté avec succès.');
+            ->with(
+                'success',
+                'Le plat a été ajouté avec succès.'
+            );
     }
-
 
     /**
      * Affiche les détails d'un plat.
@@ -262,7 +285,6 @@ class ProductController extends Controller
         return view('admin.products.show', compact('product'));
     }
 
-
     /**
      * Affiche le formulaire de modification d'un plat.
      */
@@ -276,18 +298,22 @@ class ProductController extends Controller
             'productImages.media',
         ]);
 
-        return view('admin.products.edit', compact(
-            'product',
-            'categories'
-        ));
+        return view(
+            'admin.products.edit',
+            compact(
+                'product',
+                'categories'
+            )
+        );
     }
-
 
     /**
      * Met à jour un plat existant.
      */
-    public function update(Request $request, Product $product)
-    {
+    public function update(
+        Request $request,
+        Product $product
+    ) {
         /*
         |--------------------------------------------------------------------------
         | VALIDATION
@@ -355,7 +381,6 @@ class ProductController extends Controller
             ],
         ]);
 
-
         /*
         |--------------------------------------------------------------------------
         | SLUG
@@ -363,9 +388,10 @@ class ProductController extends Controller
         */
 
         if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['name']);
+            $validated['slug'] = Str::slug(
+                $validated['name']
+            );
         }
-
 
         /*
         |--------------------------------------------------------------------------
@@ -373,10 +399,11 @@ class ProductController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $validated['is_available'] = $request->boolean('is_available');
+        $validated['is_available'] =
+            $request->boolean('is_available');
 
-        $validated['is_featured'] = $request->boolean('is_featured');
-
+        $validated['is_featured'] =
+            $request->boolean('is_featured');
 
         /*
         |--------------------------------------------------------------------------
@@ -385,7 +412,6 @@ class ProductController extends Controller
         */
 
         $product->update($validated);
-
 
         /*
         |--------------------------------------------------------------------------
@@ -401,13 +427,13 @@ class ProductController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $oldProductImage = $product->productImages()
+            $oldProductImage = $product
+                ->productImages()
                 ->where('is_primary', true)
                 ->with('media')
                 ->first();
 
             $oldMedia = $oldProductImage?->media;
-
 
             /*
             |--------------------------------------------------------------------------
@@ -417,19 +443,30 @@ class ProductController extends Controller
 
             $file = $request->file('image');
 
-
             /*
             |--------------------------------------------------------------------------
             | INFORMATIONS DU FICHIER
             |--------------------------------------------------------------------------
-            | IMPORTANT :
-            | On récupère ces informations AVANT move().
             */
 
             $mimeType = $file->getMimeType();
             $fileSize = $file->getSize();
-            $extension = $file->getClientOriginalExtension();
+            $extension = strtolower(
+                $file->getClientOriginalExtension()
+            );
 
+            /*
+            |--------------------------------------------------------------------------
+            | DIMENSIONS
+            |--------------------------------------------------------------------------
+            */
+
+            $imageSize = getimagesize(
+                $file->getRealPath()
+            );
+
+            $width = $imageSize[0] ?? null;
+            $height = $imageSize[1] ?? null;
 
             /*
             |--------------------------------------------------------------------------
@@ -437,33 +474,38 @@ class ProductController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $filename = Str::uuid() . '.' . $extension;
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | DOSSIER LOCAL
-            |--------------------------------------------------------------------------
-            */
-
-            $directory = public_path('images/products');
-
-            if (!is_dir($directory)) {
-                mkdir($directory, 0755, true);
-            }
-
+            $filename = Str::uuid()
+                ->toString()
+                . '.'
+                . $extension;
 
             /*
             |--------------------------------------------------------------------------
-            | SAUVEGARDE LOCALE
+            | STOCKAGE LARAVEL
             |--------------------------------------------------------------------------
             */
 
-            $file->move(
-                $directory,
+            $path = Storage::disk('public')->putFileAs(
+                'images/products',
+                $file,
                 $filename
             );
 
+            /*
+            |--------------------------------------------------------------------------
+            | VÉRIFICATION
+            |--------------------------------------------------------------------------
+            */
+
+            if (!$path) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with(
+                        'error',
+                        'Impossible d’enregistrer la nouvelle image.'
+                    );
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -473,20 +515,19 @@ class ProductController extends Controller
 
             $newMedia = Media::create([
                 'disk' => 'public',
-                'path' => 'images/products/' . $filename,
+                'path' => $path,
                 'filename' => $filename,
                 'mime_type' => $mimeType,
                 'size' => $fileSize,
-                'width' => null,
-                'height' => null,
+                'width' => $width,
+                'height' => $height,
                 'alt' => $product->name,
                 'caption' => null,
             ]);
 
-
             /*
             |--------------------------------------------------------------------------
-            | MISE À JOUR DE LA RELATION
+            | MISE À JOUR DE PRODUCT_IMAGE
             |--------------------------------------------------------------------------
             */
 
@@ -508,32 +549,23 @@ class ProductController extends Controller
                 ]);
             }
 
-
             /*
             |--------------------------------------------------------------------------
-            | SUPPRESSION DE L'ANCIEN FICHIER LOCAL
+            | SUPPRESSION DE L'ANCIEN FICHIER
             |--------------------------------------------------------------------------
             */
 
-            if ($oldMedia) {
+            if ($oldMedia && $oldMedia->path) {
+
+                $oldDisk = $oldMedia->disk ?: 'public';
 
                 if (
-                    $oldMedia->path &&
-                    str_starts_with(
-                        $oldMedia->path,
-                        'images/products/'
-                    )
+                    Storage::disk($oldDisk)
+                        ->exists($oldMedia->path)
                 ) {
-
-                    $oldImagePath = public_path(
-                        $oldMedia->path
-                    );
-
-                    if (is_file($oldImagePath)) {
-                        unlink($oldImagePath);
-                    }
+                    Storage::disk($oldDisk)
+                        ->delete($oldMedia->path);
                 }
-
 
                 /*
                 |--------------------------------------------------------------------------
@@ -545,7 +577,6 @@ class ProductController extends Controller
             }
         }
 
-
         /*
         |--------------------------------------------------------------------------
         | REDIRECTION
@@ -554,9 +585,11 @@ class ProductController extends Controller
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', 'Le plat a été modifié avec succès.');
+            ->with(
+                'success',
+                'Le plat a été modifié avec succès.'
+            );
     }
-
 
     /**
      * Supprime un plat.
@@ -569,10 +602,10 @@ class ProductController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $productImages = $product->productImages()
+        $productImages = $product
+            ->productImages()
             ->with('media')
             ->get();
-
 
         /*
         |--------------------------------------------------------------------------
@@ -584,31 +617,24 @@ class ProductController extends Controller
 
             $media = $productImage->media;
 
-
             /*
             |--------------------------------------------------------------------------
-            | SUPPRESSION DU FICHIER LOCAL
+            | SUPPRESSION DU FICHIER
             |--------------------------------------------------------------------------
             */
 
-            if (
-                $media &&
-                $media->path &&
-                str_starts_with(
-                    $media->path,
-                    'images/products/'
-                )
-            ) {
+            if ($media && $media->path) {
 
-                $imagePath = public_path(
-                    $media->path
-                );
+                $disk = $media->disk ?: 'public';
 
-                if (is_file($imagePath)) {
-                    unlink($imagePath);
+                if (
+                    Storage::disk($disk)
+                        ->exists($media->path)
+                ) {
+                    Storage::disk($disk)
+                        ->delete($media->path);
                 }
             }
-
 
             /*
             |--------------------------------------------------------------------------
@@ -617,7 +643,6 @@ class ProductController extends Controller
             */
 
             $productImage->delete();
-
 
             /*
             |--------------------------------------------------------------------------
@@ -630,7 +655,6 @@ class ProductController extends Controller
             }
         }
 
-
         /*
         |--------------------------------------------------------------------------
         | SUPPRESSION DU PLAT
@@ -638,7 +662,6 @@ class ProductController extends Controller
         */
 
         $product->delete();
-
 
         /*
         |--------------------------------------------------------------------------
@@ -648,6 +671,9 @@ class ProductController extends Controller
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', 'Le plat a été supprimé avec succès.');
+            ->with(
+                'success',
+                'Le plat a été supprimé avec succès.'
+            );
     }
 }

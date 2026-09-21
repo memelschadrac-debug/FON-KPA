@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Media;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class MediaController extends Controller
@@ -31,85 +32,181 @@ class MediaController extends Controller
      * Enregistrer un nouveau média.
      */
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'image' => [
-            'required',
-            'image',
-            'mimes:jpg,jpeg,png,webp',
-            'max:5120',
-        ],
-        'alt' => [
-            'nullable',
-            'string',
-            'max:255',
-        ],
-        'caption' => [
-            'nullable',
-            'string',
-        ],
-    ]);
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDATION
+        |--------------------------------------------------------------------------
+        */
 
-    $file = $request->file('image');
+        $validated = $request->validate([
+            'image' => [
+                'required',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:5120',
+            ],
 
-    // Récupérer les informations AVANT de déplacer le fichier.
-    $mimeType = $file->getMimeType();
-    $fileSize = $file->getSize();
-    $extension = $file->getClientOriginalExtension();
+            'alt' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
 
-    // Récupérer les dimensions de l'image.
-    $imageSize = getimagesize($file->getRealPath());
+            'caption' => [
+                'nullable',
+                'string',
+            ],
+        ]);
 
-    $width = $imageSize[0] ?? null;
-    $height = $imageSize[1] ?? null;
+        /*
+        |--------------------------------------------------------------------------
+        | FICHIER
+        |--------------------------------------------------------------------------
+        */
 
-    // Générer un nom propre à partir du nom original.
-    $baseName = pathinfo(
-        $file->getClientOriginalName(),
-        PATHINFO_FILENAME
-    );
+        $file = $request->file('image');
 
-    $baseName = Str::slug($baseName);
+        /*
+        |--------------------------------------------------------------------------
+        | INFORMATIONS DU FICHIER
+        |--------------------------------------------------------------------------
+        |
+        | Ces informations doivent être récupérées avant l'enregistrement.
+        |
+        */
 
-    $extension = strtolower($extension);
+        $mimeType = $file->getMimeType();
+        $fileSize = $file->getSize();
+        $extension = strtolower(
+            $file->getClientOriginalExtension()
+        );
 
-    $filename = $baseName . '.' . $extension;
+        /*
+        |--------------------------------------------------------------------------
+        | DIMENSIONS
+        |--------------------------------------------------------------------------
+        */
 
-    // Éviter les doublons.
-    $counter = 1;
+        $imageSize = getimagesize($file->getRealPath());
 
-    while (file_exists(public_path('images/' . $filename))) {
-        $filename = $baseName . '-' . $counter . '.' . $extension;
-        $counter++;
+        $width = $imageSize[0] ?? null;
+        $height = $imageSize[1] ?? null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOM DU FICHIER
+        |--------------------------------------------------------------------------
+        |
+        | On conserve un nom lisible basé sur le nom original.
+        |
+        */
+
+        $baseName = pathinfo(
+            $file->getClientOriginalName(),
+            PATHINFO_FILENAME
+        );
+
+        $baseName = Str::slug($baseName);
+
+        /*
+        |--------------------------------------------------------------------------
+        | FALLBACK SI LE NOM EST VIDE
+        |--------------------------------------------------------------------------
+        */
+
+        if (empty($baseName)) {
+            $baseName = 'image';
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOM UNIQUE
+        |--------------------------------------------------------------------------
+        */
+
+        $filename = $baseName . '.' . $extension;
+
+        $counter = 1;
+
+        while (
+            Storage::disk('public')->exists(
+                'images/' . $filename
+            )
+        ) {
+            $filename = $baseName
+                . '-'
+                . $counter
+                . '.'
+                . $extension;
+
+            $counter++;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | STOCKAGE LARAVEL
+        |--------------------------------------------------------------------------
+        |
+        | Le fichier sera enregistré dans :
+        |
+        | storage/app/public/images/
+        |
+        */
+
+        $path = Storage::disk('public')->putFileAs(
+            'images',
+            $file,
+            $filename
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | VÉRIFICATION DU STOCKAGE
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$path) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Impossible d’enregistrer le fichier.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CRÉATION DU MEDIA
+        |--------------------------------------------------------------------------
+        */
+
+        Media::create([
+            'disk' => 'public',
+            'path' => $path,
+            'filename' => $filename,
+            'mime_type' => $mimeType,
+            'size' => $fileSize,
+            'width' => $width,
+            'height' => $height,
+            'alt' => $validated['alt'] ?? null,
+            'caption' => $validated['caption'] ?? null,
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | REDIRECTION
+        |--------------------------------------------------------------------------
+        */
+
+        return redirect()
+            ->route('admin.media.index')
+            ->with(
+                'success',
+                'Média ajouté avec succès.'
+            );
     }
-
-    // Dossier de destination.
-    $directory = public_path('images');
-
-    if (!is_dir($directory)) {
-        mkdir($directory, 0755, true);
-    }
-
-    // Déplacer l'image.
-    $file->move($directory, $filename);
-
-    // Enregistrer le média en base de données.
-    Media::create([
-        'disk' => 'public',
-        'path' => 'images/' . $filename,
-        'filename' => $filename,
-        'mime_type' => $mimeType,
-        'size' => $fileSize,
-        'width' => $width,
-        'height' => $height,
-        'alt' => $validated['alt'] ?? null,
-        'caption' => $validated['caption'] ?? null,
-    ]);
-
-    return redirect()
-        ->route('admin.media.index')
-        ->with('success', 'Média ajouté avec succès.');
-}
 
     /**
      * Afficher les détails d'un média.
@@ -128,8 +225,12 @@ class MediaController extends Controller
      */
     public function destroy(Media $media)
     {
-        
-        // Vérifier si le média est utilisé par un produit.
+        /*
+        |--------------------------------------------------------------------------
+        | VÉRIFIER SI LE MÉDIA EST UTILISÉ
+        |--------------------------------------------------------------------------
+        */
+
         if ($media->productImages()->exists()) {
             return redirect()
                 ->route('admin.media.index')
@@ -139,35 +240,66 @@ class MediaController extends Controller
                 );
         }
 
-        // Vérifier que le média possède bien un chemin.
+        /*
+        |--------------------------------------------------------------------------
+        | VÉRIFIER LE CHEMIN
+        |--------------------------------------------------------------------------
+        */
+
         if (!$media->path) {
             return redirect()
                 ->route('admin.media.index')
-                ->with('error', 'Le chemin du fichier est introuvable.');
+                ->with(
+                    'error',
+                    'Le chemin du fichier est introuvable.'
+                );
         }
 
-        // Construire le chemin physique du fichier.
-        $filePath = public_path($media->path);
+        /*
+        |--------------------------------------------------------------------------
+        | SUPPRESSION DU FICHIER
+        |--------------------------------------------------------------------------
+        |
+        | On utilise le disque enregistré dans Media.
+        |
+        */
 
-        // Vérifier que le fichier existe.
-        if (!is_file($filePath)) {
-            return redirect()
-                ->route('admin.media.index')
-                ->with('error', 'Le fichier physique est introuvable.');
+        $disk = $media->disk ?: 'public';
+
+        if (Storage::disk($disk)->exists($media->path)) {
+            $deleted = Storage::disk($disk)->delete(
+                $media->path
+            );
+
+            if (!$deleted) {
+                return redirect()
+                    ->route('admin.media.index')
+                    ->with(
+                        'error',
+                        'Impossible de supprimer le fichier physique.'
+                    );
+            }
         }
 
-        // Supprimer réellement le fichier.
-        if (!unlink($filePath)) {
-            return redirect()
-                ->route('admin.media.index')
-                ->with('error', 'Impossible de supprimer le fichier physique.');
-        }
+        /*
+        |--------------------------------------------------------------------------
+        | SUPPRESSION DU MEDIA
+        |--------------------------------------------------------------------------
+        */
 
-        // Supprimer l'enregistrement de la base de données.
         $media->delete();
+
+        /*
+        |--------------------------------------------------------------------------
+        | REDIRECTION
+        |--------------------------------------------------------------------------
+        */
 
         return redirect()
             ->route('admin.media.index')
-            ->with('success', 'Média supprimé avec succès.');
+            ->with(
+                'success',
+                'Média supprimé avec succès.'
+            );
     }
 }
