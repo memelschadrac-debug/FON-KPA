@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\OrderController;
 use App\Http\Controllers\Storefront\DishesController;
+use App\Http\Controllers\Storefront\CategoryController as StorefrontCategoryController;
 use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +21,10 @@ Route::get('/nos-plats/data', [DishesController::class, 'data'])
 // Route::view('/nos-plats', 'storefront.plats.index')
 //     ->name('plats.index');
 
-Route::view('/categories', 'storefront.categories.index')
+//Route::view('/categories', 'storefront.categories.index')
+  //  ->name('categories.index');
+
+Route::get('/categories', [StorefrontCategoryController::class, 'index'])
     ->name('categories.index');
 
 Route::view('/a-propos', 'storefront.about')

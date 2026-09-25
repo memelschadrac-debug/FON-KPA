@@ -1467,7 +1467,7 @@
 
             search: '',
 
-            category: 'all',
+           category: @js($selectedCategorySlug ?? 'all'),
 
             minPrice: null,
 

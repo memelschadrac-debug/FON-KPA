@@ -5,254 +5,440 @@ namespace App\Http\Controllers\Storefront;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DishesController extends Controller
 {
-    public function index(): View
+    /**
+     * =========================================================================
+     * PAGE : NOS PLATS
+     * =========================================================================
+     *
+     * Charge les données initiales nécessaires au rendu de la page.
+     *
+     * Les mêmes données pourront ensuite être actualisées via l'endpoint
+     * data() appelé par Alpine.js.
+     */
+    public function index(Request $request): View
+{
+    $catalog = $this->getCatalogData();
+
+    /*
+    |--------------------------------------------------------------------------
+    | CATÉGORIE DEMANDÉE DANS L'URL
+    |--------------------------------------------------------------------------
+    |
+    | Exemple :
+    | /plats?category=grillades
+    |
+    | On récupère uniquement le slug.
+    |
+    */
+
+    $selectedCategorySlug = $request->query('category');
+
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDATION DU SLUG
+    |--------------------------------------------------------------------------
+    |
+    | Si quelqu'un met une catégorie inexistante dans l'URL,
+    | on ne transmet pas une valeur invalide à Alpine.
+    |
+    */
+
+    $validCategorySlugs = $catalog['categories']
+        ->pluck('slug')
+        ->filter()
+        ->values();
+
+    if (
+        $selectedCategorySlug &&
+        !$validCategorySlugs->contains($selectedCategorySlug)
+    ) {
+        $selectedCategorySlug = null;
+    }
+
+    return view('storefront.plats.index', [
+        'products' => $catalog['products'],
+        'categories' => $catalog['categories'],
+        'productsData' => $catalog['productsData'],
+        'categoriesData' => $catalog['categoriesData'],
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILTRE INITIAL
+        |--------------------------------------------------------------------------
+        */
+
+        'selectedCategorySlug' => $selectedCategorySlug,
+    ]);
+}
+
+    /**
+     * =========================================================================
+     * API : DONNÉES DU CATALOGUE
+     * =========================================================================
+     *
+     * Cet endpoint est utilisé par Alpine.js pour actualiser le catalogue
+     * sans recharger toute la page.
+     *
+     * Exemple :
+     *
+     * GET /plats/data
+     */
+    public function data(): JsonResponse
+    {
+        $catalog = $this->getCatalogData();
+
+        return response()->json([
+            'success' => true,
+            'products' => $catalog['productsData'],
+            'categories' => $catalog['categoriesData'],
+        ]);
+    }
+
+    /**
+     * =========================================================================
+     * SOURCE UNIQUE DU CATALOGUE
+     * =========================================================================
+     *
+     * Centralise toute la logique utilisée par :
+     *
+     * - index()
+     * - data()
+     *
+     * Cela évite d'avoir deux versions différentes du catalogue.
+     */
+    private function getCatalogData(): array
     {
         /*
         |--------------------------------------------------------------------------
         | CATÉGORIES
         |--------------------------------------------------------------------------
-        | On récupère uniquement les 4 catégories utilisées
-        | par le catalogue FON-KPA.
         |
-        | "Tous les plats" n'est PAS une catégorie en base de données.
-        | C'est simplement un filtre affiché dans l'interface.
-        |--------------------------------------------------------------------------
+        | L'ordre est piloté par la colonne sort_order de la table categories.
+        |
+        | Aucune catégorie n'est codée en dur ici.
+        |
+        | Une nouvelle catégorie créée depuis l'administration sera donc
+        | automatiquement récupérée par le storefront.
+        |
         */
 
-        $categorySlugs = [
-            'accompagnement',
-            'boisson',
-            'sauce',
-            'grillade',
-        ];
-
-        $categories = Category::withCount('products')
-            ->whereIn('slug', $categorySlugs)
-            ->get()
-            ->sortBy(function ($category) use ($categorySlugs) {
-                return array_search(
-                    $category->slug,
-                    $categorySlugs
-                );
-            })
-            ->values();
+        $categories = Category::query()
+            ->withCount('products')
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
 
         /*
         |--------------------------------------------------------------------------
         | PRODUITS
         |--------------------------------------------------------------------------
-        | On récupère les produits avec :
         |
-        | - leur catégorie
-        | - leurs images
-        | - leur média associé
-        | - leurs groupes d'options
-        | - les choix disponibles dans chaque groupe
-        |--------------------------------------------------------------------------
+        | On charge toutes les relations nécessaires au storefront afin
+        | d'éviter les problèmes N+1.
+        |
         */
 
-        $products = Product::with([
-            'category',
+        $products = Product::query()
+            ->with([
+                /*
+                |--------------------------------------------------------------------------
+                | CATÉGORIE
+                |--------------------------------------------------------------------------
+                */
 
-            'productImages' => function ($query) {
-                $query
-                    ->with('media')
-                    ->orderByDesc('is_primary')
-                    ->orderBy('sort_order');
-            },
+                'category',
 
-            'optionGroups' => function ($query) {
-                $query
-                    ->orderBy('sort_order')
-                    ->with([
-                        'optionChoices' => function ($query) {
-                            $query->orderBy('sort_order');
-                        },
-                    ]);
-            },
-        ])
+                /*
+                |--------------------------------------------------------------------------
+                | IMAGES
+                |--------------------------------------------------------------------------
+                |
+                | L'image principale est placée en premier.
+                | Ensuite on respecte sort_order.
+                |
+                */
+
+                'productImages' => function ($query) {
+                    $query
+                        ->with('media')
+                        ->orderByDesc('is_primary')
+                        ->orderBy('sort_order');
+                },
+
+                /*
+                |--------------------------------------------------------------------------
+                | GROUPES D'OPTIONS
+                |--------------------------------------------------------------------------
+                */
+
+                'optionGroups' => function ($query) {
+                    $query
+                        ->orderBy('sort_order')
+                        ->with([
+                            'optionChoices' => function ($query) {
+                                $query->orderBy('sort_order');
+                            },
+                        ]);
+                },
+            ])
+
+            /*
+            |--------------------------------------------------------------------------
+            | ORDRE DU CATALOGUE
+            |--------------------------------------------------------------------------
+            |
+            | Les produits mis en avant apparaissent avant les autres.
+            | Ensuite les plus récents.
+            |
+            */
+
             ->orderByDesc('is_featured')
             ->latest()
             ->get();
 
         /*
         |--------------------------------------------------------------------------
-        | DONNÉES PRODUITS POUR ALPINE.JS
-        |--------------------------------------------------------------------------
-        | On prépare les données côté PHP afin de fournir à Alpine.js
-        | toutes les informations nécessaires au catalogue et
-        | à la personnalisation des plats.
+        | TRANSFORMATION POUR ALPINE.JS
         |--------------------------------------------------------------------------
         */
 
-        $productsData = $products->map(function ($product) {
+        $productsData = $products
+            ->map(function (Product $product) {
 
-            /*
-            |--------------------------------------------------------------------------
-            | IMAGE PRINCIPALE
-            |--------------------------------------------------------------------------
-            |
-            | Les images FON-KPA sont stockées via le disque Laravel "public".
-            |
-            | Exemple :
-            |
-            | storage/app/public/images/products/mon-image.jpg
-            |
-            | On ne transmet donc PAS directement $media->path.
-            | On génère l'URL publique avec Storage::disk()->url().
-            |--------------------------------------------------------------------------
-            */
+                /*
+                |--------------------------------------------------------------------------
+                | IMAGE
+                |--------------------------------------------------------------------------
+                */
 
-            $image = null;
+                $imageUrl = null;
 
-            $primaryImage = $product->productImages->first();
+                $productImage = $product->productImages->first();
 
-            if (
-                $primaryImage &&
-                $primaryImage->media &&
-                $primaryImage->media->path
-            ) {
-                $media = $primaryImage->media;
+                if ($productImage && $productImage->media) {
 
-                // On utilise le disque enregistré en base.
-                // Si aucun disque n'est défini, "public" est utilisé.
-                $disk = $media->disk ?: 'public';
+                    $media = $productImage->media;
 
-                // On vérifie que le fichier existe réellement
-                // avant de transmettre son URL au frontend.
-                if (Storage::disk($disk)->exists($media->path)) {
-                    $image = Storage::disk($disk)->url($media->path);
+                    $disk = $media->disk ?: 'public';
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Vérification de l'existence réelle du fichier
+                    |--------------------------------------------------------------------------
+                    |
+                    | Cela évite d'envoyer une URL vers une image supprimée ou
+                    | inexistante.
+                    |
+                    */
+
+                    if (
+                        $media->path &&
+                        Storage::disk($disk)->exists($media->path)
+                    ) {
+                        $imageUrl = Storage::disk($disk)
+                            ->url($media->path);
+                    }
                 }
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | GROUPES D'OPTIONS
-            |--------------------------------------------------------------------------
-            |
-            | Les options restent entièrement dynamiques.
-            | Rien n'est codé en dur dans le frontend.
-            |--------------------------------------------------------------------------
-            */
-
-            $optionGroups = $product->optionGroups
-                ->map(function ($group) {
-
-                    return [
-                        'id' => $group->id,
-
-                        'name' => $group->name,
-
-                        'is_required' => (bool) $group->is_required,
-
-                        'min_choices' => (int) $group->min_choices,
-
-                        'max_choices' => (int) $group->max_choices,
-
-                        'choices' => $group->optionChoices
-                            ->map(function ($choice) {
-
-                                return [
-                                    'id' => $choice->id,
-
-                                    'name' => $choice->name,
-
-                                    'price_modifier' =>
-                                        (float) $choice->price_modifier,
-
-                                    'available' =>
-                                        (bool) $choice->is_available,
-                                ];
-                            })
-                            ->values(),
-                    ];
-                })
-                ->values();
-
-            /*
-            |--------------------------------------------------------------------------
-            | PRODUIT
-            |--------------------------------------------------------------------------
-            */
-
-            return [
-                'id' => $product->id,
-
-                'name' => $product->name,
-
-                'category' =>
-                    $product->category?->slug ?? 'all',
-
-                'price' =>
-                    (float) $product->price,
-
-                'available' =>
-                    (bool) $product->is_available,
-
-                'badge' =>
-                    $product->is_featured
-                        ? 'Populaire'
-                        : '',
 
                 /*
                 |--------------------------------------------------------------------------
-                | URL DE L'IMAGE
-                |--------------------------------------------------------------------------
-                |
-                | Alpine.js reçoit maintenant une vraie URL exploitable
-                | par <img :src="product.image">.
+                | GROUPES D'OPTIONS
                 |--------------------------------------------------------------------------
                 */
 
-                'image' => $image,
+                $optionGroups = $product->optionGroups
+                    ->map(function ($group) {
 
-                'description' =>
-                    $product->description ?? '',
+                        return [
+                            'id' => (int) $group->id,
+
+                            'name' => $group->name,
+
+                            'is_required' => (bool) $group->is_required,
+
+                            'min_choices' => (int) $group->min_choices,
+
+                            'max_choices' => (int) $group->max_choices,
+
+                            'choices' => $group->optionChoices
+                                ->map(function ($choice) {
+
+                                    return [
+                                        'id' => (int) $choice->id,
+
+                                        'name' => $choice->name,
+
+                                        'price_modifier' => (float) $choice->price_modifier,
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | DISPONIBILITÉ DU CHOIX
+                                        |--------------------------------------------------------------------------
+                                        |
+                                        | La colonne réelle de OptionChoice est
+                                        | "is_available".
+                                        |
+                                        | On expose volontairement "available"
+                                        | au frontend afin de conserver le
+                                        | contrat attendu par Alpine.js.
+                                        |
+                                        */
+
+                                        'available' => (bool) $choice->is_available,
+                                    ];
+                                })
+                                ->values()
+                                ->all(),
+                        ];
+                    })
+                    ->values()
+                    ->all();
 
                 /*
                 |--------------------------------------------------------------------------
-                | OPTIONS DU PRODUIT
+                | BADGE
                 |--------------------------------------------------------------------------
                 */
 
-                'option_groups' => $optionGroups,
-            ];
-        })->values();
+                $badge = $product->is_featured
+                    ? 'Populaire'
+                    : null;
+
+                /*
+                |--------------------------------------------------------------------------
+                | DONNÉES ALPINE
+                |--------------------------------------------------------------------------
+                */
+
+                return [
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | IDENTIFIANT
+                    |--------------------------------------------------------------------------
+                    */
+
+                    'id' => (int) $product->id,
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | NOM
+                    |--------------------------------------------------------------------------
+                    */
+
+                    'name' => $product->name,
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | CATÉGORIE
+                    |--------------------------------------------------------------------------
+                    |
+                    | La Blade filtre avec :
+                    |
+                    | product.category === category
+                    |
+                    | On envoie donc le slug.
+                    |
+                    */
+
+                    'category' => $product->category?->slug,
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | PRIX
+                    |--------------------------------------------------------------------------
+                    */
+
+                    'price' => (float) $product->price,
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | DISPONIBILITÉ DU PRODUIT
+                    |--------------------------------------------------------------------------
+                    */
+
+                    'available' => (bool) $product->is_available,
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | BADGE
+                    |--------------------------------------------------------------------------
+                    */
+
+                    'badge' => $badge,
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | IMAGE
+                    |--------------------------------------------------------------------------
+                    */
+
+                    'image' => $imageUrl,
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | DESCRIPTION
+                    |--------------------------------------------------------------------------
+                    */
+
+                    'description' => $product->description,
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | OPTIONS
+                    |--------------------------------------------------------------------------
+                    */
+
+                    'option_groups' => $optionGroups,
+                ];
+            })
+            ->values()
+            ->all();
 
         /*
         |--------------------------------------------------------------------------
-        | DONNÉES CATÉGORIES POUR ALPINE.JS
+        | DONNÉES DES CATÉGORIES POUR ALPINE.JS
         |--------------------------------------------------------------------------
+        |
+        | La Blade attend :
+        |
+        | - item.id
+        | - item.name
+        | - item.slug
+        | - item.products_count
+        |
         */
 
         $categoriesData = $categories
-            ->map(function ($category) {
+            ->map(function (Category $category) {
 
                 return [
-                    'id' => $category->id,
+                    'id' => (int) $category->id,
 
                     'name' => $category->name,
 
                     'slug' => $category->slug,
 
-                    'products_count' =>
-                        $category->products_count,
+                    'products_count' => (int) $category->products_count,
                 ];
             })
-            ->values();
+            ->values()
+            ->all();
 
         /*
         |--------------------------------------------------------------------------
-        | VUE
+        | RETOUR
         |--------------------------------------------------------------------------
         */
 
-        return view('storefront.plats.index', [
+        return [
             'products' => $products,
 
             'categories' => $categories,
@@ -260,124 +446,6 @@ class DishesController extends Controller
             'productsData' => $productsData,
 
             'categoriesData' => $categoriesData,
-        ]);
-    }
-
-    public function data()
-{
-    $categorySlugs = [
-        'accompagnement',
-        'boisson',
-        'sauce',
-        'grillade',
-    ];
-
-    $categories = Category::withCount('products')
-        ->whereIn('slug', $categorySlugs)
-        ->get()
-        ->sortBy(function ($category) use ($categorySlugs) {
-            return array_search(
-                $category->slug,
-                $categorySlugs
-            );
-        })
-        ->values();
-
-    $products = Product::with([
-        'category',
-
-        'productImages' => function ($query) {
-            $query
-                ->with('media')
-                ->orderByDesc('is_primary')
-                ->orderBy('sort_order');
-        },
-
-        'optionGroups' => function ($query) {
-            $query
-                ->orderBy('sort_order')
-                ->with([
-                    'optionChoices' => function ($query) {
-                        $query->orderBy('sort_order');
-                    },
-                ]);
-        },
-    ])
-        ->orderByDesc('is_featured')
-        ->latest()
-        ->get();
-
-    $productsData = $products->map(function ($product) {
-
-        $image = null;
-
-        $primaryImage = $product->productImages->first();
-
-        if (
-            $primaryImage &&
-            $primaryImage->media &&
-            $primaryImage->media->path
-        ) {
-            $media = $primaryImage->media;
-
-            $disk = $media->disk ?: 'public';
-
-            if (\Illuminate\Support\Facades\Storage::disk($disk)->exists($media->path)) {
-                $image = \Illuminate\Support\Facades\Storage::disk($disk)->url($media->path);
-            }
-        }
-
-        $optionGroups = $product->optionGroups
-            ->map(function ($group) {
-
-                return [
-                    'id' => $group->id,
-                    'name' => $group->name,
-                    'is_required' => (bool) $group->is_required,
-                    'min_choices' => (int) $group->min_choices,
-                    'max_choices' => (int) $group->max_choices,
-
-                    'choices' => $group->optionChoices
-                        ->map(function ($choice) {
-                            return [
-                                'id' => $choice->id,
-                                'name' => $choice->name,
-                                'price_modifier' => (float) $choice->price_modifier,
-                                'available' => (bool) $choice->is_available,
-                            ];
-                        })
-                        ->values(),
-                ];
-            })
-            ->values();
-
-        return [
-            'id' => $product->id,
-            'name' => $product->name,
-            'category' => $product->category?->slug ?? 'all',
-            'price' => (float) $product->price,
-            'available' => (bool) $product->is_available,
-            'badge' => $product->is_featured ? 'Populaire' : '',
-            'image' => $image,
-            'description' => $product->description ?? '',
-            'option_groups' => $optionGroups,
         ];
-    })->values();
-
-    $categoriesData = $categories
-        ->map(function ($category) {
-            return [
-                'id' => $category->id,
-                'name' => $category->name,
-                'slug' => $category->slug,
-                'products_count' => $category->products_count,
-            ];
-        })
-        ->values();
-
-    return response()->json([
-        'products' => $productsData,
-        'categories' => $categoriesData,
-    ]);
-}
+    }
 }

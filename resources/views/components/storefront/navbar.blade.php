@@ -1,8 +1,13 @@
 {{-- ========================================================= --}}
-{{-- FON-KPA NAVBAR — DESIGN INSPIREE DE LA MAQUETTE          --}}
+{{-- FON-KPA NAVBAR                                           --}}
+{{-- Desktop conservé + Mobile Bottom Navigation moderne     --}}
 {{-- ========================================================= --}}
 
-{{-- Bootstrap Icons --}}
+
+{{-- ========================================================= --}}
+{{-- BOOTSTRAP ICONS                                          --}}
+{{-- ========================================================= --}}
+
 <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
@@ -10,496 +15,516 @@
 
 
 {{-- ========================================================= --}}
-{{-- NAVBAR PRINCIPALE                                         --}}
+{{-- NAVBAR PRINCIPALE                                        --}}
 {{-- ========================================================= --}}
 
 <div
     x-data="fonKpaNavbar()"
     x-init="init()"
+    :class="{ 'overflow-hidden': mobileAccountOpen }"
     class="relative z-[100]"
 >
 
+
     {{-- ===================================================== --}}
-    {{-- MOBILE MENU                                           --}}
+    {{-- MOBILE : BOTTOM SHEET COMPTE                        --}}
     {{-- ===================================================== --}}
 
-    <el-dialog>
+    <div
+        x-show="mobileAccountOpen"
+        x-cloak
+        class="fixed inset-0 z-[110] lg:hidden"
+        aria-modal="true"
+        role="dialog"
+        aria-label="Menu mobile"
+        @keydown.escape.window="mobileAccountOpen = false"
+    >
 
-        <dialog
-            id="mobile-menu"
-            class="backdrop:bg-transparent lg:hidden"
+        {{-- ------------------------------------------------- --}}
+        {{-- BACKDROP                                          --}}
+        {{-- ------------------------------------------------- --}}
+
+        <div
+            class="absolute inset-0 bg-[#3D1F0D]/25
+                   backdrop-blur-[4px]"
+            @click="mobileAccountOpen = false"
+
+            x-transition:enter="transition-opacity ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+
+            x-transition:leave="transition-opacity ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+        ></div>
+
+
+        {{-- ------------------------------------------------- --}}
+        {{-- BOTTOM SHEET                                      --}}
+        {{-- ------------------------------------------------- --}}
+
+        <section
+            x-show="mobileAccountOpen"
+
+            x-transition:enter="transform transition ease-[cubic-bezier(0.22,1,0.36,1)] duration-400"
+            x-transition:enter-start="translate-y-full"
+            x-transition:enter-end="translate-y-0"
+
+            x-transition:leave="transform transition ease-in duration-250"
+            x-transition:leave-start="translate-y-0"
+            x-transition:leave-end="translate-y-full"
+
+            class="absolute inset-x-0 bottom-0
+                   max-h-[88vh]
+                   overflow-y-auto
+                   rounded-t-[2rem]
+                   border-t border-[#EADCCF]
+                   bg-[#FFFCF7]
+                   shadow-[0_-20px_60px_rgba(89,49,20,0.18)]
+                   pb-[calc(1rem+env(safe-area-inset-bottom))]"
         >
 
-            {{-- Backdrop --}}
-            <el-dialog-backdrop
-                class="fixed inset-0 bg-black/30 opacity-100
-                       backdrop-blur-[2px]
-                       transition-all duration-300 ease-out
-                       data-closed:opacity-0"
-            ></el-dialog-backdrop>
+            {{-- ------------------------------------------------- --}}
+            {{-- HANDLE                                             --}}
+            {{-- ------------------------------------------------- --}}
+
+            <div class="flex justify-center pt-3">
+                <span
+                    class="h-1.5 w-12 rounded-full bg-[#DCCFC4]"
+                ></span>
+            </div>
 
 
-            {{-- Conteneur --}}
+            {{-- ------------------------------------------------- --}}
+            {{-- HEADER DU SHEET                                    --}}
+            {{-- ------------------------------------------------- --}}
+
             <div
-                tabindex="0"
-                class="fixed inset-0 flex focus:outline-none"
+                class="flex items-center justify-between
+                       px-5 pb-4 pt-4"
             >
 
-                {{-- ================================================= --}}
-                {{-- PANNEAU MOBILE                                     --}}
-                {{-- ================================================= --}}
-
-                <el-dialog-panel
-                    class="relative flex w-full max-w-[20rem]
-                           transform flex-col overflow-y-auto
-                           bg-[#FFFCF7] pb-10 shadow-2xl
-                           transition-all duration-300 ease-out
-                           data-closed:-translate-x-full
-                           data-closed:opacity-0
-                           sm:max-w-sm"
-                >
-
-                    {{-- ================================================= --}}
-                    {{-- HEADER MOBILE                                      --}}
-                    {{-- ================================================= --}}
-
-                    <div class="flex items-center justify-between px-5 pb-4 pt-5">
-
-                        {{-- Logo --}}
-                        <a
-                            href="{{ route('home') }}"
-                            class="flex items-center"
-                        >
-                            <img
-                                src="{{ asset('images/FON-KPA LOGO1.png') }}"
-                                alt="FON-KPA"
-                                class="h-7 w-auto"
-                            >
-                        </a>
-
-
-                        {{-- Fermer --}}
-                        <button
-                            type="button"
-                            command="close"
-                            commandfor="mobile-menu"
-                            class="flex h-10 w-10 items-center
-                                   justify-center rounded-full
-                                   text-gray-500
-                                   transition-all duration-200
-                                   hover:bg-[#F8EBD9]
-                                   hover:text-[#e25f12]
-                                   active:scale-90"
-                            aria-label="Fermer le menu"
-                        >
-                            <i class="bi bi-x-lg text-lg"></i>
-                        </button>
-
-                    </div>
-
-
-                    {{-- Séparation --}}
-                    <div class="mx-5 border-b border-[#EDE4DA]"></div>
-
-
-                    {{-- ================================================= --}}
-                    {{-- NAVIGATION MOBILE                                 --}}
-                    {{-- ================================================= --}}
-
-                    <nav
-                        aria-label="Navigation mobile"
-                        class="mt-5 px-4"
-                    >
-
-                        <div class="space-y-1">
-
-                            {{-- Accueil --}}
-                            <a
-                                href="{{ route('home') }}"
-                                class="group flex items-center gap-3 rounded-xl
-                                       px-3 py-3 text-sm font-medium
-                                       transition-all duration-200
-                                       {{ request()->routeIs('home')
-                                           ? 'bg-[#FFF1E7] text-[#e25f12]'
-                                           : 'text-gray-800 hover:bg-[#FFF7F1] hover:text-[#e25f12]' }}"
-                            >
-
-                                <span
-                                    class="flex h-9 w-9 shrink-0
-                                           items-center justify-center
-                                           rounded-lg
-                                           {{ request()->routeIs('home')
-                                               ? 'bg-white text-[#e25f12]'
-                                               : 'bg-[#F7F4F0] text-gray-500 group-hover:text-[#e25f12]' }}"
-                                >
-                                    <i class="bi bi-house text-lg"></i>
-                                </span>
-
-                                <span>
-                                    Accueil
-                                </span>
-
-                            </a>
-
-
-                            {{-- Nos plats --}}
-                            <a
-                                href="{{ route('plats.index') }}"
-                                class="group flex items-center gap-3 rounded-xl
-                                       px-3 py-3 text-sm font-medium
-                                       transition-all duration-200
-                                       {{ request()->routeIs('plats.*')
-                                           ? 'bg-[#FFF1E7] text-[#e25f12]'
-                                           : 'text-gray-800 hover:bg-[#FFF7F1] hover:text-[#e25f12]' }}"
-                            >
-
-                                <span
-                                    class="flex h-9 w-9 shrink-0
-                                           items-center justify-center
-                                           rounded-lg
-                                           bg-[#F7F4F0] text-gray-500
-                                           transition-colors
-                                           group-hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-egg-fried text-lg"></i>
-                                </span>
-
-                                <span>
-                                    Nos plats
-                                </span>
-
-                            </a>
-
-
-                            {{-- Catégories --}}
-                            <a
-                                href="{{ route('categories.index') }}"
-                                class="group flex items-center gap-3 rounded-xl
-                                       px-3 py-3 text-sm font-medium
-                                       transition-all duration-200
-                                       {{ request()->routeIs('categories.*')
-                                           ? 'bg-[#FFF1E7] text-[#e25f12]'
-                                           : 'text-gray-800 hover:bg-[#FFF7F1] hover:text-[#e25f12]' }}"
-                            >
-
-                                <span
-                                    class="flex h-9 w-9 shrink-0
-                                           items-center justify-center
-                                           rounded-lg
-                                           bg-[#F7F4F0] text-gray-500
-                                           transition-colors
-                                           group-hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-grid text-lg"></i>
-                                </span>
-
-                                <span>
-                                    Catégories
-                                </span>
-
-                            </a>
-
-
-                            {{-- À propos --}}
-                            <a
-                                href="{{ route('about') }}"
-                                class="group flex items-center gap-3 rounded-xl
-                                       px-3 py-3 text-sm font-medium
-                                       transition-all duration-200
-                                       {{ request()->routeIs('about')
-                                           ? 'bg-[#FFF1E7] text-[#e25f12]'
-                                           : 'text-gray-800 hover:bg-[#FFF7F1] hover:text-[#e25f12]' }}"
-                            >
-
-                                <span
-                                    class="flex h-9 w-9 shrink-0
-                                           items-center justify-center
-                                           rounded-lg
-                                           bg-[#F7F4F0] text-gray-500
-                                           transition-colors
-                                           group-hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-info-circle text-lg"></i>
-                                </span>
-
-                                <span>
-                                    À propos
-                                </span>
-
-                            </a>
-
-
-                            {{-- Contact --}}
-                            <a
-                                href="{{ route('contact') }}"
-                                class="group flex items-center gap-3 rounded-xl
-                                       px-3 py-3 text-sm font-medium
-                                       transition-all duration-200
-                                       {{ request()->routeIs('contact')
-                                           ? 'bg-[#FFF1E7] text-[#e25f12]'
-                                           : 'text-gray-800 hover:bg-[#FFF7F1] hover:text-[#e25f12]' }}"
-                            >
-
-                                <span
-                                    class="flex h-9 w-9 shrink-0
-                                           items-center justify-center
-                                           rounded-lg
-                                           bg-[#F7F4F0] text-gray-500
-                                           transition-colors
-                                           group-hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-envelope text-lg"></i>
-                                </span>
-
-                                <span>
-                                    Contact
-                                </span>
-
-                            </a>
-
-                        </div>
-
-                    </nav>
-
-
-                    {{-- ================================================= --}}
-                    {{-- COMPTE MOBILE                                     --}}
-                    {{-- ================================================= --}}
+                <div class="flex items-center gap-3">
 
                     <div
-                        x-data="{ open: false }"
-                        class="mt-6 border-t border-[#EDE4DA]
-                               px-4 pt-5"
+                        class="flex h-11 w-11 items-center
+                               justify-center rounded-full
+                               bg-[#FFF1E7]
+                               text-[#E25F12]"
                     >
+                        <i class="bi bi-person text-xl"></i>
+                    </div>
 
-                        <button
-                            type="button"
-                            @click="open = !open"
-                            class="flex w-full items-center
-                                   justify-between rounded-xl
-                                   px-3 py-3 text-gray-900
-                                   transition-all duration-200
-                                   hover:bg-white"
+                    <div>
+
+                        <p
+                            class="text-sm font-bold text-[#593114]"
                         >
+                            Mon compte
+                        </p>
 
-                            <span class="flex items-center gap-3">
-
-                                <span
-                                    class="flex h-9 w-9 items-center
-                                           justify-center rounded-lg
-                                           bg-[#FFF1E7]
-                                           text-[#e25f12]"
-                                >
-                                    <i class="bi bi-person text-lg"></i>
-                                </span>
-
-                                <span class="text-sm font-semibold">
-                                    Mon compte
-                                </span>
-
-                            </span>
-
-                            <i
-                                class="bi bi-chevron-down text-sm
-                                       transition-transform duration-300"
-                                :class="open ? 'rotate-180' : ''"
-                            ></i>
-
-                        </button>
-
-
-                        {{-- Sous-menu --}}
-                        <div
-                            x-show="open"
-                            x-cloak
-                            x-transition
-                            class="mt-2 space-y-1 overflow-hidden"
+                        <p
+                            class="mt-0.5 text-xs text-[#8A7D74]"
                         >
-
-                            @auth
-
-                                <a
-                                    href="{{ route('profile.edit') }}"
-                                    class="flex items-center gap-3
-                                           rounded-lg px-3 py-2.5
-                                           text-sm text-gray-700
-                                           transition
-                                           hover:bg-[#FFF1E7]
-                                           hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-person-circle text-lg"></i>
-                                    <span>Mon profil</span>
-                                </a>
-
-
-                                <a
-                                    href="#"
-                                    class="flex items-center gap-3
-                                           rounded-lg px-3 py-2.5
-                                           text-sm text-gray-700
-                                           transition
-                                           hover:bg-[#FFF1E7]
-                                           hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-bag-check text-lg"></i>
-                                    <span>Mes commandes</span>
-                                </a>
-
-                            @endauth
-
-
-                            @guest
-
-                                <a
-                                    href="{{ route('login') }}"
-                                    class="flex items-center gap-3
-                                           rounded-lg px-3 py-2.5
-                                           text-sm text-gray-700
-                                           transition
-                                           hover:bg-[#FFF1E7]
-                                           hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-box-arrow-in-right text-lg"></i>
-                                    <span>Se connecter</span>
-                                </a>
-
-
-                                <a
-                                    href="{{ route('register') }}"
-                                    class="flex items-center gap-3
-                                           rounded-lg px-3 py-2.5
-                                           text-sm text-gray-700
-                                           transition
-                                           hover:bg-[#FFF1E7]
-                                           hover:text-[#e25f12]"
-                                >
-                                    <i class="bi bi-person-plus text-lg"></i>
-                                    <span>Créer un compte</span>
-                                </a>
-
-                            @endguest
-
-
-                            @auth
-
-                                <div class="border-t border-gray-100 pt-1">
-
-                                    <form
-                                        method="POST"
-                                        action="{{ route('logout') }}"
-                                    >
-                                        @csrf
-
-                                        <button
-                                            type="submit"
-                                            class="flex w-full items-center
-                                                   gap-3 rounded-lg
-                                                   px-3 py-2.5 text-left
-                                                   text-sm text-red-600
-                                                   transition
-                                                   hover:bg-red-50"
-                                        >
-                                            <i class="bi bi-box-arrow-right text-lg"></i>
-                                            <span>Se déconnecter</span>
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            @endauth
-
-                        </div>
+                            Gérez votre espace personnel
+                        </p>
 
                     </div>
 
-
-                    {{-- ================================================= --}}
-                    {{-- PANIER MOBILE                                      --}}
-                    {{-- ================================================= --}}
-
-                    @php
-                        $mobileCartCount = collect(
-                            session('cart', [])
-                        )->sum('quantity');
-                    @endphp
-
-                    <div class="mt-5 border-t border-[#EDE4DA] px-4 pt-5">
-
-                        <a
-                            href="{{ route('cart.index') }}"
-                            class="flex items-center justify-between
-                                   rounded-xl bg-white px-3 py-3
-                                   shadow-sm ring-1 ring-[#EEE5DC]
-                                   transition hover:ring-[#E25F12]"
-                        >
-
-                            <span class="flex items-center gap-3">
-
-                                <span
-                                    class="flex h-9 w-9 items-center
-                                           justify-center rounded-lg
-                                           bg-[#593114] text-white"
-                                >
-                                    <i class="bi bi-cart3"></i>
-                                </span>
-
-                                <span class="text-sm font-semibold text-[#593114]">
-                                    Mon panier
-                                </span>
-
-                            </span>
-
-                            <span
-                                class="flex h-6 min-w-6 items-center
-                                       justify-center rounded-full
-                                       bg-[#e25f12] px-1.5
-                                       text-[10px] font-bold text-white"
-                            >
-                                {{ $mobileCartCount }}
-                            </span>
-
-                        </a>
-
-                    </div>
+                </div>
 
 
-                    {{-- ================================================= --}}
-                    {{-- DEVISE MOBILE                                     --}}
-                    {{-- ================================================= --}}
-
-                    <div class="mt-4 px-4">
-
-                        <div class="flex items-center gap-3
-                                    rounded-xl px-3 py-3
-                                    text-gray-800">
-
-                            <img
-                                src="https://flagcdn.io/flags/4x3/ci.svg"
-                                alt="Côte d'Ivoire"
-                                class="w-5"
-                            >
-
-                            <span class="text-sm font-medium">
-                                FCFA
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </el-dialog-panel>
+                {{-- Fermer --}}
+                <button
+                    type="button"
+                    @click="mobileAccountOpen = false"
+                    class="flex h-10 w-10 items-center
+                           justify-center rounded-full
+                           bg-white
+                           text-[#593114]
+                           ring-1 ring-[#EADCCF]
+                           transition-all duration-300
+                           hover:bg-[#FFF1E7]
+                           hover:text-[#E25F12]
+                           active:scale-90"
+                    aria-label="Fermer le menu"
+                >
+                    <i class="bi bi-x-lg text-sm"></i>
+                </button>
 
             </div>
 
-        </dialog>
 
-    </el-dialog>
+            {{-- ------------------------------------------------- --}}
+            {{-- CONTENU                                            --}}
+            {{-- ------------------------------------------------- --}}
+
+            <div class="px-4">
 
 
-    {{-- ========================================================= --}}
-    {{-- HEADER / NAVBAR DESKTOP                                  --}}
-    {{-- ========================================================= --}}
+                {{-- ================================================= --}}
+                {{-- ESPACE COMPTE                                    --}}
+                {{-- ================================================= --}}
+
+                <div
+                    class="overflow-hidden rounded-2xl
+                           border border-[#EEE5DC]
+                           bg-white"
+                >
+
+                    @auth
+
+                        {{-- Mon profil --}}
+                        <a
+                            href="{{ route('profile.edit') }}"
+                            class="flex items-center gap-3
+                                   px-4 py-3.5
+                                   text-sm text-[#3F3834]
+                                   transition-colors duration-200
+                                   hover:bg-[#FFF7F1]
+                                   hover:text-[#E25F12]"
+                        >
+
+                            <span
+                                class="flex h-9 w-9 items-center
+                                       justify-center rounded-xl
+                                       bg-[#F8F4EF]
+                                       text-[#593114]"
+                            >
+                                <i class="bi bi-person-circle text-lg"></i>
+                            </span>
+
+                            <span class="font-medium">
+                                Mon profil
+                            </span>
+
+                            <i
+                                class="bi bi-chevron-right ml-auto
+                                       text-xs text-[#A99B91]"
+                            ></i>
+
+                        </a>
+
+
+                        {{-- Mes commandes --}}
+                        <a
+                            href="#"
+                            class="flex items-center gap-3
+                                   border-t border-[#F0E9E3]
+                                   px-4 py-3.5
+                                   text-sm text-[#3F3834]
+                                   transition-colors duration-200
+                                   hover:bg-[#FFF7F1]
+                                   hover:text-[#E25F12]"
+                        >
+
+                            <span
+                                class="flex h-9 w-9 items-center
+                                       justify-center rounded-xl
+                                       bg-[#F8F4EF]
+                                       text-[#593114]"
+                            >
+                                <i class="bi bi-bag-check text-lg"></i>
+                            </span>
+
+                            <span class="font-medium">
+                                Mes commandes
+                            </span>
+
+                            <i
+                                class="bi bi-chevron-right ml-auto
+                                       text-xs text-[#A99B91]"
+                            ></i>
+
+                        </a>
+
+                    @else
+
+                        {{-- Se connecter --}}
+                        <a
+                            href="{{ route('login') }}"
+                            class="flex items-center gap-3
+                                   px-4 py-3.5
+                                   text-sm text-[#3F3834]
+                                   transition-colors duration-200
+                                   hover:bg-[#FFF7F1]
+                                   hover:text-[#E25F12]"
+                        >
+
+                            <span
+                                class="flex h-9 w-9 items-center
+                                       justify-center rounded-xl
+                                       bg-[#F8F4EF]
+                                       text-[#593114]"
+                            >
+                                <i
+                                    class="bi bi-box-arrow-in-right text-lg"
+                                ></i>
+                            </span>
+
+                            <span class="font-medium">
+                                Se connecter
+                            </span>
+
+                            <i
+                                class="bi bi-chevron-right ml-auto
+                                       text-xs text-[#A99B91]"
+                            ></i>
+
+                        </a>
+
+
+                        {{-- Créer un compte --}}
+                        <a
+                            href="{{ route('register') }}"
+                            class="flex items-center gap-3
+                                   border-t border-[#F0E9E3]
+                                   px-4 py-3.5
+                                   text-sm text-[#3F3834]
+                                   transition-colors duration-200
+                                   hover:bg-[#FFF7F1]
+                                   hover:text-[#E25F12]"
+                        >
+
+                            <span
+                                class="flex h-9 w-9 items-center
+                                       justify-center rounded-xl
+                                       bg-[#F8F4EF]
+                                       text-[#593114]"
+                            >
+                                <i class="bi bi-person-plus text-lg"></i>
+                            </span>
+
+                            <span class="font-medium">
+                                Créer un compte
+                            </span>
+
+                            <i
+                                class="bi bi-chevron-right ml-auto
+                                       text-xs text-[#A99B91]"
+                            ></i>
+
+                        </a>
+
+                    @endauth
+
+                </div>
+
+
+                {{-- ================================================= --}}
+                {{-- NAVIGATION SECONDAIRE                            --}}
+                {{-- ================================================= --}}
+
+                <div class="mt-4">
+
+                    <p
+                        class="mb-2 px-2 text-[10px]
+                               font-bold uppercase tracking-[0.16em]
+                               text-[#A99B91]"
+                    >
+                        Découvrir
+                    </p>
+
+
+                    <div
+                        class="overflow-hidden rounded-2xl
+                               border border-[#EEE5DC]
+                               bg-white"
+                    >
+
+                        {{-- À propos --}}
+                        <a
+                            href="{{ route('about') }}"
+                            class="flex items-center gap-3
+                                   px-4 py-3.5
+                                   text-sm text-[#3F3834]
+                                   transition-colors duration-200
+                                   hover:bg-[#FFF7F1]
+                                   hover:text-[#E25F12]"
+                        >
+
+                            <span
+                                class="flex h-9 w-9 items-center
+                                       justify-center rounded-xl
+                                       bg-[#F8F4EF]
+                                       text-[#593114]"
+                            >
+                                <i class="bi bi-info-circle text-lg"></i>
+                            </span>
+
+                            <span class="font-medium">
+                                À propos
+                            </span>
+
+                            <i
+                                class="bi bi-chevron-right ml-auto
+                                       text-xs text-[#A99B91]"
+                            ></i>
+
+                        </a>
+
+
+                        {{-- Contact --}}
+                        <a
+                            href="{{ route('contact') }}"
+                            class="flex items-center gap-3
+                                   border-t border-[#F0E9E3]
+                                   px-4 py-3.5
+                                   text-sm text-[#3F3834]
+                                   transition-colors duration-200
+                                   hover:bg-[#FFF7F1]
+                                   hover:text-[#E25F12]"
+                        >
+
+                            <span
+                                class="flex h-9 w-9 items-center
+                                       justify-center rounded-xl
+                                       bg-[#F8F4EF]
+                                       text-[#593114]"
+                            >
+                                <i class="bi bi-envelope text-lg"></i>
+                            </span>
+
+                            <span class="font-medium">
+                                Contact
+                            </span>
+
+                            <i
+                                class="bi bi-chevron-right ml-auto
+                                       text-xs text-[#A99B91]"
+                            ></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                {{-- ================================================= --}}
+                {{-- DEVISE                                            --}}
+                {{-- ================================================= --}}
+
+                <div
+                    class="mt-4 flex items-center
+                           justify-between rounded-2xl
+                           border border-[#EEE5DC]
+                           bg-white px-4 py-3.5"
+                >
+
+                    <div class="flex items-center gap-3">
+
+                        <span
+                            class="flex h-9 w-9 items-center
+                                   justify-center rounded-xl
+                                   bg-[#F8F4EF] text-base"
+                        >
+                            🇨🇮
+                        </span>
+
+                        <div>
+
+                            <p
+                                class="text-sm font-semibold
+                                       text-[#593114]"
+                            >
+                                Côte d'Ivoire
+                            </p>
+
+                            <p
+                                class="text-[11px] text-[#9A8D84]"
+                            >
+                                Devise
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <span
+                        class="rounded-full
+                               bg-[#FFF1E7]
+                               px-3 py-1.5
+                               text-xs font-bold
+                               text-[#E25F12]"
+                    >
+                        FCFA
+                    </span>
+
+                </div>
+
+
+                {{-- ================================================= --}}
+                {{-- DÉCONNEXION                                       --}}
+                {{-- ================================================= --}}
+
+                @auth
+
+                    <div class="mt-4">
+
+                        <form
+                            method="POST"
+                            action="{{ route('logout') }}"
+                        >
+
+                            @csrf
+
+                            <button
+                                type="submit"
+                                class="flex w-full items-center
+                                       gap-3 rounded-2xl
+                                       border border-red-100
+                                       bg-red-50/70
+                                       px-4 py-3.5
+                                       text-left text-sm
+                                       font-medium text-red-600
+                                       transition-all duration-200
+                                       hover:bg-red-50
+                                       active:scale-[0.99]"
+                            >
+
+                                <span
+                                    class="flex h-9 w-9 items-center
+                                           justify-center rounded-xl
+                                           bg-white text-red-600"
+                                >
+                                    <i
+                                        class="bi bi-box-arrow-right text-lg"
+                                    ></i>
+                                </span>
+
+                                <span>
+                                    Se déconnecter
+                                </span>
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                @endauth
+
+
+            </div>
+
+
+            {{-- ------------------------------------------------- --}}
+            {{-- ESPACE BAS                                         --}}
+            {{-- ------------------------------------------------- --}}
+
+            <div class="h-2"></div>
+
+        </section>
+
+    </div>
+
+
+
+    {{-- ===================================================== --}}
+    {{-- HEADER / NAVBAR                                      --}}
+    {{-- ===================================================== --}}
 
     <header
         class="fixed inset-x-0 top-0 z-50
@@ -511,41 +536,33 @@
 
         <nav
             aria-label="Navigation principale"
-            class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)]"
+            class="mx-auto w-full max-w-[1720px]
+                   px-[clamp(1.25rem,7vw,7.5rem)]"
         >
 
             <div
-                class="flex h-[76px] items-center justify-between
-                       transition-all duration-500"
-                :class="scrolled ? 'h-[68px]' : 'h-[76px]'"
+                class="flex h-[68px] items-center
+                       justify-between
+                       transition-all duration-500
+                       sm:h-[72px] lg:h-[76px]"
+                :class="scrolled
+                    ? 'lg:h-[68px]'
+                    : 'lg:h-[76px]'"
             >
 
 
                 {{-- ================================================= --}}
-                {{-- GAUCHE : LOGO                                      --}}
+                {{-- GAUCHE : LOGO                                    --}}
                 {{-- ================================================= --}}
 
-                <div class="flex shrink-0 items-center">
+                <div
+                    class="flex shrink-0 items-center"
+                >
 
-                    {{-- Menu mobile --}}
-                    <button
-                        type="button"
-                        command="show-modal"
-                        commandfor="mobile-menu"
-                        class="mr-3 flex h-10 w-10
-                               items-center justify-center
-                               rounded-full text-[#593114]
-                               transition-all duration-200
-                               hover:bg-[#FFF1E7]
-                               hover:text-[#e25f12]
-                               active:scale-90 lg:hidden"
-                        aria-label="Ouvrir le menu"
-                    >
-                        <i class="bi bi-list text-2xl"></i>
-                    </button>
+                    {{-- ------------------------------------------------- --}}
+                    {{-- LOGO MOBILE + DESKTOP                             --}}
+                    {{-- ------------------------------------------------- --}}
 
-
-                    {{-- Logo --}}
                     <a
                         href="{{ route('home') }}"
                         class="group flex items-center"
@@ -558,8 +575,9 @@
                         <img
                             src="{{ asset('images/FON-KPA LOGO1.png') }}"
                             alt="FON-KPA"
-                            class="h-7 w-auto transition-transform
-                                   duration-300 group-hover:scale-[1.02]
+                            class="h-7 w-auto
+                                   transition-transform duration-300
+                                   group-hover:scale-[1.02]
                                    sm:h-7"
                         >
 
@@ -568,124 +586,158 @@
                 </div>
 
 
+
                 {{-- ================================================= --}}
-                {{-- CENTRE : NAVIGATION                                --}}
+                {{-- CENTRE : NAVIGATION DESKTOP                      --}}
                 {{-- ================================================= --}}
 
                 <div class="hidden lg:flex">
 
-                    <div class="flex items-center gap-8 xl:gap-10">
+                    <div
+                        class="flex items-center
+                               gap-8 xl:gap-10"
+                    >
 
-                        {{-- Accueil --}}
+                        {{-- ------------------------------------------------- --}}
+                        {{-- ACCUEIL                                            --}}
+                        {{-- ------------------------------------------------- --}}
+
                         <a
                             href="{{ route('home') }}"
                             class="relative py-2 text-[13px]
-                                   font-medium transition-colors
-                                   duration-200"
-                            :class="'{{ request()->routeIs('home')
-                                ? 'text-[#e25f12]'
-                                : 'text-[#3F3834] hover:text-[#e25f12]' }}'"
+                                   font-medium
+                                   transition-colors duration-200
+                                   {{ request()->routeIs('home')
+                                       ? 'text-[#e25f12]'
+                                       : 'text-[#3F3834] hover:text-[#e25f12]' }}"
                         >
+
                             Accueil
 
                             @if(request()->routeIs('home'))
+
                                 <span
                                     class="absolute -bottom-1 left-1/2
                                            h-1 w-1 -translate-x-1/2
                                            rounded-full bg-[#e25f12]"
                                 ></span>
+
                             @endif
 
                         </a>
 
 
-                        {{-- Nos plats --}}
+                        {{-- ------------------------------------------------- --}}
+                        {{-- NOS PLATS                                          --}}
+                        {{-- ------------------------------------------------- --}}
+
                         <a
                             href="{{ route('plats.index') }}"
                             class="relative py-2 text-[13px]
-                                   font-medium transition-colors
-                                   duration-200
+                                   font-medium
+                                   transition-colors duration-200
                                    {{ request()->routeIs('plats.*')
                                        ? 'text-[#e25f12]'
                                        : 'text-[#3F3834] hover:text-[#e25f12]' }}"
                         >
+
                             Nos plats
 
                             @if(request()->routeIs('plats.*'))
+
                                 <span
                                     class="absolute -bottom-1 left-1/2
                                            h-1 w-1 -translate-x-1/2
                                            rounded-full bg-[#e25f12]"
                                 ></span>
+
                             @endif
 
                         </a>
 
 
-                        {{-- Catégories --}}
+                        {{-- ------------------------------------------------- --}}
+                        {{-- CATÉGORIES                                        --}}
+                        {{-- ------------------------------------------------- --}}
+
                         <a
                             href="{{ route('categories.index') }}"
                             class="relative py-2 text-[13px]
-                                   font-medium transition-colors
-                                   duration-200
+                                   font-medium
+                                   transition-colors duration-200
                                    {{ request()->routeIs('categories.*')
                                        ? 'text-[#e25f12]'
                                        : 'text-[#3F3834] hover:text-[#e25f12]' }}"
                         >
+
                             Catégories
 
                             @if(request()->routeIs('categories.*'))
+
                                 <span
                                     class="absolute -bottom-1 left-1/2
                                            h-1 w-1 -translate-x-1/2
                                            rounded-full bg-[#e25f12]"
                                 ></span>
+
                             @endif
 
                         </a>
 
 
-                        {{-- À propos --}}
+                        {{-- ------------------------------------------------- --}}
+                        {{-- À PROPOS                                           --}}
+                        {{-- ------------------------------------------------- --}}
+
                         <a
                             href="{{ route('about') }}"
                             class="relative py-2 text-[13px]
-                                   font-medium transition-colors
-                                   duration-200
+                                   font-medium
+                                   transition-colors duration-200
                                    {{ request()->routeIs('about')
                                        ? 'text-[#e25f12]'
                                        : 'text-[#3F3834] hover:text-[#e25f12]' }}"
                         >
+
                             À propos
 
                             @if(request()->routeIs('about'))
+
                                 <span
                                     class="absolute -bottom-1 left-1/2
                                            h-1 w-1 -translate-x-1/2
                                            rounded-full bg-[#e25f12]"
                                 ></span>
+
                             @endif
 
                         </a>
 
 
-                        {{-- Contact --}}
+                        {{-- ------------------------------------------------- --}}
+                        {{-- CONTACT                                            --}}
+                        {{-- ------------------------------------------------- --}}
+
                         <a
                             href="{{ route('contact') }}"
                             class="relative py-2 text-[13px]
-                                   font-medium transition-colors
-                                   duration-200
+                                   font-medium
+                                   transition-colors duration-200
                                    {{ request()->routeIs('contact')
                                        ? 'text-[#e25f12]'
                                        : 'text-[#3F3834] hover:text-[#e25f12]' }}"
                         >
+
                             Contact
 
                             @if(request()->routeIs('contact'))
+
                                 <span
                                     class="absolute -bottom-1 left-1/2
                                            h-1 w-1 -translate-x-1/2
                                            rounded-full bg-[#e25f12]"
                                 ></span>
+
                             @endif
 
                         </a>
@@ -695,15 +747,19 @@
                 </div>
 
 
+
                 {{-- ================================================= --}}
-                {{-- DROITE : ACTIONS                                  --}}
+                {{-- DROITE : ACTIONS DESKTOP                         --}}
                 {{-- ================================================= --}}
 
-                <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+                <div
+                    class="flex shrink-0 items-center
+                           gap-2 sm:gap-3"
+                >
 
 
                     {{-- ================================================= --}}
-                    {{-- COMPTE                                           --}}
+                    {{-- COMPTE DESKTOP                                   --}}
                     {{-- ================================================= --}}
 
                     <div
@@ -726,31 +782,38 @@
                                    hover:bg-[#FFF1E7]
                                    hover:text-[#e25f12]"
                             aria-label="Mon compte"
+                            :aria-expanded="open"
                         >
 
-                            <i
-                                class="bi bi-person text-[17px]"
-                            ></i>
+                            <i class="bi bi-person text-[17px]"></i>
 
                         </button>
 
 
-                        {{-- Dropdown --}}
+                        {{-- ------------------------------------------------- --}}
+                        {{-- DROPDOWN COMPTE                                   --}}
+                        {{-- ------------------------------------------------- --}}
+
                         <div
                             x-show="open"
                             x-cloak
+
                             x-transition:enter="transition ease-out duration-200"
                             x-transition:enter-start="opacity-0 translate-y-2 scale-95"
                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+
                             x-transition:leave="transition ease-in duration-150"
                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                             x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+
                             class="absolute right-0 top-12 z-50 w-64
                                    overflow-hidden rounded-2xl
                                    border border-[#EEE5DC]
-                                   bg-white shadow-[0_20px_50px_rgba(89,49,20,0.12)]"
+                                   bg-white
+                                   shadow-[0_20px_50px_rgba(89,49,20,0.12)]"
                         >
 
+                            {{-- Header compte --}}
                             <div
                                 class="border-b border-[#F0E9E3]
                                        bg-[#FFFCF7] px-4 py-4"
@@ -765,17 +828,26 @@
                                                bg-[#FFF1E7]
                                                text-[#e25f12]"
                                     >
-                                        <i class="bi bi-person text-xl"></i>
+                                        <i
+                                            class="bi bi-person text-xl"
+                                        ></i>
                                     </div>
 
                                     <div>
-                                        <p class="text-sm font-semibold text-[#593114]">
+
+                                        <p
+                                            class="text-sm font-semibold
+                                                   text-[#593114]"
+                                        >
                                             Mon compte
                                         </p>
 
-                                        <p class="text-xs text-gray-500">
+                                        <p
+                                            class="text-xs text-gray-500"
+                                        >
                                             Gérez votre espace personnel
                                         </p>
+
                                     </div>
 
                                 </div>
@@ -783,6 +855,7 @@
                             </div>
 
 
+                            {{-- Liens --}}
                             <div class="p-2">
 
                                 @auth
@@ -796,8 +869,14 @@
                                                hover:bg-[#FFF1E7]
                                                hover:text-[#e25f12]"
                                     >
-                                        <i class="bi bi-person-circle text-lg"></i>
-                                        <span>Mon profil</span>
+                                        <i
+                                            class="bi bi-person-circle text-lg"
+                                        ></i>
+
+                                        <span>
+                                            Mon profil
+                                        </span>
+
                                     </a>
 
 
@@ -810,8 +889,14 @@
                                                hover:bg-[#FFF1E7]
                                                hover:text-[#e25f12]"
                                     >
-                                        <i class="bi bi-bag-check text-lg"></i>
-                                        <span>Mes commandes</span>
+                                        <i
+                                            class="bi bi-bag-check text-lg"
+                                        ></i>
+
+                                        <span>
+                                            Mes commandes
+                                        </span>
+
                                     </a>
 
                                 @endauth
@@ -828,8 +913,15 @@
                                                hover:bg-[#FFF1E7]
                                                hover:text-[#e25f12]"
                                     >
-                                        <i class="bi bi-box-arrow-in-right text-lg"></i>
-                                        <span>Se connecter</span>
+
+                                        <i
+                                            class="bi bi-box-arrow-in-right text-lg"
+                                        ></i>
+
+                                        <span>
+                                            Se connecter
+                                        </span>
+
                                     </a>
 
 
@@ -842,8 +934,15 @@
                                                hover:bg-[#FFF1E7]
                                                hover:text-[#e25f12]"
                                     >
-                                        <i class="bi bi-person-plus text-lg"></i>
-                                        <span>Créer un compte</span>
+
+                                        <i
+                                            class="bi bi-person-plus text-lg"
+                                        ></i>
+
+                                        <span>
+                                            Créer un compte
+                                        </span>
+
                                     </a>
 
                                 @endguest
@@ -851,27 +950,39 @@
                             </div>
 
 
+                            {{-- Déconnexion --}}
                             @auth
 
-                                <div class="border-t border-[#F0E9E3] p-2">
+                                <div
+                                    class="border-t border-[#F0E9E3] p-2"
+                                >
 
                                     <form
                                         method="POST"
                                         action="{{ route('logout') }}"
                                     >
+
                                         @csrf
 
                                         <button
                                             type="submit"
                                             class="flex w-full items-center
-                                                   gap-3 rounded-xl px-3 py-2.5
+                                                   gap-3 rounded-xl
+                                                   px-3 py-2.5
                                                    text-left text-sm
                                                    text-red-600
                                                    transition
                                                    hover:bg-red-50"
                                         >
-                                            <i class="bi bi-box-arrow-right text-lg"></i>
-                                            <span>Se déconnecter</span>
+
+                                            <i
+                                                class="bi bi-box-arrow-right text-lg"
+                                            ></i>
+
+                                            <span>
+                                                Se déconnecter
+                                            </span>
+
                                         </button>
 
                                     </form>
@@ -885,8 +996,9 @@
                     </div>
 
 
+
                     {{-- ================================================= --}}
-                    {{-- PANIER                                            --}}
+                    {{-- PANIER DESKTOP                                   --}}
                     {{-- ================================================= --}}
 
                     @php
@@ -894,6 +1006,7 @@
                             session('cart', [])
                         )->sum('quantity');
                     @endphp
+
 
                     <div
                         x-data="{
@@ -909,6 +1022,7 @@
                                 }
                             );
                         "
+                        class="hidden lg:block"
                     >
 
                         <a
@@ -934,9 +1048,7 @@
 
 
                             <span
-                                x-show="cartCount > 0"
                                 x-text="cartCount"
-                                x-cloak
                                 class="absolute -right-1 -top-1
                                        flex h-[18px] min-w-[18px]
                                        items-center justify-center
@@ -952,8 +1064,9 @@
                     </div>
 
 
+
                     {{-- ================================================= --}}
-                    {{-- CTA PRINCIPAL                                     --}}
+                    {{-- CTA PRINCIPAL DESKTOP                           --}}
                     {{-- ================================================= --}}
 
                     <a
@@ -967,7 +1080,7 @@
                                hover:-translate-y-0.5
                                hover:bg-[#593114]
                                hover:shadow-[0_12px_25px_rgba(89,49,20,0.18)]
-                               sm:flex"
+                               lg:flex"
                     >
                         Commander
                     </a>
@@ -980,18 +1093,345 @@
 
     </header>
 
+
+
+    {{-- ===================================================== --}}
+    {{-- MOBILE BOTTOM NAVIGATION                             --}}
+    {{-- ===================================================== --}}
+
+    <div
+        class="fixed inset-x-3 bottom-3 z-[90] lg:hidden"
+    >
+
+        <nav
+            aria-label="Navigation mobile"
+            class="mx-auto flex max-w-md items-center
+                   rounded-[1.7rem]
+                   border border-[#E8DDD4]
+                   bg-white/90
+                   px-2 py-2
+                   shadow-[0_18px_50px_rgba(89,49,20,0.16)]
+                   backdrop-blur-xl
+                   pb-[calc(0.5rem+env(safe-area-inset-bottom))]"
+        >
+
+
+            {{-- ================================================= --}}
+            {{-- ACCUEIL                                           --}}
+            {{-- ================================================= --}}
+
+            @php
+                $mobileHomeActive = request()->routeIs('home');
+            @endphp
+
+            <a
+                href="{{ route('home') }}"
+                class="group relative flex min-w-0
+                       flex-1 flex-col items-center
+                       justify-center gap-1
+                       rounded-2xl px-1 py-2
+                       text-[10px] font-semibold
+                       transition-all duration-300 ease-out
+                       {{ $mobileHomeActive
+                           ? 'text-[#E25F12]'
+                           : 'text-[#857970] hover:text-[#593114]' }}"
+            >
+
+                <span
+                    class="relative flex h-8 w-8
+                           items-center justify-center
+                           rounded-xl
+                           transition-all duration-300
+                           {{ $mobileHomeActive
+                               ? 'scale-100 bg-[#FFF1E7]'
+                               : 'bg-transparent group-hover:bg-[#FFF7F1]' }}"
+                >
+
+                    <i
+                        class="text-[18px]
+                               {{ $mobileHomeActive
+                                   ? 'bi bi-house-fill'
+                                   : 'bi bi-house' }}"
+                    ></i>
+
+
+                    @if($mobileHomeActive)
+
+                        <span
+                            class="absolute -bottom-1
+                                   h-1 w-1 rounded-full
+                                   bg-[#E25F12]"
+                        ></span>
+
+                    @endif
+
+                </span>
+
+
+                <span>
+                    Accueil
+                </span>
+
+            </a>
+
+
+
+            {{-- ================================================= --}}
+            {{-- NOS PLATS                                         --}}
+            {{-- ================================================= --}}
+
+            @php
+                $mobilePlatsActive = request()->routeIs('plats.*');
+            @endphp
+
+            <a
+                href="{{ route('plats.index') }}"
+                class="group relative flex min-w-0
+                       flex-1 flex-col items-center
+                       justify-center gap-1
+                       rounded-2xl px-1 py-2
+                       text-[10px] font-semibold
+                       transition-all duration-300 ease-out
+                       {{ $mobilePlatsActive
+                           ? 'text-[#E25F12]'
+                           : 'text-[#857970] hover:text-[#593114]' }}"
+            >
+
+                <span
+                    class="relative flex h-8 w-8
+                           items-center justify-center
+                           rounded-xl
+                           transition-all duration-300
+                           {{ $mobilePlatsActive
+                               ? 'scale-100 bg-[#FFF1E7]'
+                               : 'bg-transparent group-hover:bg-[#FFF7F1]' }}"
+                >
+
+                    <i
+                        class="text-[18px]
+                               {{ $mobilePlatsActive
+                                   ? 'bi bi-egg-fried'
+                                   : 'bi bi-egg-fried' }}"
+                    ></i>
+
+
+                    @if($mobilePlatsActive)
+
+                        <span
+                            class="absolute -bottom-1
+                                   h-1 w-1 rounded-full
+                                   bg-[#E25F12]"
+                        ></span>
+
+                    @endif
+
+                </span>
+
+
+                <span>
+                    Plats
+                </span>
+
+            </a>
+
+
+
+            {{-- ================================================= --}}
+            {{-- CATÉGORIES                                       --}}
+            {{-- ================================================= --}}
+
+            @php
+                $mobileCategoriesActive =
+                    request()->routeIs('categories.*');
+            @endphp
+
+            <a
+                href="{{ route('categories.index') }}"
+                class="group relative flex min-w-0
+                       flex-1 flex-col items-center
+                       justify-center gap-1
+                       rounded-2xl px-1 py-2
+                       text-[10px] font-semibold
+                       transition-all duration-300 ease-out
+                       {{ $mobileCategoriesActive
+                           ? 'text-[#E25F12]'
+                           : 'text-[#857970] hover:text-[#593114]' }}"
+            >
+
+                <span
+                    class="relative flex h-8 w-8
+                           items-center justify-center
+                           rounded-xl
+                           transition-all duration-300
+                           {{ $mobileCategoriesActive
+                               ? 'scale-100 bg-[#FFF1E7]'
+                               : 'bg-transparent group-hover:bg-[#FFF7F1]' }}"
+                >
+
+                    <i class="bi bi-grid text-[18px]"></i>
+
+
+                    @if($mobileCategoriesActive)
+
+                        <span
+                            class="absolute -bottom-1
+                                   h-1 w-1 rounded-full
+                                   bg-[#E25F12]"
+                        ></span>
+
+                    @endif
+
+                </span>
+
+
+                <span>
+                    Catégories
+                </span>
+
+            </a>
+
+
+
+            {{-- ================================================= --}}
+            {{-- PANIER                                            --}}
+            {{-- ================================================= --}}
+
+            <div
+                x-data="{
+                    cartCount: {{ $cartCount }}
+                }"
+                x-init="
+                    window.addEventListener(
+                        'fonkpa-cart-updated',
+                        (event) => {
+                            cartCount = Number(
+                                event.detail?.count || 0
+                            );
+                        }
+                    );
+                "
+                class="flex min-w-0 flex-1"
+            >
+
+                <a
+                    href="{{ route('cart.index') }}"
+                    class="group relative flex w-full
+                           flex-col items-center
+                           justify-center gap-1
+                           rounded-2xl px-1 py-2
+                           text-[10px] font-semibold
+                           text-[#857970]
+                           transition-all duration-300 ease-out
+                           hover:text-[#593114]"
+                >
+
+                    <span
+                        class="relative flex h-8 w-8
+                               items-center justify-center
+                               rounded-xl
+                               transition-all duration-300
+                               group-hover:bg-[#FFF7F1]"
+                    >
+
+                        <i
+                            class="bi bi-basket2 text-[18px]
+                                   transition-transform duration-300
+                                   group-hover:scale-110"
+                        ></i>
+
+
+                        {{-- Badge dynamique --}}
+                        <span
+                            x-show="cartCount > 0"
+                            x-cloak
+                            x-text="cartCount"
+                            class="absolute -right-1 -top-1
+                                   flex h-[17px] min-w-[17px]
+                                   items-center justify-center
+                                   rounded-full
+                                   bg-[#E25F12]
+                                   px-1
+                                   text-[8px] font-bold
+                                   leading-none text-white
+                                   ring-2 ring-white"
+                        ></span>
+
+                    </span>
+
+
+                    <span>
+                        Panier
+                    </span>
+
+                </a>
+
+            </div>
+
+
+
+            {{-- ================================================= --}}
+            {{-- COMPTE                                            --}}
+            {{-- ================================================= --}}
+
+            <button
+                type="button"
+                @click="mobileAccountOpen = true"
+                class="group relative flex min-w-0
+                       flex-1 flex-col items-center
+                       justify-center gap-1
+                       rounded-2xl px-1 py-2
+                       text-[10px] font-semibold
+                       text-[#857970]
+                       transition-all duration-300 ease-out
+                       hover:text-[#593114]"
+                :aria-expanded="mobileAccountOpen"
+                aria-label="Ouvrir mon compte"
+            >
+
+                <span
+                    class="flex h-8 w-8 items-center
+                           justify-center rounded-xl
+                           transition-all duration-300
+                           group-hover:bg-[#FFF7F1]"
+                >
+
+                    <i
+                        class="bi bi-person text-[18px]
+                               transition-transform duration-300
+                               group-hover:scale-110"
+                    ></i>
+
+                </span>
+
+
+                <span>
+                    Compte
+                </span>
+
+            </button>
+
+        </nav>
+
+    </div>
+
+
+
+    {{-- ===================================================== --}}
+    {{-- ESPACE BAS POUR ÉVITER QUE LE CONTENU SOIT CACHÉ    --}}
+    {{-- PAR LA BOTTOM NAVIGATION                             --}}
+    {{-- ===================================================== --}}
+
+    <div
+        class="h-[100px] lg:hidden"
+        aria-hidden="true"
+    ></div>
+
 </div>
 
 
-{{-- ========================================================= --}}
-{{-- ESPACE POUR LA NAVBAR SUR MOBILE                         --}}
-{{-- ========================================================= --}}
-
-<div class="h-[76px] lg:hidden"></div>
-
 
 {{-- ========================================================= --}}
-{{-- ALPINE CLOAK                                              --}}
+{{-- ALPINE CLOAK                                             --}}
 {{-- ========================================================= --}}
 
 <style>
@@ -1001,8 +1441,9 @@
 </style>
 
 
+
 {{-- ========================================================= --}}
-{{-- ALPINE NAVBAR                                             --}}
+{{-- ALPINE NAVBAR                                            --}}
 {{-- ========================================================= --}}
 
 <script>
@@ -1010,21 +1451,72 @@
 
         return {
 
+            /*
+             * ----------------------------------------------------
+             * État du scroll desktop
+             * ----------------------------------------------------
+             */
             scrolled: false,
 
+
+            /*
+             * ----------------------------------------------------
+             * État du menu compte mobile
+             * ----------------------------------------------------
+             */
+            mobileAccountOpen: false,
+
+
+            /*
+             * ----------------------------------------------------
+             * Initialisation
+             * ----------------------------------------------------
+             */
             init() {
 
                 this.handleScroll();
 
+
+                /*
+                 * Écoute du scroll.
+                 *
+                 * passive:true permet au navigateur de gérer
+                 * le scroll sans bloquer l'interface.
+                 */
                 window.addEventListener(
                     'scroll',
                     () => this.handleScroll(),
                     { passive: true }
                 );
 
+
+                /*
+                 * Fermeture du sheet mobile avec Escape.
+                 */
+                window.addEventListener(
+                    'keydown',
+                    (event) => {
+
+                        if (
+                            event.key === 'Escape' &&
+                            this.mobileAccountOpen
+                        ) {
+
+                            this.mobileAccountOpen = false;
+
+                        }
+
+                    }
+                );
+
             },
 
 
+            /*
+             * ----------------------------------------------------
+             * Gestion du scroll
+             * ----------------------------------------------------
+             */
             handleScroll() {
 
                 this.scrolled =

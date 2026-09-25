@@ -4,98 +4,16 @@
 
     <div
         x-data="orderPage()"
-        class="min-h-screen bg-[#FCFAF7] text-[#3B200F]"
+       x-init="init()"
+    class="min-h-screen overflow-hidden bg-[#FCFAF7] text-[#3D1F0D]"
     >
 
         {{-- =========================================================
              MAIN
         ========================================================== --}}
         <main
-            class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)] pb-20 pt-10 sm:pt-14 lg:mt-16 lg:pb-28"
+             class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)] pb-20 pt-10 sm:pt-14 lg:pb-28 lg:pt-16 lg:mt-16"
         >
-
-            {{-- =====================================================
-                 HEADER
-            ====================================================== --}}
-            <header>
-
-                {{-- FIL D'ÉTAPES --}}
-                <div class="mb-8 flex items-center gap-3">
-
-                    {{-- ÉTAPE 1 --}}
-                    <div class="flex items-center gap-2">
-
-                        <span
-                            class="flex h-7 w-7 items-center justify-center rounded-full bg-[#593114] text-[9px] font-bold text-white"
-                        >
-                            <i class="bi bi-check2 text-xs"></i>
-                        </span>
-
-                        <div class="hidden sm:block">
-                            <p class="text-[8px] font-bold uppercase tracking-[0.12em] text-[#9B8D82]">
-                                Étape 1
-                            </p>
-
-                            <p class="text-[10px] font-bold text-[#593114]">
-                                Panier
-                            </p>
-                        </div>
-
-                    </div>
-
-
-                    <span class="h-px w-8 bg-[#DCCFC5] sm:w-12"></span>
-
-
-                    {{-- ÉTAPE 2 --}}
-                    <div class="flex items-center gap-2">
-
-                        <div
-                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#E25F12] text-white shadow-[0_5px_15px_rgba(226,95,18,0.2)]"
-                        >
-                            <span class="text-[10px] font-bold">2</span>
-                        </div>
-
-                        <div class="hidden sm:block">
-                            <p class="text-[8px] font-bold uppercase tracking-[0.12em] text-[#E25F12]">
-                                Étape 2
-                            </p>
-
-                            <p class="text-[10px] font-bold text-[#593114]">
-                                Livraison
-                            </p>
-                        </div>
-
-                    </div>
-
-
-                    <span class="h-px w-8 bg-[#DCCFC5] sm:w-12"></span>
-
-
-                    {{-- ÉTAPE 3 --}}
-                    <div class="flex items-center gap-2">
-
-                        <span
-                            class="flex h-7 w-7 items-center justify-center rounded-full border border-[#DED3CB] bg-white text-[9px] font-semibold text-[#A2948B]"
-                        >
-                            3
-                        </span>
-
-                        <div class="hidden sm:block">
-                            <p class="text-[8px] font-bold uppercase tracking-[0.12em] text-[#9B8D82]">
-                                Étape 3
-                            </p>
-
-                            <p class="text-[10px] font-bold text-[#593114]">
-                                Paiement
-                            </p>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </header>
 
 
             {{-- =====================================================
@@ -165,11 +83,11 @@
 
                                 <div>
 
-                                    <h2
+                                    <h3
                                         class="text-[15px] font-black tracking-tight text-[#3B200F]"
                                     >
                                         Vos informations
-                                    </h2>
+                                    </h3>
 
                                     <p
                                         class="mt-1 text-[10px] leading-5 text-[#968A81]"
@@ -381,11 +299,11 @@
 
                                         <div>
 
-                                            <h2
+                                            <h3
                                                 class="text-[15px] font-black tracking-tight text-[#3B200F]"
                                             >
                                                 Où souhaitez-vous recevoir votre commande ?
-                                            </h2>
+                                            </h3>
 
                                             <p
                                                 class="mt-1 text-[10px] leading-5 text-[#968A81]"
@@ -707,11 +625,11 @@
 
                                         <div>
 
-                                            <h2
+                                            <h3
                                                 class="text-[15px] font-black tracking-tight text-[#3B200F]"
                                             >
                                                 Comment souhaitez-vous payer ?
-                                            </h2>
+                                            </h3>
 
                                             <p
                                                 class="mt-1 text-[10px] leading-5 text-[#968A81]"

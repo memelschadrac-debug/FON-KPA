@@ -90,6 +90,12 @@
             @csrf
             @method('PUT')
 
+            <input
+                type="hidden"
+                name="sort_order"
+                value="{{ old('sort_order', $category->sort_order) }}"
+            >
+
             <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
 
                 {{-- =================================================

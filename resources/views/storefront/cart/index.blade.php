@@ -4,10 +4,14 @@
 
     @section('title', 'FON-KPA — Mon panier')
 
-    <div class="min-h-screen bg-[#FCFAF7] text-[#3D1F0D] lg:mt-10">
+     <div
+    x-data="categoryCatalog()"
+    x-init="init()"
+    class="min-h-screen overflow-hidden bg-[#FCFAF7] text-[#3D1F0D]"
+    >
 
         <main
-            class="mx-auto w-full max-w-[1440px] px-[clamp(1.25rem,5vw,5rem)] pb-20 pt-10 sm:pt-14 lg:pb-28 lg:pt-16"
+            class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)] pb-20 pt-10 sm:pt-14 lg:pb-28 lg:pt-16 lg:mt-16"
         >
 
             {{-- =========================================================
@@ -15,108 +19,6 @@
             ========================================================== --}}
 
             <header>
-
-                {{-- Fil d'étapes --}}
-                <div class="mb-8 flex items-center gap-3">
-
-                    <div class="flex items-center gap-2">
-
-                        <div
-                            class="flex h-8 w-8 shrink-0 items-center
-                            justify-center rounded-full
-                            bg-[#E25F12] text-white
-                            shadow-[0_5px_15px_rgba(226,95,18,0.2)]"
-                        >
-                            <span class="text-[10px] font-bold">1</span>
-                        </div>
-
-                        <div class="hidden sm:block">
-
-                            <p
-                                class="text-[8px] font-bold
-                                    uppercase tracking-[0.12em]
-                                    text-[#E25F12]"
-                            >
-                                    Étape 1
-                            </p>
-
-                            <p
-                                class="text-[10px] font-bold
-                                    text-[#593114]"
-                            >
-                                Panier
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <span class="h-px w-8 bg-[#DCCFC5] sm:w-12"></span>
-
-                    <div class="flex items-center gap-2">
-
-                        <span
-                            class="flex h-7 w-7 items-center justify-center rounded-full border border-[#DED3CB] bg-white text-[9px] font-semibold text-[#A2948B]"
-                        >
-                            2
-                        </span>
-
-                       <div class="hidden sm:block">
-
-                            <p
-                                class="text-[8px] font-bold
-                                uppercase tracking-[0.12em]
-                                text-[#9B8D82]"
-                            >
-                                Étape 2
-                            </p>
-
-                            <p
-                                class="text-[10px] font-bold
-                                text-[#593114]"
-                            >
-                                Livraison
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <span class="h-px w-8 bg-[#DCCFC5] sm:w-12"></span>
-
-
-                    <div class="flex items-center gap-2">
-
-                        <span
-                            class="flex h-7 w-7 items-center justify-center rounded-full border border-[#DED3CB] bg-white text-[9px] font-semibold text-[#A2948B]"
-                        >
-                            3
-                        </span>
-
-                       <div class="hidden sm:block">
-
-                            <p
-                                class="text-[8px] font-bold
-                                uppercase tracking-[0.12em]
-                                text-[#9B8D82]"
-                            >
-                                Étape 3
-                            </p>
-
-                            <p
-                                class="text-[10px] font-bold
-                                text-[#593114]"
-                            >
-                                Paiament
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
 
                 {{-- Titre --}}
                 <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">

@@ -14,7 +14,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::latest()->get();
+        $categories = Category::query()
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
 
         return view('admin.categories.index', compact('categories'));
     }
@@ -33,7 +36,11 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
 
             'slug' => [
                 'required',
@@ -53,7 +60,27 @@ class CategoryController extends Controller
                 'mimes:jpg,jpeg,png,webp',
                 'max:2048',
             ],
+
+            'sort_order' => [
+                'nullable',
+                'integer',
+                'min:1',
+            ],
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | ORDRE D'AFFICHAGE
+        |--------------------------------------------------------------------------
+        |
+        | Si aucun ordre n'est fourni, la nouvelle catégorie est placée
+        | automatiquement à la fin des catégories existantes.
+        |
+        */
+
+        if (!isset($validated['sort_order'])) {
+            $validated['sort_order'] = ((int) Category::max('sort_order')) + 1;
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -126,6 +153,12 @@ class CategoryController extends Controller
                 'mimes:jpg,jpeg,png,webp',
                 'max:2048',
             ],
+
+            'sort_order' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
         ]);
 
         /*
@@ -137,9 +170,11 @@ class CategoryController extends Controller
         if ($request->hasFile('image')) {
 
             /*
-            | Supprime l'ancienne image uniquement si elle appartient
-            | à notre dossier public/images/categories.
+            |--------------------------------------------------------------------------
+            | SUPPRESSION DE L'ANCIENNE IMAGE
+            |--------------------------------------------------------------------------
             */
+
             if (
                 $category->image &&
                 str_starts_with($category->image, 'images/categories/')
@@ -152,9 +187,11 @@ class CategoryController extends Controller
             }
 
             /*
-            | Enregistre la nouvelle image directement dans :
-            | public/images/categories
+            |--------------------------------------------------------------------------
+            | ENREGISTREMENT DE LA NOUVELLE IMAGE
+            |--------------------------------------------------------------------------
             */
+
             $file = $request->file('image');
 
             $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
@@ -168,9 +205,11 @@ class CategoryController extends Controller
         }
 
         /*
-        | Si aucune nouvelle image n'est envoyée,
-        | l'ancienne valeur de image reste inchangée.
+        |--------------------------------------------------------------------------
+        | MISE À JOUR
+        |--------------------------------------------------------------------------
         */
+
         $category->update($validated);
 
         return redirect()

@@ -8,6 +8,7 @@ use App\Models\Media;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -35,6 +36,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::where('is_active', true)
+            ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
 
@@ -119,9 +121,7 @@ class ProductController extends Controller
         */
 
         if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug(
-                $validated['name']
-            );
+            $validated['slug'] = Str::slug($validated['name']);
         }
 
         /*
@@ -130,133 +130,140 @@ class ProductController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $validated['is_available'] =
-            $request->boolean('is_available');
-
-        $validated['is_featured'] =
-            $request->boolean('is_featured');
+        $validated['is_available'] = $request->boolean('is_available');
+        $validated['is_featured'] = $request->boolean('is_featured');
 
         /*
         |--------------------------------------------------------------------------
-        | CRÉATION DU PLAT
+        | CRÉATION DU PLAT + MÉDIA
         |--------------------------------------------------------------------------
+        |
+        | La transaction garantit que la création du produit et de ses
+        | informations en base restent cohérentes.
+        |
         */
 
-        $product = Product::create($validated);
-
-        /*
-        |--------------------------------------------------------------------------
-        | IMAGE DU PLAT
-        |--------------------------------------------------------------------------
-        */
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
+        $product = DB::transaction(function () use ($request, $validated) {
 
             /*
             |--------------------------------------------------------------------------
-            | INFORMATIONS DU FICHIER
+            | CRÉATION DU PRODUIT
             |--------------------------------------------------------------------------
             */
 
-            $mimeType = $file->getMimeType();
-            $fileSize = $file->getSize();
-            $extension = strtolower(
-                $file->getClientOriginalExtension()
-            );
+            $product = Product::create($validated);
 
             /*
             |--------------------------------------------------------------------------
-            | DIMENSIONS
+            | IMAGE DU PLAT
             |--------------------------------------------------------------------------
             */
 
-            $imageSize = getimagesize(
-                $file->getRealPath()
-            );
+            if ($request->hasFile('image')) {
 
-            $width = $imageSize[0] ?? null;
-            $height = $imageSize[1] ?? null;
+                $file = $request->file('image');
 
-            /*
-            |--------------------------------------------------------------------------
-            | NOM UNIQUE
-            |--------------------------------------------------------------------------
-            |
-            | UUID = très faible risque de collision.
-            |
-            */
+                /*
+                |--------------------------------------------------------------------------
+                | INFORMATIONS DU FICHIER
+                |--------------------------------------------------------------------------
+                */
 
-            $filename = Str::uuid()
-                .toString()
-                . '.'
-                . $extension;
+                $mimeType = $file->getMimeType();
+                $fileSize = $file->getSize();
 
-            /*
-            |--------------------------------------------------------------------------
-            | STOCKAGE
-            |--------------------------------------------------------------------------
-            |
-            | storage/app/public/images/products/
-            |
-            */
+                $extension = strtolower(
+                    $file->getClientOriginalExtension()
+                );
 
-            $path = Storage::disk('public')->putFileAs(
-                'images/products',
-                $file,
-                $filename
-            );
+                /*
+                |--------------------------------------------------------------------------
+                | DIMENSIONS
+                |--------------------------------------------------------------------------
+                */
 
-            /*
-            |--------------------------------------------------------------------------
-            | VÉRIFICATION
-            |--------------------------------------------------------------------------
-            */
+                $imageSize = getimagesize(
+                    $file->getRealPath()
+                );
 
-            if (!$path) {
-                $product->delete();
+                $width = $imageSize[0] ?? null;
+                $height = $imageSize[1] ?? null;
 
-                return redirect()
-                    ->back()
-                    ->withInput()
-                    ->with(
-                        'error',
+                /*
+                |--------------------------------------------------------------------------
+                | NOM UNIQUE
+                |--------------------------------------------------------------------------
+                |
+                | UUID = nom pratiquement impossible à dupliquer.
+                |
+                */
+
+                $filename = Str::uuid()->toString()
+                    . '.'
+                    . $extension;
+
+                /*
+                |--------------------------------------------------------------------------
+                | STOCKAGE
+                |--------------------------------------------------------------------------
+                |
+                | storage/app/public/images/products/
+                |
+                */
+
+                $path = Storage::disk('public')->putFileAs(
+                    'images/products',
+                    $file,
+                    $filename
+                );
+
+                /*
+                |--------------------------------------------------------------------------
+                | VÉRIFICATION DU STOCKAGE
+                |--------------------------------------------------------------------------
+                */
+
+                if (!$path) {
+                    throw new \RuntimeException(
                         'Impossible d’enregistrer l’image du plat.'
                     );
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | CRÉATION DU MEDIA
+                |--------------------------------------------------------------------------
+                */
+
+                $media = Media::create([
+                    'disk' => 'public',
+                    'path' => $path,
+                    'filename' => $filename,
+                    'mime_type' => $mimeType,
+                    'size' => $fileSize,
+                    'width' => $width,
+                    'height' => $height,
+                    'alt' => $product->name,
+                    'caption' => null,
+                ]);
+
+                /*
+                |--------------------------------------------------------------------------
+                | LIAISON PRODUCT ↔ MEDIA
+                |--------------------------------------------------------------------------
+                */
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'media_id' => $media->id,
+                    'sort_order' => 0,
+                    'is_primary' => true,
+                    'alt' => $product->name,
+                ]);
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | CRÉATION DU MEDIA
-            |--------------------------------------------------------------------------
-            */
-
-            $media = Media::create([
-                'disk' => 'public',
-                'path' => $path,
-                'filename' => $filename,
-                'mime_type' => $mimeType,
-                'size' => $fileSize,
-                'width' => $width,
-                'height' => $height,
-                'alt' => $product->name,
-                'caption' => null,
-            ]);
-
-            /*
-            |--------------------------------------------------------------------------
-            | LIAISON PRODUCT ↔ MEDIA
-            |--------------------------------------------------------------------------
-            */
-
-            ProductImage::create([
-                'product_id' => $product->id,
-                'media_id' => $media->id,
-                'sort_order' => 0,
-                'is_primary' => true,
-                'alt' => $product->name,
-            ]);
-        }
+            return $product;
+        });
 
         /*
         |--------------------------------------------------------------------------
@@ -291,6 +298,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::where('is_active', true)
+            ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
 
@@ -388,9 +396,7 @@ class ProductController extends Controller
         */
 
         if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug(
-                $validated['name']
-            );
+            $validated['slug'] = Str::slug($validated['name']);
         }
 
         /*
@@ -399,27 +405,41 @@ class ProductController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $validated['is_available'] =
-            $request->boolean('is_available');
-
-        $validated['is_featured'] =
-            $request->boolean('is_featured');
+        $validated['is_available'] = $request->boolean('is_available');
+        $validated['is_featured'] = $request->boolean('is_featured');
 
         /*
         |--------------------------------------------------------------------------
-        | MISE À JOUR DU PLAT
+        | MISE À JOUR
         |--------------------------------------------------------------------------
         */
 
-        $product->update($validated);
+        DB::transaction(function () use (
+            $request,
+            $validated,
+            $product
+        ) {
 
-        /*
-        |--------------------------------------------------------------------------
-        | REMPLACEMENT DE L'IMAGE
-        |--------------------------------------------------------------------------
-        */
+            /*
+            |--------------------------------------------------------------------------
+            | MISE À JOUR DU PRODUIT
+            |--------------------------------------------------------------------------
+            */
 
-        if ($request->hasFile('image')) {
+            $product->update($validated);
+
+            /*
+            |--------------------------------------------------------------------------
+            | AUCUNE NOUVELLE IMAGE
+            |--------------------------------------------------------------------------
+            |
+            | On conserve simplement l'image actuelle.
+            |
+            */
+
+            if (!$request->hasFile('image')) {
+                return;
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -451,6 +471,7 @@ class ProductController extends Controller
 
             $mimeType = $file->getMimeType();
             $fileSize = $file->getSize();
+
             $extension = strtolower(
                 $file->getClientOriginalExtension()
             );
@@ -474,14 +495,13 @@ class ProductController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $filename = Str::uuid()
-                ->toString()
+            $filename = Str::uuid()->toString()
                 . '.'
                 . $extension;
 
             /*
             |--------------------------------------------------------------------------
-            | STOCKAGE LARAVEL
+            | STOCKAGE
             |--------------------------------------------------------------------------
             */
 
@@ -498,13 +518,9 @@ class ProductController extends Controller
             */
 
             if (!$path) {
-                return redirect()
-                    ->back()
-                    ->withInput()
-                    ->with(
-                        'error',
-                        'Impossible d’enregistrer la nouvelle image.'
-                    );
+                throw new \RuntimeException(
+                    'Impossible d’enregistrer la nouvelle image.'
+                );
             }
 
             /*
@@ -575,7 +591,7 @@ class ProductController extends Controller
 
                 $oldMedia->delete();
             }
-        }
+        });
 
         /*
         |--------------------------------------------------------------------------

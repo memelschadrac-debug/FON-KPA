@@ -211,11 +211,11 @@
                             class="relative z-10
                                    h-[370px] w-[370px]
                                    sm:h-[470px] sm:w-[470px]
-                                   lg:h-[560px] lg:w-[560px]"
+                                   lg:h-[460px] lg:w-[460px]"
                         >
 
                             <img
-                                src="{{ asset('images/garba.png') }}"
+                                src="{{ asset('images/sous-hero1.png') }}"
                                 alt="Plat ivoirien FON-KPA"
                                 class="h-full w-full object-contain
                                        drop-shadow-[0_30px_40px_rgba(89,49,20,0.18)]"
@@ -456,7 +456,7 @@
                         >
 
                             <img
-                                src="{{ asset('images/riz_poulet.png') }}"
+                                src="{{ asset('images/Hero4.png') }}"
                                 alt="Cuisine FON-KPA"
                                 class="aspect-[1.05/1] w-full
                                        object-cover
@@ -883,7 +883,7 @@
             >
 
                 <img
-                    src="{{ asset('images/Hero2.jpg') }}"
+                    src="{{ asset('images/Hero13.jpg') }}"
                     alt="Cuisine ivoirienne FON-KPA"
                     class="absolute inset-0 h-full w-full
                            object-cover"
@@ -929,11 +929,11 @@
 
                             <h2
                                 class="mt-4 text-3xl font-black
-                                       leading-[1]
-                                       tracking-[-0.05em]
-                                       text-white
-                                       sm:text-5xl
-                                       lg:text-6xl"
+                                leading-[1]
+                                tracking-[-0.05em]
+                                !text-[#E25F12]
+                                sm:text-5xl
+                                lg:text-6xl"
                             >
                                 Une table peut nourrir
                                 le corps.
@@ -1090,7 +1090,7 @@
                                 class="mt-4 text-3xl font-black
                                        leading-[1.05]
                                        tracking-[-0.045em]
-                                       text-white
+                                       !text-[#E25F12]
                                        sm:text-4xl"
                             >
                                 Découvrez les saveurs

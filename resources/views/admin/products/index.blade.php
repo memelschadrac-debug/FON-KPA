@@ -127,6 +127,60 @@
 
 
         {{-- ========================================================= --}}
+        {{-- MESSAGE D'AVERTISSEMENT                                   --}}
+        {{-- ========================================================= --}}
+
+        @if (session('warning'))
+
+            <div
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    border
+                    border-amber-100
+                    bg-amber-50
+                    px-4
+                    py-3
+                    text-sm
+                    text-amber-700
+                "
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    class="h-5 w-5 shrink-0"
+                >
+                    <path
+                        d="M12 9v4"
+                        stroke-linecap="round"
+                    />
+
+                    <path
+                        d="M12 17h.01"
+                        stroke-linecap="round"
+                    />
+
+                    <path
+                        d="M10.3 4.6 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.6a2 2 0 0 0-3.4 0Z"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+
+                <span>
+                    {{ session('warning') }}
+                </span>
+
+            </div>
+
+        @endif
+
+
+        {{-- ========================================================= --}}
         {{-- CARD PRINCIPALE                                           --}}
         {{-- ========================================================= --}}
 
@@ -177,7 +231,7 @@
 
 
             {{-- ===================================================== --}}
-            {{-- TABLEAU                                                --}}
+            {{-- TABLEAU                                               --}}
             {{-- ===================================================== --}}
 
             @if ($products->count())
@@ -308,6 +362,7 @@
                                     <td class="px-5 py-4">
 
                                         @php
+
                                             $primaryImage =
                                                 $product->productImages->firstWhere('is_primary', true)
                                                 ?? $product->productImages->first();
@@ -317,12 +372,19 @@
                                             $imageUrl = null;
 
                                             if ($media && $media->path) {
+
                                                 $disk = $media->disk ?: 'public';
 
-                                                if (\Illuminate\Support\Facades\Storage::disk($disk)->exists($media->path)) {
-                                                    $imageUrl = \Illuminate\Support\Facades\Storage::disk($disk)->url($media->path);
+                                                if (
+                                                    \Illuminate\Support\Facades\Storage::disk($disk)
+                                                        ->exists($media->path)
+                                                ) {
+                                                    $imageUrl =
+                                                        \Illuminate\Support\Facades\Storage::disk($disk)
+                                                            ->url($media->path);
                                                 }
                                             }
+
                                         @endphp
 
 
@@ -361,6 +423,7 @@
                                                         stroke-width="1.6"
                                                         class="h-5 w-5"
                                                     >
+
                                                         <path
                                                             d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13Z"
                                                         />
@@ -370,6 +433,7 @@
                                                             stroke-linecap="round"
                                                             stroke-linejoin="round"
                                                         />
+
                                                     </svg>
 
                                                 </div>
@@ -882,6 +946,246 @@
                     </table>
 
                 </div>
+
+
+                {{-- ========================================================= --}}
+                {{-- PAGINATION                                                --}}
+                {{-- ========================================================= --}}
+
+                @if ($products->hasPages())
+
+                    <div
+                        class="
+                            flex
+                            flex-col
+                            gap-4
+                            border-t
+                            border-gray-100
+                            px-5
+                            py-4
+                            sm:flex-row
+                            sm:items-center
+                            sm:justify-between
+                        "
+                    >
+
+                        {{-- Informations --}}
+                        <p class="text-[12px] text-gray-400">
+
+                            Affichage de
+
+                            <span class="font-semibold text-gray-600">
+                                {{ $products->firstItem() }}
+                            </span>
+
+                            à
+
+                            <span class="font-semibold text-gray-600">
+                                {{ $products->lastItem() }}
+                            </span>
+
+                            sur
+
+                            <span class="font-semibold text-gray-600">
+                                {{ $products->total() }}
+                            </span>
+
+                            {{ $products->total() > 1 ? 'plats' : 'plat' }}
+
+                        </p>
+
+
+                        {{-- Navigation --}}
+                        <div class="flex items-center gap-1">
+
+                            {{-- Précédent --}}
+                            @if ($products->onFirstPage())
+
+                                <span
+                                    class="
+                                        inline-flex
+                                        h-9
+                                        items-center
+                                        justify-center
+                                        rounded-lg
+                                        border
+                                        border-gray-100
+                                        bg-gray-50
+                                        px-3
+                                        text-[12px]
+                                        font-medium
+                                        text-gray-300
+                                        cursor-not-allowed
+                                    "
+                                >
+                                    Précédent
+                                </span>
+
+                            @else
+
+                                <a
+                                    href="{{ $products->previousPageUrl() }}"
+                                    class="
+                                        inline-flex
+                                        h-9
+                                        items-center
+                                        justify-center
+                                        rounded-lg
+                                        border
+                                        border-gray-200
+                                        bg-white
+                                        px-3
+                                        text-[12px]
+                                        font-medium
+                                        text-gray-600
+                                        transition
+                                        hover:border-[#593114]/20
+                                        hover:bg-[#593114]/[0.05]
+                                        hover:text-[#593114]
+                                    "
+                                >
+                                    Précédent
+                                </a>
+
+                            @endif
+
+
+                            {{-- Numéros de pages --}}
+                            <div class="hidden items-center gap-1 sm:flex">
+
+                                @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+
+                                    @if ($page == $products->currentPage())
+
+                                        <span
+                                            class="
+                                                inline-flex
+                                                h-9
+                                                min-w-9
+                                                items-center
+                                                justify-center
+                                                rounded-lg
+                                                bg-[#593114]
+                                                px-2
+                                                text-[12px]
+                                                font-semibold
+                                                text-white
+                                            "
+                                        >
+                                            {{ $page }}
+                                        </span>
+
+                                    @else
+
+                                        <a
+                                            href="{{ $url }}"
+                                            class="
+                                                inline-flex
+                                                h-9
+                                                min-w-9
+                                                items-center
+                                                justify-center
+                                                rounded-lg
+                                                border
+                                                border-gray-200
+                                                bg-white
+                                                px-2
+                                                text-[12px]
+                                                font-medium
+                                                text-gray-500
+                                                transition
+                                                hover:border-[#593114]/20
+                                                hover:bg-[#593114]/[0.05]
+                                                hover:text-[#593114]
+                                            "
+                                        >
+                                            {{ $page }}
+                                        </a>
+
+                                    @endif
+
+                                @endforeach
+
+                            </div>
+
+
+                            {{-- Page actuelle sur mobile --}}
+                            <span
+                                class="
+                                    inline-flex
+                                    h-9
+                                    min-w-9
+                                    items-center
+                                    justify-center
+                                    rounded-lg
+                                    bg-[#593114]
+                                    px-2
+                                    text-[12px]
+                                    font-semibold
+                                    text-white
+                                    sm:hidden
+                                "
+                            >
+                                {{ $products->currentPage() }}
+                            </span>
+
+
+                            {{-- Suivant --}}
+                            @if ($products->hasMorePages())
+
+                                <a
+                                    href="{{ $products->nextPageUrl() }}"
+                                    class="
+                                        inline-flex
+                                        h-9
+                                        items-center
+                                        justify-center
+                                        rounded-lg
+                                        border
+                                        border-gray-200
+                                        bg-white
+                                        px-3
+                                        text-[12px]
+                                        font-medium
+                                        text-gray-600
+                                        transition
+                                        hover:border-[#593114]/20
+                                        hover:bg-[#593114]/[0.05]
+                                        hover:text-[#593114]
+                                    "
+                                >
+                                    Suivant
+                                </a>
+
+                            @else
+
+                                <span
+                                    class="
+                                        inline-flex
+                                        h-9
+                                        items-center
+                                        justify-center
+                                        rounded-lg
+                                        border
+                                        border-gray-100
+                                        bg-gray-50
+                                        px-3
+                                        text-[12px]
+                                        font-medium
+                                        text-gray-300
+                                        cursor-not-allowed
+                                    "
+                                >
+                                    Suivant
+                                </span>
+
+                            @endif
+
+                        </div>
+
+                    </div>
+
+                @endif
 
             @else
 

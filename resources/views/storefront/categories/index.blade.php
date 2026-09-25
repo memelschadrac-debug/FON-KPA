@@ -9,9 +9,18 @@
         |--------------------------------------------------------------------------
         | CONFIGURATION VISUELLE DES CATÉGORIES
         |--------------------------------------------------------------------------
-        | Les catégories viennent de Laravel.
-        | Cette configuration permet simplement d'associer une image,
-        | une description et une couleur visuelle à chaque slug.
+        |
+        | Ces informations servent uniquement de complément visuel.
+        |
+        | L'image de la catégorie provient en priorité de :
+        |
+        | categories.image
+        |
+        | donc de l'image définie depuis l'administration.
+        |
+        | Les images ci-dessous servent uniquement de fallback lorsqu'une
+        | catégorie ne possède aucune image en base.
+        |
         */
 
         $categoryVisuals = [
@@ -52,7 +61,7 @@
             ],
 
             'boissons' => [
-                'image' => 'bissap.jpg',
+                'image' => 'Boissons.jpg',
                 'description' => 'Des boissons fraîches et naturelles pour accompagner chaque moment.',
                 'eyebrow' => 'Rafraîchissant',
                 'tone' => 'green',
@@ -70,6 +79,10 @@
         |--------------------------------------------------------------------------
         | FALLBACK
         |--------------------------------------------------------------------------
+        |
+        | Utilisé uniquement si aucune catégorie provenant de la base
+        | n'est disponible.
+        |
         */
 
         $fallbackCategories = [
@@ -80,7 +93,9 @@
                 'products_count' => 24,
                 'image' => 'garba.jpg',
                 'eyebrow' => 'L’essentiel',
+                'tone' => 'orange',
             ],
+
             [
                 'slug' => 'grillades',
                 'name' => 'Grillades',
@@ -88,7 +103,9 @@
                 'products_count' => 12,
                 'image' => 'aloco_poulet.jpg',
                 'eyebrow' => 'Au feu',
+                'tone' => 'brown',
             ],
+
             [
                 'slug' => 'attieke',
                 'name' => 'Attiéké',
@@ -96,7 +113,9 @@
                 'products_count' => 12,
                 'image' => 'garba.jpg',
                 'eyebrow' => 'Tradition',
+                'tone' => 'cream',
             ],
+
             [
                 'slug' => 'riz-sauces',
                 'name' => 'Riz & sauces',
@@ -104,7 +123,9 @@
                 'products_count' => 8,
                 'image' => 'riz_poulet.png',
                 'eyebrow' => 'Généreux',
+                'tone' => 'cream',
             ],
+
             [
                 'slug' => 'accompagnements',
                 'name' => 'Accompagnements',
@@ -112,7 +133,9 @@
                 'products_count' => 6,
                 'image' => 'aloco_poulet.jpg',
                 'eyebrow' => 'À côté',
+                'tone' => 'gold',
             ],
+
             [
                 'slug' => 'boissons',
                 'name' => 'Boissons',
@@ -120,7 +143,9 @@
                 'products_count' => 10,
                 'image' => 'bissap.jpg',
                 'eyebrow' => 'Frais',
+                'tone' => 'green',
             ],
+
             [
                 'slug' => 'desserts',
                 'name' => 'Desserts',
@@ -128,6 +153,7 @@
                 'products_count' => 6,
                 'image' => 'dessert.jpg',
                 'eyebrow' => 'Gourmand',
+                'tone' => 'pink',
             ],
         ];
 
@@ -135,57 +161,125 @@
         |--------------------------------------------------------------------------
         | NORMALISATION DES CATÉGORIES
         |--------------------------------------------------------------------------
+        |
+        | Les catégories provenant de la base sont transformées dans une
+        | structure homogène utilisée par toute la vue.
+        |
+        | IMPORTANT :
+        |
+        | $category->storefront_image vient du CategoryController.
+        |
+        | Cette valeur correspond à :
+        |
+        | categories.image
+        |
+        | et non à l'image d'un produit.
+        |
         */
 
-        $hasDatabaseCategories = isset($categories) && count($categories) > 0;
+        $hasDatabaseCategories = isset($categories) && $categories->isNotEmpty();
 
         if ($hasDatabaseCategories) {
 
-            $categoryItems = collect($categories)->map(function ($category) use ($categoryVisuals) {
+            $categoryItems = collect($categories)
+                ->map(function ($category) use ($categoryVisuals) {
 
-                $slug = $category->slug
-                    ?? \Illuminate\Support\Str::slug($category->name);
+                    $slug = $category->slug
+                        ?? \Illuminate\Support\Str::slug($category->name);
 
-                $visual = $categoryVisuals[$slug] ?? [
-                    'image' => 'garba.jpg',
-                    'description' => 'Découvrez notre sélection de recettes préparées avec soin.',
-                    'eyebrow' => 'Notre sélection',
-                    'tone' => 'cream',
-                ];
+                    $visual = $categoryVisuals[$slug] ?? [
+                        'image' => 'garba.jpg',
+                        'description' => 'Découvrez notre sélection de recettes préparées avec soin.',
+                        'eyebrow' => 'Notre sélection',
+                        'tone' => 'cream',
+                    ];
 
-                return [
-                    'id' => $category->id ?? null,
-                    'slug' => $slug,
-                    'name' => $category->name,
-                    'description' => $category->description
-                        ?? $visual['description'],
-                    'products_count' => $category->products_count ?? 0,
-                    'image' => $category->image
-                        ?? $visual['image'],
-                    'eyebrow' => $visual['eyebrow'],
-                    'tone' => $visual['tone'] ?? 'cream',
-                ];
-            })->values()->all();
+                    /*
+                    |--------------------------------------------------------------------------
+                    | IMAGE DE LA CATÉGORIE
+                    |--------------------------------------------------------------------------
+                    |
+                    | Priorité :
+                    |
+                    | 1. Image définie dans l'administration
+                    | 2. Image visuelle de fallback
+                    |
+                    | Le CategoryController prépare déjà :
+                    |
+                    | $category->storefront_image
+                    |
+                    | sous forme d'une URL directement utilisable par le navigateur.
+                    |
+                    */
+
+                    $image = $category->storefront_image
+                        ?? (
+                            !empty($visual['image'])
+                                ? asset('images/' . $visual['image'])
+                                : null
+                        );
+
+                    return [
+                        'id' => $category->id ?? null,
+
+                        'slug' => $slug,
+
+                        'name' => $category->name,
+
+                        'description' => $category->description
+                            ?: $visual['description'],
+
+                        'products_count' => $category->products_count ?? 0,
+
+                        'image' => $image,
+
+                        'eyebrow' => $visual['eyebrow'],
+
+                        'tone' => $visual['tone'] ?? 'cream',
+                    ];
+                })
+                ->values()
+                ->all();
 
         } else {
 
             $categoryItems = $fallbackCategories;
-
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | CATÉGORIE MISE EN AVANT
+        |--------------------------------------------------------------------------
+        */
+
         $featuredCategory = $categoryItems[0] ?? null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | CATÉGORIES SECONDAIRES
+        |--------------------------------------------------------------------------
+        */
 
         $secondaryCategories = collect($categoryItems)
             ->skip(1)
             ->values();
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL DES PRODUITS
+        |--------------------------------------------------------------------------
+        */
 
         $totalProducts = collect($categoryItems)
             ->sum('products_count');
     @endphp
 
 
-    <div class="min-h-screen bg-[#FCFAF7] text-[#3B200F]">
-
+    <div
+        x-data="categoryCatalog()"
+        x-init="init()"
+        class="min-h-screen overflow-hidden bg-[#FCFAF7] text-[#3D1F0D]"
+    >
 
         {{-- ============================================================
              HERO
@@ -194,6 +288,7 @@
         <section class="relative overflow-hidden lg:mt-10">
 
             {{-- Décors très subtils --}}
+
             <div
                 class="pointer-events-none absolute -left-40 top-10 h-80 w-80 rounded-full bg-[#F4C451]/10 blur-3xl"
             ></div>
@@ -210,7 +305,6 @@
                 <div
                     class="grid min-h-[500px] items-center gap-12 py-16 sm:py-20 lg:grid-cols-[1fr_0.85fr] lg:gap-16 lg:py-24"
                 >
-
 
                     {{-- ==================================================
                          TEXTE HERO
@@ -242,13 +336,11 @@
                         <h1
                             class="mt-7 max-w-[680px] text-[3rem] font-black leading-[0.96] tracking-[-0.06em] text-[#3B200F] sm:text-[4.5rem] lg:text-[5.2rem]"
                         >
-
                             Explorez
 
                             <span class="text-[#E25F12]">
                                 nos saveurs.
                             </span>
-
                         </h1>
 
 
@@ -258,6 +350,7 @@
                             Des recettes ivoiriennes généreuses, des grillades
                             savoureuses et des accompagnements qui racontent
                             notre cuisine.
+
                             <span class="font-semibold text-[#593114]">
                                 Choisissez une catégorie et laissez-vous guider.
                             </span>
@@ -347,11 +440,9 @@
                                 href="#categories"
                                 class="btn h-12 min-h-12 rounded-full border-0 bg-[#593114] px-7 text-[10px] font-bold text-white shadow-lg shadow-[#593114]/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#E25F12]"
                             >
-
                                 Explorer les catégories
 
                                 <i class="bi bi-arrow-down ml-1"></i>
-
                             </a>
 
 
@@ -359,11 +450,9 @@
                                 href="{{ route('plats.index') }}"
                                 class="btn h-12 min-h-12 rounded-full border border-[#E4D8CF] bg-white px-7 text-[10px] font-semibold text-[#593114] shadow-none transition-all duration-300 hover:border-[#593114] hover:bg-white"
                             >
-
                                 Voir tous les plats
 
                                 <i class="bi bi-arrow-up-right ml-1"></i>
-
                             </a>
 
                         </div>
@@ -396,12 +485,12 @@
                         @if($featuredCategory)
 
                             <div
-                                class="relative z-10 h-[290px] w-[290px] overflow-hidden rounded-full border-[10px] border-white shadow-[0_30px_70px_rgba(89,49,20,0.14)] sm:h-[380px] sm:w-[380px] sm:border-[12px] lg:h-[430px] lg:w-[430px]"
+                                class="relative z-10 h-[290px] w-[290px] sm:h-[380px] sm:w-[380px] lg:h-[430px] lg:w-[430px]"
                             >
 
                                 <img
-                                    src="{{ asset('images/' . $featuredCategory['image']) }}"
-                                    alt="{{ $featuredCategory['name'] }}"
+                                    src="{{ asset('images/Hero5.png') }}"
+                                    alt="Attiéké"
                                     class="h-full w-full object-cover"
                                 >
 
@@ -476,14 +565,11 @@
         </section>
 
 
-
         {{-- ============================================================
              BARRE DE NAVIGATION RAPIDE
         ============================================================= --}}
 
-        <section
-            class="border-y border-[#EEE4DB] bg-white"
-        >
+        <section class="border-y border-[#EEE4DB] bg-white">
 
             <div
                 class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)]"
@@ -507,7 +593,7 @@
                             </span>
 
                             <span
-                                class="text-[9px] font-bold whitespace-nowrap text-[#695D55] group-hover:text-[#593114]"
+                                class="whitespace-nowrap text-[9px] font-bold text-[#695D55] group-hover:text-[#593114]"
                             >
                                 {{ $category['name'] }}
                             </span>
@@ -523,7 +609,6 @@
         </section>
 
 
-
         {{-- ============================================================
              CATÉGORIES PRINCIPALES
         ============================================================= --}}
@@ -536,7 +621,6 @@
             <div
                 class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)]"
             >
-
 
                 {{-- HEADER SECTION --}}
 
@@ -582,7 +666,6 @@
                 </div>
 
 
-
                 {{-- =====================================================
                      FEATURED CATEGORY
                 ====================================================== --}}
@@ -596,8 +679,10 @@
                             class="group relative block min-h-[430px] overflow-hidden rounded-[2rem] bg-[#593114]"
                         >
 
+                            {{-- IMAGE DE LA CATÉGORIE --}}
+
                             <img
-                                src="{{ asset('images/' . $featuredCategory['image']) }}"
+                                src="{{ $featuredCategory['image'] }}"
                                 alt="{{ $featuredCategory['name'] }}"
                                 class="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-700 ease-out group-hover:scale-[1.035]"
                             >
@@ -608,7 +693,6 @@
                             <div
                                 class="absolute inset-0 bg-gradient-to-r from-[#241106]/90 via-[#241106]/55 to-transparent"
                             ></div>
-
 
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-[#241106]/70 via-transparent to-transparent"
@@ -684,7 +768,6 @@
                 @endif
 
 
-
                 {{-- =====================================================
                      GRILLE SECONDAIRE
                 ====================================================== --}}
@@ -708,8 +791,10 @@
                                     class="relative h-[245px] overflow-hidden"
                                 >
 
+                                    {{-- IMAGE DE LA CATÉGORIE --}}
+
                                     <img
-                                        src="{{ asset('images/' . $category['image']) }}"
+                                        src="{{ $category['image'] }}"
                                         alt="{{ $category['name'] }}"
                                         class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                                         loading="lazy"
@@ -820,7 +905,6 @@
         </section>
 
 
-
         {{-- ============================================================
              SECTION "CHOISISSEZ SELON VOTRE ENVIE"
         ============================================================= --}}
@@ -837,7 +921,6 @@
                     class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-20"
                 >
 
-
                     {{-- TEXTE --}}
 
                     <div class="max-w-xl">
@@ -853,6 +936,7 @@
                             class="mt-3 text-3xl font-black leading-[1.05] tracking-[-0.045em] text-[#3B200F] sm:text-4xl"
                         >
                             Choisissez selon
+
                             <span class="text-[#E25F12]">
                                 votre envie.
                             </span>
@@ -878,7 +962,6 @@
                         </a>
 
                     </div>
-
 
 
                     {{-- OPTIONS --}}
@@ -1027,7 +1110,6 @@
         </section>
 
 
-
         {{-- ============================================================
              BLOC CONFIANCE
         ============================================================= --}}
@@ -1137,7 +1219,6 @@
         </section>
 
 
-
         {{-- ============================================================
              CTA FINAL
         ============================================================= --}}
@@ -1182,6 +1263,7 @@
                                 class="mt-3 max-w-xl text-3xl font-black leading-[1.05] tracking-[-0.045em] text-[#3B200F] sm:text-4xl"
                             >
                                 Retrouvez votre plat préféré
+
                                 <span class="text-[#E25F12]">
                                     en quelques clics.
                                 </span>

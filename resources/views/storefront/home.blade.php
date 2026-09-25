@@ -252,123 +252,127 @@
 
 
     {{-- ========================================================= --}}
-    {{-- POPULAR DISHES                                            --}}
-    {{-- ========================================================= --}}
+{{-- PLATS POPULAIRES                                          --}}
+{{-- ========================================================= --}}
 
-    <section class="bg-white py-20 sm:py-24">
+<section class="bg-white py-20 sm:py-24">
 
-        <div class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)]">
+    <div class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)]">
 
-            {{-- Heading --}}
-            <div class="flex items-end justify-between gap-5">
+        {{-- ================================================= --}}
+        {{-- HEADING                                           --}}
+        {{-- ================================================= --}}
 
-                <div>
+        <div class="flex items-end justify-between gap-5">
 
-                    <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-[#E25F12]">
-                        Les incontournables
-                    </span>
+            <div>
 
-                    <h2 class="mt-2 text-3xl font-black tracking-[-0.04em] text-[#3B200F] sm:text-4xl">
-                        Plats populaires
-                    </h2>
+                <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-[#E25F12]">
+                    Les incontournables
+                </span>
 
-                    <p class="mt-3 max-w-lg text-xs leading-6 text-[#887A70] sm:text-sm">
-                        Les recettes qui font revenir nos clients,
-                        encore et encore.
-                    </p>
+                <h2 class="mt-2 text-3xl font-black tracking-[-0.04em] text-[#3B200F] sm:text-4xl">
+                    Plats populaires
+                </h2>
 
-                </div>
-
-
-                <a
-                    href="{{ route('plats.index') }}"
-                    class="btn btn-ghost hidden rounded-full text-[10px] font-bold text-[#593114] hover:bg-[#F8EEE5] sm:flex"
-                >
-                    Voir tout
-                    <i class="bi bi-arrow-right"></i>
-                </a>
+                <p class="mt-3 max-w-lg text-xs leading-6 text-[#887A70] sm:text-sm">
+                    Découvrez une sélection de nos plats les plus appréciés.
+                </p>
 
             </div>
 
 
-            {{-- ================================================= --}}
-            {{-- DONNÉES DE SECOURS                                 --}}
-            {{-- ================================================= --}}
-            @php
+            <a
+                href="{{ route('plats.index') }}"
+                class="btn btn-ghost hidden rounded-full text-[10px] font-bold text-[#593114] hover:bg-[#F8EEE5] sm:flex"
+            >
+                Voir tout
+                <i class="bi bi-arrow-right"></i>
+            </a>
 
-                /*
-                |--------------------------------------------------------------------------
-                | Ces données conservent exactement le rendu initial de la Home.
-                |
-                | Dès que les vrais produits sont récupérés depuis
-                | storefront.plats.data, les boutons utilisent les vrais produits
-                | avec leurs options.
-                |--------------------------------------------------------------------------
-                */
-
-                $popularDishes = [
-                    [
-                        'name' => 'Garba Royal',
-                        'image' => 'garba.jpg',
-                        'price' => '3 500',
-                        'badge' => 'Best Seller',
-                        'description' => 'Attiéké, thon frit croustillant, oignons, tomates fraîches et piment doux.',
-                    ],
-                    [
-                        'name' => 'Poulet Braisé & Alloco',
-                        'image' => 'aloco_poulet.jpg',
-                        'price' => '5 000',
-                        'badge' => 'Populaire',
-                        'description' => 'Poulet mariné aux épices locales, braisé et servi avec un alloco doré.',
-                    ],
-                    [
-                        'name' => 'Foutou Sauce Graine',
-                        'image' => 'aloco-poulet.jpg',
-                        'price' => '4 500',
-                        'badge' => 'Nouveau',
-                        'description' => 'Foutou banane accompagné de sa sauce graine riche et généreuse.',
-                    ],
-                    [
-                        'name' => 'Attiéké Poisson',
-                        'image' => 'garba.jpg',
-                        'price' => '4 000',
-                        'badge' => 'Coup de cœur',
-                        'description' => 'Attiéké frais accompagné de poisson grillé et de légumes croquants.',
-                    ],
-                ];
-
-            @endphp
+        </div>
 
 
-            {{-- Cards --}}
-            <div class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {{-- ================================================= --}}
+        {{-- CHARGEMENT                                       --}}
+        {{-- ================================================= --}}
 
-                @foreach($popularDishes as $index => $dish)
+        <template x-if="productsLoading">
+
+            <div class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+                <template x-for="i in 4" :key="i">
+
+                    <div class="overflow-hidden rounded-[1.5rem] border border-[#EEE4DB] bg-[#FCFAF7]">
+
+                        <div class="h-52 animate-pulse bg-[#F3EAE3]"></div>
+
+                        <div class="space-y-3 p-4">
+
+                            <div class="h-4 w-2/3 animate-pulse rounded bg-[#EDE3DB]"></div>
+
+                            <div class="h-10 animate-pulse rounded bg-[#F1E9E3]"></div>
+
+                            <div class="flex justify-between border-t border-[#EDE3DB] pt-3">
+
+                                <div class="h-8 w-24 animate-pulse rounded bg-[#EDE3DB]"></div>
+
+                                <div class="h-9 w-24 animate-pulse rounded-full bg-[#EDE3DB]"></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </template>
+
+            </div>
+
+        </template>
+
+
+        {{-- ================================================= --}}
+        {{-- PRODUITS                                         --}}
+        {{-- ================================================= --}}
+
+        <template x-if="!productsLoading && featuredProducts.length > 0">
+
+            <div class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+                <template
+                    x-for="product in featuredProducts"
+                    :key="product.id"
+                >
 
                     <article
                         class="card group overflow-hidden rounded-[1.5rem] border border-[#EEE4DB] bg-[#FCFAF7] shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-[#E8D6C6] hover:shadow-xl"
                     >
 
-                        {{-- Image --}}
+                        {{-- IMAGE --}}
                         <figure class="relative h-52 overflow-hidden bg-[#F8EEE4]">
 
                             <img
-                                src="{{ asset('images/' . $dish['image']) }}"
-                                :src="cardProduct({{ $index }})?.image || '{{ asset('images/' . $dish['image']) }}'"
-                                alt="{{ $dish['name'] }}"
-                                :alt="cardProduct({{ $index }})?.name || '{{ $dish['name'] }}'"
+                                :src="product.image || '{{ asset('images/default-product.jpg') }}'"
+                                :alt="product.name || 'Plat FON-KPA'"
                                 class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                loading="lazy"
                             >
 
 
-                            {{-- Badge --}}
-                            <span
-                                class="absolute left-3 top-3 rounded-full border px-3 py-1.5 text-[8px] font-bold uppercase tracking-[0.08em] shadow-sm backdrop-blur-md"
-                                :class="badgeClass(cardProduct({{ $index }})?.badge || @js($dish['badge']))"
-                                x-text="cardProduct({{ $index }})?.badge || @js($dish['badge'])"
-                            ></span>
+                            {{-- BADGE --}}
+                            <template x-if="product.badge">
+
+                                <span
+                                    class="absolute left-3 top-3 rounded-full border px-3 py-1.5 text-[8px] font-bold uppercase tracking-[0.08em] shadow-sm backdrop-blur-md"
+                                    :class="badgeClass(product.badge)"
+                                    x-text="product.badge"
+                                ></span>
+
+                            </template>
 
 
+                            {{-- FAVORIS --}}
                             <button
                                 type="button"
                                 class="btn btn-circle btn-sm absolute right-3 top-3 border-0 bg-white/95 text-[#593114] shadow-sm hover:bg-[#593114] hover:text-white"
@@ -380,16 +384,19 @@
                         </figure>
 
 
-                        {{-- Content --}}
+                        {{-- CONTENU --}}
                         <div class="card-body p-4">
 
-                            <h3 class="text-sm font-black text-[#593114]">
-                                {{ $dish['name'] }}
-                            </h3>
+                            <h3
+                                class="truncate text-sm font-black text-[#593114]"
+                                x-text="product.name"
+                            ></h3>
 
-                            <p class="mt-1 min-h-[40px] text-[12px] leading-5 text-[#8A7B71]">
-                                {{ $dish['description'] }}
-                            </p>
+
+                            <p
+                                class="mt-1 min-h-[40px] text-[12px] leading-5 text-[#8A7B71]"
+                                x-text="product.description || 'Une recette généreuse préparée avec soin.'"
+                            ></p>
 
 
                             <div class="mt-3 flex items-center justify-between border-t border-[#EDE3DB] pt-3">
@@ -402,10 +409,8 @@
 
                                     <span
                                         class="text-sm font-black text-[#A84B0B]"
-                                        x-text="formatPrice(cardProduct({{ $index }})?.price || '{{ str_replace(' ', '', $dish['price']) }}')"
-                                    >
-                                        {{ $dish['price'] }}
-                                    </span>
+                                        x-text="formatPrice(product.price)"
+                                    ></span>
 
                                     <span class="text-[9px] font-semibold text-[#8C8179]">
                                         FCFA
@@ -414,11 +419,11 @@
                                 </div>
 
 
-                                {{-- Panier --}}
+                                {{-- PANIER --}}
                                 <button
                                     type="button"
-                                    @click="addHomeCardToCart({{ $index }})"
-                                    :disabled="!cardProduct({{ $index }}) || !cardProduct({{ $index }})?.available || productsLoading"
+                                    @click="addToCart(product)"
+                                    :disabled="!product.available || productsLoading"
                                     class="group/cart flex h-9 items-center gap-2 rounded-full bg-[#593114] px-3.5 text-[9px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#E25F12] hover:shadow-lg hover:shadow-[#E25F12]/15 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0 disabled:hover:bg-[#593114] disabled:hover:shadow-none"
                                     aria-label="Ajouter au panier"
                                 >
@@ -437,22 +442,52 @@
 
                     </article>
 
-                @endforeach
+                </template>
 
             </div>
 
+        </template>
 
-            <a
-                href="{{ route('plats.index') }}"
-                class="btn mt-7 flex h-11 min-h-11 rounded-full border border-[#E5D6C8] bg-white text-[10px] font-bold text-[#593114] sm:hidden"
-            >
-                Voir tous les plats
-                <i class="bi bi-arrow-right"></i>
-            </a>
 
-        </div>
+        {{-- ================================================= --}}
+        {{-- AUCUN PRODUIT                                    --}}
+        {{-- ================================================= --}}
 
-    </section>
+        <template x-if="!productsLoading && featuredProducts.length === 0">
+
+            <div class="mt-10 rounded-[1.5rem] border border-[#EEE4DB] bg-[#FCFAF7] px-6 py-14 text-center">
+
+                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F8EBD9] text-[#593114]">
+
+                    <i class="bi bi-egg-fried text-xl"></i>
+
+                </div>
+
+                <h3 class="mt-4 text-sm font-black text-[#593114]">
+                    Aucun plat à afficher
+                </h3>
+
+                <p class="mt-2 text-[10px] leading-5 text-[#8C8179]">
+                    Les plats mis en avant apparaîtront ici.
+                </p>
+
+            </div>
+
+        </template>
+
+
+        {{-- MOBILE --}}
+        <a
+            href="{{ route('plats.index') }}"
+            class="btn mt-7 flex h-11 min-h-11 rounded-full border border-[#E5D6C8] bg-white text-[10px] font-bold text-[#593114] sm:hidden"
+        >
+            Voir tous les plats
+            <i class="bi bi-arrow-right"></i>
+        </a>
+
+    </div>
+
+</section>
 
 
     {{-- ========================================================= --}}
@@ -474,10 +509,10 @@
                     <div class="absolute -bottom-8 right-0 h-40 w-40 rounded-full bg-[#E25F12]/10 blur-2xl"></div>
 
 
-                    <div class="relative overflow-hidden p-4">
+                    <div class="relative  p-4">
 
                         <img
-                            src="{{ asset('images/riz_poulet.png') }}"
+                            src="{{ asset('images/sous-hero3.png') }}"
                             alt="Cuisine FON-KPA"
                             class="aspect-square w-full rounded-[2rem] object-cover"
                         >
@@ -638,6 +673,10 @@
 
         <div class="mx-auto w-full max-w-[1720px] px-[clamp(2rem,7vw,7.5rem)]">
 
+            {{-- ================================================= --}}
+            {{-- HEADING                                           --}}
+            {{-- ================================================= --}}
+
             <div class="text-center">
 
                 <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-[#E25F12]">
@@ -656,10 +695,19 @@
             </div>
 
 
-            {{-- Tabs Alpine --}}
-            <div class="mt-8 flex flex-wrap justify-center gap-2">
+            {{-- ================================================= --}}
+            {{-- TABS DYNAMIQUES                                   --}}
+            {{-- ================================================= --}}
 
-                <template x-for="tab in menuTabs" :key="tab">
+            <div
+                x-show="menuTabs.length > 1"
+                class="mt-8 flex flex-wrap justify-center gap-2"
+            >
+
+                <template
+                    x-for="tab in menuTabs"
+                    :key="tab"
+                >
 
                     <button
                         type="button"
@@ -667,7 +715,7 @@
                         class="btn h-9 min-h-9 rounded-full border px-4 text-[9px] font-semibold shadow-none transition"
                         :class="
                             activeMenu === tab
-                                ? 'border-[#F4C451] bg-[#593114] text-[#FFFF]'
+                                ? 'border-[#F4C451] bg-[#593114] text-white'
                                 : 'border-[#E8DED5] bg-white text-[#786B61] hover:border-[#E25F12] hover:text-[#E25F12]'
                         "
                         x-text="tab"
@@ -678,103 +726,144 @@
             </div>
 
 
-            {{-- Menu grid --}}
-            <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {{-- ================================================= --}}
+            {{-- PRODUITS                                         --}}
+            {{-- ================================================= --}}
 
-                @foreach($popularDishes as $index => $dish)
+            <template x-if="!productsLoading">
 
-                    <article
-                        x-show="activeMenu === 'Tout' || activeMenu === menuCategories[{{ $index }}]"
-                        x-transition
-                        class="card group overflow-hidden rounded-[1.5rem] border border-[#EEE4DB] bg-[#FCFAF7] shadow-none"
-                    >
+                <div class="mt-10">
 
-                        <figure class="h-48 overflow-hidden bg-[#F8EEE4]">
+                    <template x-if="filteredMenuProducts.length > 0">
 
-                            <img
-                                src="{{ asset('images/' . $dish['image']) }}"
-                                :src="cardProduct({{ $index }})?.image || '{{ asset('images/' . $dish['image']) }}'"
-                                alt="{{ $dish['name'] }}"
-                                :alt="cardProduct({{ $index }})?.name || '{{ $dish['name'] }}'"
-                                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+                            <template
+                                x-for="product in filteredMenuProducts"
+                                :key="product.id"
                             >
 
-                        </figure>
-
-
-                        <div class="card-body p-4">
-
-                            <div class="flex items-center justify-between gap-2">
-
-                                <h3 class="text-sm font-black text-[#593114]">
-                                    {{ $dish['name'] }}
-                                </h3>
-
-                                <div class="flex gap-0.5 text-[#F4B72E]">
-
-                                    <i class="bi bi-star-fill text-[7px]"></i>
-                                    <i class="bi bi-star-fill text-[7px]"></i>
-                                    <i class="bi bi-star-fill text-[7px]"></i>
-                                    <i class="bi bi-star-fill text-[7px]"></i>
-                                    <i class="bi bi-star-fill text-[7px]"></i>
-
-                                </div>
-
-                            </div>
-
-                            <p class="mt-1 text-[12px] leading-5 text-[#8A7B71]">
-                                {{ $dish['description'] }}
-                            </p>
-
-
-                            <div class="mt-3 flex items-center justify-between border-t border-[#EDE3DB] pt-3">
-
-                                <div>
-
-                                    <p class="text-[8px] uppercase tracking-[0.12em] text-[#A09288]">
-                                        À partir de
-                                    </p>
-
-                                    <span
-                                        class="text-sm font-black text-[#A84B0B]"
-                                        x-text="formatPrice(cardProduct({{ $index }})?.price || '{{ str_replace(' ', '', $dish['price']) }}')"
-                                    >
-                                        {{ $dish['price'] }}
-                                    </span>
-
-                                    <span class="text-[9px] font-semibold text-[#8C8179]">
-                                        FCFA
-                                    </span>
-
-                                </div>
-
-
-                                {{-- Panier --}}
-                                <button
-                                    type="button"
-                                    @click="addHomeCardToCart({{ $index }})"
-                                    :disabled="!cardProduct({{ $index }}) || !cardProduct({{ $index }})?.available || productsLoading"
-                                    class="group/cart flex h-9 items-center gap-2 rounded-full bg-[#593114] px-3.5 text-[9px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#E25F12] hover:shadow-lg hover:shadow-[#E25F12]/15 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0 disabled:hover:bg-[#593114] disabled:hover:shadow-none"
-                                    aria-label="Ajouter au panier"
+                                <article
+                                    class="card group overflow-hidden rounded-[1.5rem] border border-[#EEE4DB] bg-[#FCFAF7] shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-[#E8D6C6] hover:shadow-xl"
                                 >
 
-                                    <i class="bi bi-basket2 text-[11px] transition-transform duration-200 group-hover/cart:scale-110"></i>
+                                    {{-- IMAGE --}}
+                                    <figure class="relative h-48 overflow-hidden bg-[#F8EEE4]">
 
-                                    <span class="hidden sm:inline">
-                                        Ajouter
-                                    </span>
+                                        <img
+                                            :src="product.image || '{{ asset('images/default-product.jpg') }}'"
+                                            :alt="product.name || 'Plat FON-KPA'"
+                                            class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                            loading="lazy"
+                                        >
 
-                                </button>
+                                    </figure>
 
-                            </div>
+
+                                    {{-- CONTENU --}}
+                                    <div class="card-body p-4">
+
+                                        <div class="flex items-center justify-between gap-2">
+
+                                            <h3
+                                                class="truncate text-sm font-black text-[#593114]"
+                                                x-text="product.name"
+                                            ></h3>
+
+                                            <div class="flex shrink-0 gap-0.5 text-[#F4B72E]">
+
+                                                <i class="bi bi-star-fill text-[7px]"></i>
+                                                <i class="bi bi-star-fill text-[7px]"></i>
+                                                <i class="bi bi-star-fill text-[7px]"></i>
+                                                <i class="bi bi-star-fill text-[7px]"></i>
+                                                <i class="bi bi-star-fill text-[7px]"></i>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <p
+                                            class="mt-1 min-h-[40px] text-[12px] leading-5 text-[#8A7B71]"
+                                            x-text="product.description || 'Une recette généreuse préparée avec soin.'"
+                                        ></p>
+
+
+                                        <div class="mt-3 flex items-center justify-between border-t border-[#EDE3DB] pt-3">
+
+                                            <div>
+
+                                                <p class="text-[8px] uppercase tracking-[0.12em] text-[#A09288]">
+                                                    À partir de
+                                                </p>
+
+                                                <span
+                                                    class="text-sm font-black text-[#A84B0B]"
+                                                    x-text="formatPrice(product.price)"
+                                                ></span>
+
+                                                <span class="text-[9px] font-semibold text-[#8C8179]">
+                                                    FCFA
+                                                </span>
+
+                                            </div>
+
+
+                                            <button
+                                                type="button"
+                                                @click="addToCart(product)"
+                                                :disabled="!product.available || productsLoading"
+                                                class="group/cart flex h-9 items-center gap-2 rounded-full bg-[#593114] px-3.5 text-[9px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#E25F12] hover:shadow-lg hover:shadow-[#E25F12]/15 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-35"
+                                                aria-label="Ajouter au panier"
+                                            >
+
+                                                <i class="bi bi-basket2 text-[11px]"></i>
+
+                                                <span class="hidden sm:inline">
+                                                    Ajouter
+                                                </span>
+
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+
+                                </article>
+
+                            </template>
 
                         </div>
 
-                    </article>
+                    </template>
 
-                @endforeach
 
-            </div>
+                    {{-- Aucun résultat --}}
+                    <template x-if="filteredMenuProducts.length === 0">
+
+                        <div class="rounded-[1.5rem] border border-[#EEE4DB] bg-[#FCFAF7] px-6 py-14 text-center">
+
+                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F8EBD9] text-[#593114]">
+
+                                <i class="bi bi-search text-xl"></i>
+
+                            </div>
+
+                            <h3 class="mt-4 text-sm font-black text-[#593114]">
+                                Aucun plat dans cette catégorie
+                            </h3>
+
+                            <p class="mt-2 text-[10px] text-[#8C8179]">
+                                Essayez une autre catégorie.
+                            </p>
+
+                        </div>
+
+                    </template>
+
+                </div>
+
+            </template>
 
 
             <div class="mt-8 text-center">
@@ -812,13 +901,13 @@
                 <div class="relative grid grid-cols-1 items-center lg:grid-cols-[1fr_0.8fr]">
 
                     {{-- Texte --}}
-                    <div class="px-7 py-14 sm:px-12 lg:px-16">
+                    <div class="px-7 py-12 sm:px-10 sm:py-14 lg:px-14">
 
                         <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-[#E25F12]">
                             Une envie particulière ?
                         </span>
 
-                        <h2 class="mt-3 max-w-lg text-3xl font-black leading-[1.05] tracking-[-0.04em] text-[#3B200F] sm:text-4xl">
+                        <h2 class="mt-3 max-w-xl text-3xl font-black leading-[1.05] tracking-[-0.045em] text-[#3B200F] sm:text-4xl">
 
                             Votre prochaine
 
@@ -847,19 +936,26 @@
 
 
                     {{-- Visuel --}}
-                    <div class="relative flex min-h-[330px] items-center justify-center">
 
-                        <div class="absolute h-64 w-64 rounded-full border border-white/80 sm:h-80 sm:w-80"></div>
-
-                        <div class="absolute h-52 w-52 rounded-full bg-[#E25F12]/10 sm:h-64 sm:w-64"></div>
-
-                        <img
-                            src="{{ asset('images/Hero4.jpg') }}"
-                            alt="Plat FON-KPA"
-                            class="relative z-10 h-64 w-64 rounded-full object-cover shadow-2xl sm:h-80 sm:w-80"
+                        <div
+                            class="relative hidden h-full min-h-[280px] w-[360px] items-center justify-center pr-10 lg:flex"
                         >
 
-                    </div>
+                            <div
+                                class="absolute h-60 w-60 rounded-full border border-white/80"
+                            ></div>
+
+                            <div
+                                class="absolute h-48 w-48 rounded-full bg-[#E25F12]/10"
+                            ></div>
+
+                            <img
+                                src="{{ asset('images/garba.png') }}"
+                                alt="Cuisine ivoirienne FON-KPA"
+                                class="relative z-10 h-64 w-64 object-contain drop-shadow-[0_25px_25px_rgba(89,49,20,0.18)]"
+                            >
+
+                        </div>
 
                 </div>
 
@@ -1315,7 +1411,7 @@
                                     <template x-if="Number(group.max_choices) > 1 && Number(group.min_choices) > 0">
                                         <span>
                                             <span x-text="Number(group.min_choices)"></span>
-                                            �
+                                            �
                                             <span x-text="Number(group.max_choices)"></span>
                                             choix
                                         </span>
@@ -1633,21 +1729,10 @@
 
             activeMenu: 'Tout',
 
-            menuTabs: [
-                'Tout',
-                'Grillades',
-                'Plats',
-                'Accompagnements',
-                'Boissons',
-            ],
 
-            menuCategories: [
-                'Plats',
-                'Grillades',
-                'Plats',
-                'Accompagnements',
-            ],
-
+            /* =====================================================
+               BADGES HERO
+            ===================================================== */
 
             heroBadges: [
                 {
@@ -1664,6 +1749,10 @@
                 }
             ],
 
+
+            /* =====================================================
+               TÉMOIGNAGES
+            ===================================================== */
 
             testimonials: [
 
@@ -1736,14 +1825,199 @@
 
 
             /* =====================================================
-               TESTIMONIALS
+               CATÉGORIES DU MENU
+
+               Elles sont automatiquement générées depuis
+               les catégories réelles des produits.
+
+               Exemple :
+
+               Tout
+               Grillade
+               Accompagnement
+               Boisson
+               Sauce
+            ===================================================== */
+
+            get menuTabs() {
+
+                if (!Array.isArray(this.products)) {
+                    return ['Tout'];
+                }
+
+
+                const categories = this.products
+                    .map(product =>
+                        this.getProductCategory(product)
+                    )
+                    .filter(category =>
+                        category !== null
+                    )
+                    .map(category =>
+                        String(category).trim()
+                    )
+                    .filter(category =>
+                        category.length > 0
+                    );
+
+
+                return [
+                    'Tout',
+                    ...new Set(categories)
+                ];
+
+            },
+
+
+            /* =====================================================
+               PRODUITS POPULAIRES
+
+               IMPORTANT :
+               La Home affiche MAXIMUM 4 produits.
+
+               On utilise les produits marqués "featured".
+
+               Si aucun produit n'est featured, on prend les
+               produits disponibles comme solution de secours.
+            ===================================================== */
+
+            get featuredProducts() {
+
+                if (!Array.isArray(this.products)) {
+                    return [];
+                }
+
+
+                const featured =
+                    this.products.filter(product => {
+
+                        return (
+                            product.featured === true ||
+                            product.featured === 1 ||
+                            product.is_featured === true ||
+                            product.is_featured === 1
+                        );
+
+                    });
+
+
+                /*
+                 * Si des produits sont mis en avant,
+                 * on en affiche maximum 4.
+                 */
+
+                if (featured.length > 0) {
+
+                    return featured.slice(0, 4);
+
+                }
+
+
+                /*
+                 * Aucun produit featured :
+                 * on affiche les produits disponibles.
+                 */
+
+                return this.products
+                    .filter(product =>
+                        product.available !== false
+                    )
+                    .slice(0, 4);
+
+            },
+
+
+            /* =====================================================
+               PRODUITS DU MENU
+
+               La section "Notre menu" affiche également
+               MAXIMUM 4 produits.
+
+               Le filtre est basé sur la vraie catégorie
+               du produit.
+            ===================================================== */
+
+            get filteredMenuProducts() {
+
+                if (!Array.isArray(this.products)) {
+                    return [];
+                }
+
+
+                let products =
+                    this.products;
+
+
+                /*
+                 * "Tout" = tous les produits disponibles.
+                 */
+
+                if (
+                    this.activeMenu !== 'Tout'
+                ) {
+
+                    products =
+                        products.filter(product => {
+
+                            const category =
+                                this.getProductCategory(
+                                    product
+                                );
+
+
+                            return (
+                                String(category || '')
+                                    .trim()
+                                    .toLowerCase()
+                                ===
+                                String(this.activeMenu || '')
+                                    .trim()
+                                    .toLowerCase()
+                            );
+
+                        });
+
+                }
+
+
+                /*
+                 * IMPORTANT :
+                 * même s'il y a 20 produits dans une catégorie,
+                 * la Home n'en affiche que 4.
+                 */
+
+                return products
+                    .filter(product =>
+                        product.available !== false
+                    )
+                    .slice(0, 4);
+
+            },
+
+
+            /* =====================================================
+               TÉMOIGNAGES VISIBLES
             ===================================================== */
 
             get visibleTestimonials() {
 
+                if (
+                    !this.testimonials.length
+                ) {
+
+                    return [];
+
+                }
+
+
                 const result = [];
 
-                for (let i = 0; i < 3; i++) {
+
+                for (
+                    let i = 0;
+                    i < 3;
+                    i++
+                ) {
 
                     const index =
                         (
@@ -1751,16 +2025,22 @@
                         )
                         % this.testimonials.length;
 
+
                     result.push(
                         this.testimonials[index]
                     );
 
                 }
 
+
                 return result;
 
             },
 
+
+            /* =====================================================
+               TÉMOIGNAGE PRÉCÉDENT
+            ===================================================== */
 
             previousTestimonial() {
 
@@ -1774,6 +2054,10 @@
 
             },
 
+
+            /* =====================================================
+               TÉMOIGNAGE SUIVANT
+            ===================================================== */
 
             nextTestimonial() {
 
@@ -1815,15 +2099,18 @@
 
 
             /* =====================================================
-               CHARGEMENT DES VRAIS PRODUITS
+               CHARGEMENT DES PRODUITS
 
-               On réutilise exactement l'endpoint de la page Plats.
-               Cela évite de dupliquer la logique backend.
+               On utilise le même endpoint que la page
+               "Nos plats".
+
+               Cela évite de dupliquer la logique Laravel.
             ===================================================== */
 
             async loadProducts() {
 
                 this.productsLoading = true;
+
 
                 try {
 
@@ -1856,19 +2143,78 @@
                         await response.json();
 
 
+                    /*
+                     * Laravel doit retourner :
+
+                     * {
+                     *     products: [...]
+                     * }
+                     */
+
                     if (
                         Array.isArray(
                             data.products
                         )
                     ) {
 
+                        /*
+                         * Normalisation des données.
+                         *
+                         * On s'assure notamment que :
+                         *
+                         * - id = nombre
+                         * - price = nombre
+                         * - available = booléen
+                         * - featured = booléen
+                         */
+
                         this.products =
-                            data.products;
+                            data.products.map(
+                                product => {
+
+                                    return {
+
+                                        ...product,
+
+                                        id:
+                                            Number(
+                                                product.id
+                                            ),
+
+                                        price:
+                                            Number(
+                                                product.price
+                                            ) || 0,
+
+                                        available:
+                                            product.available !== false &&
+                                            product.available !== 0,
+
+                                        featured:
+                                            product.featured === true ||
+                                            product.featured === 1 ||
+                                            product.is_featured === true ||
+                                            product.is_featured === 1
+
+                                    };
+
+                                }
+                            );
+
 
                         this.productsLoaded =
                             true;
 
+                    } else {
+
+                        this.products =
+                            [];
+
+                        this.productsLoaded =
+                            false;
+
                     }
+
 
                 } catch (error) {
 
@@ -1876,6 +2222,10 @@
                         'Impossible de charger les produits FON-KPA :',
                         error
                     );
+
+
+                    this.products =
+                        [];
 
                     this.productsLoaded =
                         false;
@@ -1891,60 +2241,216 @@
 
 
             /* =====================================================
-               PRODUIT ASSOCIÉ À UNE CARD HOME
+               RÉCUPÉRER LA CATÉGORIE D'UN PRODUIT
+
+               Le backend peut retourner :
+
+               category.name
+
+               OU
+
+               category
+
+               OU
+
+               category_name
             ===================================================== */
 
-            cardProduct(index) {
+            getProductCategory(product) {
+
+                if (!product) {
+                    return null;
+                }
+
+
+                /*
+                 * Format :
+
+                 * category: {
+                 *     id: 1,
+                 *     name: "Grillade"
+                 * }
+                 */
 
                 if (
-                    !Array.isArray(
-                        this.products
-                    ) ||
-                    this.products.length === 0
+                    product.category &&
+                    typeof product.category === 'object' &&
+                    product.category.name
                 ) {
 
+                    return product.category.name;
+
+                }
+
+
+                /*
+                 * Format :
+
+                 * category: "Grillade"
+                 */
+
+                if (
+                    typeof product.category === 'string'
+                ) {
+
+                    return product.category;
+
+                }
+
+
+                /*
+                 * Format :
+
+                 * category_name: "Grillade"
+                 */
+
+                if (
+                    typeof product.category_name === 'string'
+                ) {
+
+                    return product.category_name;
+
+                }
+
+
+                return null;
+
+            },
+
+
+            /* =====================================================
+               IMAGE DU PRODUIT
+
+               IMPORTANT :
+
+               On récupère UNIQUEMENT l'image associée
+               au produit.
+
+               Il n'y a plus aucune logique du type :
+
+               produit 0 = image Garba
+               produit 1 = image Poulet
+               etc.
+            ===================================================== */
+
+            getProductImage(product) {
+
+                if (!product) {
                     return null;
+                }
+
+
+                /*
+                 * Format recommandé :
+
+                 * image: "/images/products/garba.jpg"
+                 */
+
+                if (
+                    typeof product.image === 'string' &&
+                    product.image.trim() !== ''
+                ) {
+
+                    return product.image;
 
                 }
 
 
-                const fallbackNames = [
-                    'Garba Royal',
-                    'Poulet Braisé & Alloco',
-                    'Foutou Sauce Graine',
-                    'Attiéké Poisson'
-                ];
+                /*
+                 * Compatibilité avec image_url.
+                 */
 
+                if (
+                    typeof product.image_url === 'string' &&
+                    product.image_url.trim() !== ''
+                ) {
 
-                const expectedName =
-                    fallbackNames[index];
-
-
-                const exactProduct =
-                    this.products.find(
-                        (product) =>
-                            String(
-                                product.name || ''
-                            )
-                                .trim()
-                                .toLowerCase()
-                            ===
-                            String(
-                                expectedName || ''
-                            )
-                                .trim()
-                                .toLowerCase()
-                    );
-
-
-                if (exactProduct) {
-
-                    return exactProduct;
+                    return product.image_url;
 
                 }
 
 
-                return this.products[index] || null;
+                /*
+                 * Compatibilité avec un tableau images.
+                 */
+
+                if (
+                    Array.isArray(product.images) &&
+                    product.images.length > 0
+                ) {
+
+                    /*
+                     * On cherche d'abord l'image principale.
+                     */
+
+                    const primaryImage =
+                        product.images.find(
+                            image =>
+                                image.is_primary === true ||
+                                image.is_primary === 1
+                        );
+
+
+                    if (
+                        primaryImage
+                    ) {
+
+                        if (
+                            primaryImage.url
+                        ) {
+
+                            return primaryImage.url;
+
+                        }
+
+
+                        if (
+                            primaryImage.path
+                        ) {
+
+                            return primaryImage.path;
+
+                        }
+
+                    }
+
+
+                    /*
+                     * Sinon on prend la première image
+                     * appartenant réellement au produit.
+                     */
+
+                    const firstImage =
+                        product.images[0];
+
+
+                    if (
+                        firstImage?.url
+                    ) {
+
+                        return firstImage.url;
+
+                    }
+
+
+                    if (
+                        firstImage?.path
+                    ) {
+
+                        return firstImage.path;
+
+                    }
+
+                }
+
+
+                /*
+                 * Aucun fallback vers une image d'un autre produit.
+                 *
+                 * Cela est volontaire.
+                 */
+
+                return null;
 
             },
 
@@ -1991,7 +2497,62 @@
                 }
 
 
+                if (
+                    value === 'coup de cœur' ||
+                    value === 'coup-de-coeur'
+                ) {
+
+                    return 'border-[#E8D8E2] bg-[#FAF1F7]/95 text-[#8C4D72]';
+
+                }
+
+
                 return 'border-[#E5DCD5] bg-white/95 text-[#715F52]';
+
+            },
+
+
+            /* =====================================================
+               BADGE DYNAMIQUE DU PRODUIT
+            ===================================================== */
+
+            getProductBadge(product) {
+
+                if (!product) {
+                    return '';
+                }
+
+
+                /*
+                 * Si le backend fournit déjà un badge,
+                 * on l'utilise.
+                 */
+
+                if (
+                    typeof product.badge === 'string' &&
+                    product.badge.trim() !== ''
+                ) {
+
+                    return product.badge;
+
+                }
+
+
+                /*
+                 * Sinon, un produit featured reçoit
+                 * automatiquement "Populaire".
+                 */
+
+                if (
+                    product.featured === true
+                ) {
+
+                    return 'Populaire';
+
+                }
+
+
+                return '';
 
             },
 
@@ -2003,9 +2564,7 @@
             formatPrice(value) {
 
                 const number =
-                    Number(
-                        value
-                    ) || 0;
+                    Number(value) || 0;
 
 
                 return new Intl.NumberFormat(
@@ -2028,7 +2587,7 @@
                         product?.option_groups
                     ) &&
                     product.option_groups.some(
-                        (group) =>
+                        group =>
                             Array.isArray(
                                 group.choices
                             ) &&
@@ -2040,17 +2599,13 @@
 
 
             /* =====================================================
-               OUVERTURE MODAL
+               OUVERTURE DU MODAL
             ===================================================== */
 
             openCustomization(product) {
 
-                if (
-                    !product
-                ) {
-
+                if (!product) {
                     return;
-
                 }
 
 
@@ -2074,7 +2629,7 @@
                     product.option_groups ||
                     []
                 ).forEach(
-                    (group) => {
+                    group => {
 
                         this.selectedOptions[
                             Number(group.id)
@@ -2096,7 +2651,7 @@
 
 
             /* =====================================================
-               FERMETURE MODAL
+               FERMETURE DU MODAL
             ===================================================== */
 
             closeCustomization() {
@@ -2135,32 +2690,42 @@
 
             /* =====================================================
                CARD HOME → PANIER
+
+               IMPORTANT :
+
+               On transmet directement le Product.
+
+               Il n'y a plus :
+
+               addHomeCardToCart(index)
+
+               mais :
+
+               addHomeCardToCart(product)
             ===================================================== */
 
-            async addHomeCardToCart(index) {
+            async addHomeCardToCart(product) {
 
-                const product =
-                    this.cardProduct(
-                        index
-                    );
-
-
-                if (
-                    !product
-                ) {
+                if (!product) {
 
                     this.cartErrorMessage =
                         'Le produit est momentanément indisponible.';
 
+
                     this.showCartError =
                         true;
 
+
                     setTimeout(
                         () => {
-                            this.showCartError = false;
+
+                            this.showCartError =
+                                false;
+
                         },
                         3500
                     );
+
 
                     return;
 
@@ -2175,7 +2740,7 @@
 
 
             /* =====================================================
-               AJOUT PANIER
+               AJOUT AU PANIER
             ===================================================== */
 
             async addToCart(product) {
@@ -2189,6 +2754,11 @@
 
                 }
 
+
+                /*
+                 * Si le produit possède des options,
+                 * on ouvre d'abord le modal.
+                 */
 
                 if (
                     this.hasOptions(
@@ -2204,6 +2774,11 @@
 
                 }
 
+
+                /*
+                 * Produit sans option :
+                 * ajout direct au panier.
+                 */
 
                 await this.sendToCart(
                     product,
@@ -2239,7 +2814,7 @@
                         group.choices ||
                         []
                     ).find(
-                        (item) =>
+                        item =>
                             Number(item.id) ===
                             numericChoiceId
                     );
@@ -2276,7 +2851,9 @@
                     ];
 
 
-                /* CHOIX UNIQUE */
+                /* =================================================
+                   CHOIX UNIQUE
+                ================================================= */
 
                 if (
                     Number(
@@ -2308,12 +2885,15 @@
                     this.customizationErrors =
                         [];
 
+
                     return;
 
                 }
 
 
-                /* CHOIX MULTIPLES */
+                /* =================================================
+                   CHOIX MULTIPLES
+                ================================================= */
 
                 const index =
                     current.indexOf(
@@ -2334,6 +2914,7 @@
                     this.customizationErrors =
                         [];
 
+
                     return;
 
                 }
@@ -2353,6 +2934,7 @@
                     this.customizationErrors = [
                         `Vous pouvez sélectionner au maximum ${maxChoices} option(s) dans « ${group.name} ».`
                     ];
+
 
                     return;
 
@@ -2408,7 +2990,7 @@
 
 
             /* =====================================================
-               COMPTEUR OPTIONS
+               COMPTEUR GLOBAL DES OPTIONS
             ===================================================== */
 
             selectedChoiceCount() {
@@ -2436,6 +3018,12 @@
 
             /* =====================================================
                TOTAL PERSONNALISÉ
+
+               Attention :
+               ce total est seulement visuel.
+
+               Laravel reste responsable du calcul réel
+               du prix lors de l'ajout au panier.
             ===================================================== */
 
             customizationTotal() {
@@ -2461,7 +3049,7 @@
 
 
                 groups.forEach(
-                    (group) => {
+                    group => {
 
                         const selected =
                             this.selectedOptions[
@@ -2470,22 +3058,20 @@
 
 
                         selected.forEach(
-                            (choiceId) => {
+                            choiceId => {
 
                                 const choice =
                                     (
                                         group.choices ||
                                         []
                                     ).find(
-                                        (item) =>
+                                        item =>
                                             Number(item.id) ===
                                             Number(choiceId)
                                     );
 
 
-                                if (
-                                    choice
-                                ) {
+                                if (choice) {
 
                                     total +=
                                         Number(
@@ -2507,7 +3093,7 @@
 
 
             /* =====================================================
-               VALIDATION
+               VALIDATION PERSONNALISATION
             ===================================================== */
 
             validateCustomization() {
@@ -2522,7 +3108,7 @@
 
 
                 groups.forEach(
-                    (group) => {
+                    group => {
 
                         const count =
                             this.groupSelectedCount(
@@ -2550,6 +3136,7 @@
                             errors.push(
                                 `Veuillez sélectionner une option dans « ${group.name} ».`
                             );
+
 
                             return;
 
@@ -2604,7 +3191,7 @@
                 )
                     .flat()
                     .map(
-                        (id) =>
+                        id =>
                             Number(id)
                     )
                     .filter(
@@ -2629,6 +3216,15 @@
                 optionIds = []
             ) {
 
+                if (
+                    !product?.id
+                ) {
+
+                    return false;
+
+                }
+
+
                 try {
 
                     const response =
@@ -2651,8 +3247,10 @@
                                 },
 
                                 body: JSON.stringify({
+
                                     options:
                                         optionIds
+
                                 })
 
                             }
@@ -2726,8 +3324,10 @@
                             'fonkpa-cart-updated',
                             {
                                 detail: {
+
                                     count:
                                         this.cartCount
+
                                 }
                             }
                         )
@@ -2821,8 +3421,11 @@
                             ) {
 
                                 content.scrollTo({
+
                                     top: 0,
+
                                     behavior: 'smooth'
+
                                 });
 
                             }

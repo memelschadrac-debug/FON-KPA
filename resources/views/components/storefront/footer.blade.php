@@ -49,34 +49,69 @@
 
 
                     {{-- Champ newsletter --}}
+
                     <form
                         action="#"
                         method="POST"
                         class="mt-4"
                     >
-
                         @csrf
 
-                        <div class="flex h-10 w-full max-w-sm overflow-hidden rounded-full border border-[#DED3C9] bg-white p-1 transition-all duration-200 focus-within:border-[#E25F12] focus-within:ring-2 focus-within:ring-[#E25F12]/10">
+                        <div
+                            class="
+                                flex h-10 w-full max-w-sm items-center overflow-hidden
+                                rounded-full border border-[#DED3C9] bg-white p-1
+                                transition-all duration-200
+                                focus-within:border-[#E25F12]
+                                focus-within:ring-2 focus-within:ring-[#E25F12]/10
+                            "
+                        >
+                            {{-- Adresse e-mail --}}
+                            <div class="flex min-w-0 flex-1 items-center">
 
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Votre adresse email"
-                                class="min-w-0 flex-1 border-0 bg-transparent px-3 text-[10px] text-[#593114] outline-none placeholder:text-[#A79A91]"
-                                aria-label="Votre adresse email"
-                            >
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="Votre adresse email"
+                                    autocomplete="email"
+                                    aria-label="Votre adresse email"
+                                    required
+                                    class="
+                                        min-w-0 w-full border-0 bg-transparent
+                                        px-3 text-[10px] text-[#593114]
+                                        outline-none
+                                        ring-0
+                                        focus:outline-none
+                                        focus:ring-0
+                                        focus:border-0
+                                        placeholder:text-[#A79A91]
+                                    "
+                                />
 
+                            </div>
+
+                            {{-- Bouton d'inscription --}}
                             <button
                                 type="submit"
-                                class="btn h-8 min-h-8 rounded-full border-0 bg-[#593114] px-4 text-[9px] font-bold text-white shadow-none hover:bg-[#E25F12]"
+                                class="
+                                    flex h-8 shrink-0 items-center justify-center
+                                    rounded-full border-0 bg-[#593114]
+                                    px-4 text-[9px] font-bold text-white
+                                    shadow-sm
+                                    transition-all duration-200
+                                    hover:bg-[#E25F12]
+                                    hover:shadow-md
+                                    focus:outline-none
+                                    focus:ring-2 focus:ring-[#593114]/20
+                                    focus:ring-offset-1
+                                    active:scale-[0.98]
+                                "
                             >
                                 S'inscrire
                             </button>
-
                         </div>
-
                     </form>
+
 
                 </div>
 
