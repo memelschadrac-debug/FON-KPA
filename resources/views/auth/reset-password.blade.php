@@ -485,12 +485,14 @@
 
         <button
             type="submit"
+            id="reset-password-submit"
             class="
                 flex
                 h-10
                 w-full
                 items-center
                 justify-center
+                gap-2
                 rounded-md
                 bg-[#593114]
                 px-4
@@ -509,7 +511,34 @@
                 active:scale-[0.99]
             "
         >
-            Réinitialiser le mot de passe
+            <span id="reset-password-submit-text">
+                Réinitialiser le mot de passe
+            </span>
+
+            <svg
+                id="reset-password-submit-spinner"
+                class="hidden h-4 w-4 animate-spin"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+            >
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    class="opacity-25"
+                    stroke="currentColor"
+                    stroke-width="3"
+                />
+
+                <path
+                    d="M21 12a9 9 0 0 0-9-9"
+                    class="opacity-90"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                />
+            </svg>
         </button>
 
     </form>
@@ -637,6 +666,51 @@
 
         }
 
+    </script>
+
+    <script>
+        const resetPasswordForm =
+            document.querySelector(
+                'form[action="{{ route('password.store') }}"]'
+            );
+
+        const resetPasswordButton =
+            document.getElementById('reset-password-submit');
+
+        const resetPasswordText =
+            document.getElementById('reset-password-submit-text');
+
+        const resetPasswordSpinner =
+            document.getElementById('reset-password-submit-spinner');
+
+
+        if (
+            resetPasswordForm &&
+            resetPasswordButton &&
+            resetPasswordText &&
+            resetPasswordSpinner
+        ) {
+
+            resetPasswordForm.addEventListener('submit', function () {
+
+                // Évite les doubles clics pendant la réinitialisation.
+                resetPasswordButton.disabled = true;
+
+                // Affiche le spinner.
+                resetPasswordSpinner.classList.remove('hidden');
+
+                // Change le texte du bouton.
+                resetPasswordText.textContent = 'Réinitialisation...';
+
+                // Rend visuellement le bouton moins interactif.
+                resetPasswordButton.classList.add(
+                    'cursor-not-allowed',
+                    'opacity-90'
+                );
+
+            });
+
+        }
     </script>
 
 </x-guest-layout>

@@ -28,9 +28,9 @@
         {{-- MESSAGE DE SUCCÈS                                       --}}
         {{-- ========================================================= --}}
         @if (session('success'))
+
             <div class="flex items-center gap-3 rounded-xl border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-700">
 
-                {{-- Icône --}}
                 <svg
                     class="h-5 w-5 shrink-0"
                     fill="none"
@@ -50,6 +50,37 @@
                 </span>
 
             </div>
+
+        @endif
+
+
+        {{-- ========================================================= --}}
+        {{-- MESSAGE D'ERREUR                                         --}}
+        {{-- ========================================================= --}}
+        @if ($errors->has('order'))
+
+            <div class="flex items-center gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+
+                <svg
+                    class="h-5 w-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 9v3m0 4h.01M10.29 3.86l-7.82 14a2 2 0 001.74 3h15.58a2 2 0 001.74-3l-7.82-14a2 2 0 00-3.48 0z"
+                    />
+                </svg>
+
+                <span>
+                    {{ $errors->first('order') }}
+                </span>
+
+            </div>
+
         @endif
 
 
@@ -142,7 +173,6 @@
 
                                     <div class="flex items-center gap-3">
 
-                                        {{-- Icône --}}
                                         <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#593114]/[0.07] text-[#593114]">
 
                                             <svg
@@ -190,9 +220,11 @@
                                         </p>
 
                                         @if ($order->user?->email)
+
                                             <p class="mt-0.5 text-xs text-gray-400">
                                                 {{ $order->user->email }}
                                             </p>
+
                                         @endif
 
                                     </div>
@@ -205,10 +237,18 @@
                                 {{-- ===================================== --}}
                                 <td class="px-5 py-4">
 
+                                    @php
+                                        $deliveryLabel = match ($order->delivery_method) {
+                                            'delivery' => 'Livraison',
+                                            'pickup' => 'Retrait sur place',
+                                            default => ucfirst($order->delivery_method),
+                                        };
+                                    @endphp
+
                                     <div>
 
                                         <p class="text-sm font-medium text-gray-700">
-                                            {{ $order->delivery_method }}
+                                            {{ $deliveryLabel }}
                                         </p>
 
                                         <p class="mt-0.5 text-xs text-gray-400">
@@ -336,59 +376,20 @@
 
 
                                         {{-- -------------------------------- --}}
-                                        {{-- SUPPRIMER                       --}}
+                                        {{-- SUPPRESSION                      --}}
                                         {{-- -------------------------------- --}}
-                                        <button
-                                            type="button"
-                                            onclick="document.getElementById('delete-order-{{ $order->id }}').showModal()"
-                                            class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
-                                            title="Supprimer la commande"
-                                        >
+                                        @if (in_array($order->status, ['pending', 'cancelled'], true))
 
-                                            <svg
-                                                class="h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
+                                            {{-- Suppression autorisée --}}
+                                            <button
+                                                type="button"
+                                                onclick="document.getElementById('delete-order-{{ $order->id }}').showModal()"
+                                                class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                                                title="Supprimer la commande"
                                             >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="1.8"
-                                                    d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1 1H8a1 1 0 01-1-1V7m3 4v6m4-6v6"
-                                                />
-                                            </svg>
-
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                            {{-- ================================================= --}}
-                            {{-- MODAL DE SUPPRESSION                             --}}
-                            {{-- ================================================= --}}
-                            <dialog
-                                id="delete-order-{{ $order->id }}"
-                                class="modal"
-                            >
-
-                                <div class="modal-box max-w-md overflow-hidden rounded-2xl p-0">
-
-                                    {{-- ----------------------------------------- --}}
-                                    {{-- HEADER DU MODAL                          --}}
-                                    {{-- ----------------------------------------- --}}
-                                    <div class="px-6 py-6">
-
-                                        <div class="flex items-start gap-4">
-
-                                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
 
                                                 <svg
-                                                    class="h-5 w-5"
+                                                    class="h-4 w-4"
                                                     fill="none"
                                                     stroke="currentColor"
                                                     viewBox="0 0 24 24"
@@ -401,80 +402,156 @@
                                                     />
                                                 </svg>
 
+                                            </button>
+
+                                        @else
+
+                                            {{-- Suppression désactivée --}}
+                                            <button
+                                                type="button"
+                                                disabled
+                                                class="flex h-8 w-8 cursor-not-allowed items-center justify-center rounded-lg border border-gray-100 bg-gray-50 text-gray-300"
+                                                title="Suppression indisponible pour cette commande"
+                                                aria-label="Suppression indisponible pour cette commande"
+                                            >
+
+                                                <svg
+                                                    class="h-4 w-4"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="1.8"
+                                                        d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1 1H8a1 1 0 01-1-1V7m3 4v6m4-6v6"
+                                                    />
+                                                </svg>
+
+                                            </button>
+
+                                        @endif
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                            {{-- ================================================= --}}
+                            {{-- MODAL DE SUPPRESSION                             --}}
+                            {{-- ================================================= --}}
+                            @if (in_array($order->status, ['pending', 'cancelled'], true))
+
+                                <dialog
+                                    id="delete-order-{{ $order->id }}"
+                                    class="modal"
+                                >
+
+                                    <div class="modal-box max-w-md overflow-hidden rounded-2xl p-0">
+
+                                        {{-- ----------------------------------------- --}}
+                                        {{-- HEADER DU MODAL                          --}}
+                                        {{-- ----------------------------------------- --}}
+                                        <div class="px-6 py-6">
+
+                                            <div class="flex items-start gap-4">
+
+                                                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+
+                                                    <svg
+                                                        class="h-5 w-5"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="1.8"
+                                                            d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1-1H8a1 1 0 01-1-1V7m3 4v6m4-6v6"
+                                                        />
+                                                    </svg>
+
+                                                </div>
+
+
+                                                <div>
+
+                                                    <h3 class="text-base font-semibold text-gray-800">
+                                                        Supprimer la commande ?
+                                                    </h3>
+
+                                                    <p class="mt-1 text-sm leading-6 text-gray-500">
+                                                        Vous êtes sur le point de supprimer la commande
+                                                        <span class="font-semibold text-gray-700">
+                                                            #{{ $order->order_number }}
+                                                        </span>.
+                                                        Cette action est irréversible.
+                                                    </p>
+
+                                                </div>
+
                                             </div>
 
+                                        </div>
 
-                                            <div>
 
-                                                <h3 class="text-base font-semibold text-gray-800">
-                                                    Supprimer la commande ?
-                                                </h3>
+                                        {{-- ----------------------------------------- --}}
+                                        {{-- FOOTER DU MODAL                          --}}
+                                        {{-- ----------------------------------------- --}}
+                                        <div class="flex items-center justify-end gap-3 bg-gray-50 px-6 py-4">
 
-                                                <p class="mt-1 text-sm leading-6 text-gray-500">
-                                                    Vous êtes sur le point de supprimer la commande
-                                                    <span class="font-semibold text-gray-700">
-                                                        #{{ $order->order_number }}
-                                                    </span>.
-                                                    Cette action est irréversible.
-                                                </p>
+                                            {{-- Annuler --}}
+                                            <form method="dialog">
 
-                                            </div>
+                                                <button
+                                                    type="submit"
+                                                    class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                                                >
+                                                    Annuler
+                                                </button>
+
+                                            </form>
+
+
+                                            {{-- Confirmer --}}
+                                            <form
+                                                action="{{ route('admin.orders.destroy', $order) }}"
+                                                method="POST"
+                                            >
+
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button
+                                                    type="submit"
+                                                    class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+                                                >
+                                                    Supprimer
+                                                </button>
+
+                                            </form>
 
                                         </div>
 
                                     </div>
 
 
-                                    {{-- ----------------------------------------- --}}
-                                    {{-- FOOTER DU MODAL                          --}}
-                                    {{-- ----------------------------------------- --}}
-                                    <div class="flex items-center justify-end gap-3 bg-gray-50 px-6 py-4">
+                                    {{-- Fermer en cliquant à l'extérieur --}}
+                                    <form
+                                        method="dialog"
+                                        class="modal-backdrop"
+                                    >
+                                        <button>close</button>
+                                    </form>
 
-                                        {{-- Annuler --}}
-                                        <form method="dialog">
+                                </dialog>
 
-                                            <button
-                                                type="submit"
-                                                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
-                                            >
-                                                Annuler
-                                            </button>
+                            @endif
 
-                                        </form>
-
-
-                                        {{-- Confirmer --}}
-                                        <form
-                                            action="{{ route('admin.orders.destroy', $order) }}"
-                                            method="POST"
-                                        >
-
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button
-                                                type="submit"
-                                                class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
-                                            >
-                                                Supprimer
-                                            </button>
-
-                                        </form>
-
-                                    </div>
-
-                                </div>
-
-
-                                {{-- Fermer en cliquant à l'extérieur --}}
-                                <form
-                                    method="dialog"
-                                    class="modal-backdrop"
-                                >
-                                    <button>close</button>
-                                </form>
-
-                            </dialog>
 
                         @empty
 
@@ -490,7 +567,6 @@
 
                                     <div class="flex flex-col items-center justify-center text-center">
 
-                                        {{-- Icône --}}
                                         <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#593114]/[0.07] text-[#593114]">
 
                                             <svg
@@ -503,7 +579,7 @@
                                                     stroke-linecap="round"
                                                     stroke-linejoin="round"
                                                     stroke-width="1.7"
-                                                    d="M9 5h6m-8 3h10M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"
+                                                    d="M9 5h6m-8 3h10M7 3h10a2 2 0 012 2V5a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"
                                                 />
                                             </svg>
 

@@ -167,12 +167,14 @@
 
             <button
                 type="submit"
+                id="forgot-password-submit"
                 class="
                     flex
                     h-10
                     w-full
                     items-center
                     justify-center
+                    gap-2
                     rounded-md
                     bg-[#593114]
                     px-4
@@ -191,7 +193,34 @@
                     active:scale-[0.99]
                 "
             >
-                Envoyer le lien de réinitialisation
+                <span id="forgot-password-submit-text">
+                    Envoyer le lien de réinitialisation
+                </span>
+
+                <svg
+                    id="forgot-password-submit-spinner"
+                    class="hidden h-4 w-4 animate-spin"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                >
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                        class="opacity-25"
+                        stroke="currentColor"
+                        stroke-width="3"
+                    />
+
+                    <path
+                        d="M21 12a9 9 0 0 0-9-9"
+                        class="opacity-90"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                    />
+                </svg>
             </button>
 
         </div>
@@ -258,3 +287,48 @@
     </form>
 
 </x-guest-layout>
+
+<script>
+    const forgotPasswordForm =
+        document.querySelector(
+            'form[action="{{ route('password.email') }}"]'
+        );
+
+    const forgotPasswordButton =
+        document.getElementById('forgot-password-submit');
+
+    const forgotPasswordText =
+        document.getElementById('forgot-password-submit-text');
+
+    const forgotPasswordSpinner =
+        document.getElementById('forgot-password-submit-spinner');
+
+
+    if (
+        forgotPasswordForm &&
+        forgotPasswordButton &&
+        forgotPasswordText &&
+        forgotPasswordSpinner
+    ) {
+
+        forgotPasswordForm.addEventListener('submit', function () {
+
+            // Évite les doubles clics pendant l'envoi.
+            forgotPasswordButton.disabled = true;
+
+            // Affiche le spinner.
+            forgotPasswordSpinner.classList.remove('hidden');
+
+            // Change le texte du bouton.
+            forgotPasswordText.textContent = 'Envoi...';
+
+            // Rend visuellement le bouton moins interactif.
+            forgotPasswordButton.classList.add(
+                'cursor-not-allowed',
+                'opacity-90'
+            );
+
+        });
+
+    }
+</script>

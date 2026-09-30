@@ -27,7 +27,6 @@
                 href="{{ route('admin.orders.index') }}"
                 class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:border-[#593114]/30 hover:bg-[#593114]/[0.03] hover:text-[#593114]"
             >
-
                 <svg
                     class="h-4 w-4"
                     fill="none"
@@ -43,14 +42,13 @@
                 </svg>
 
                 Retour aux commandes
-
             </a>
 
         </div>
 
 
         {{-- ========================================================= --}}
-        {{-- MESSAGE DE SUCCÈS                                       --}}
+        {{-- MESSAGE DE SUCCÈS                                        --}}
         {{-- ========================================================= --}}
         @if (session('success'))
 
@@ -77,6 +75,107 @@
             </div>
 
         @endif
+
+
+        {{-- ========================================================= --}}
+        {{-- ERREURS DE COMMANDE                                      --}}
+        {{-- ========================================================= --}}
+        @if ($errors->has('order'))
+
+            <div class="flex items-center gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+
+                <svg
+                    class="h-5 w-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 9v4m0 4h.01M10.29 3.86l-8.18 14A2 2 0 003.84 21h16.32a2 2 0 001.73-3.14l-8.18-14a2 2 0 00-3.42 0z"
+                    />
+                </svg>
+
+                <span>
+                    {{ $errors->first('order') }}
+                </span>
+
+            </div>
+
+        @endif
+
+
+        {{-- ========================================================= --}}
+        {{-- VARIABLES D'AFFICHAGE                                   --}}
+        {{-- ========================================================= --}}
+        @php
+
+            $statusClasses = match ($order->status) {
+                'pending' =>
+                    'bg-amber-50 text-amber-700 border-amber-100',
+
+                'confirmed' =>
+                    'bg-blue-50 text-blue-700 border-blue-100',
+
+                'preparing' =>
+                    'bg-orange-50 text-orange-700 border-orange-100',
+
+                'shipped' =>
+                    'bg-purple-50 text-purple-700 border-purple-100',
+
+                'delivered' =>
+                    'bg-green-50 text-green-700 border-green-100',
+
+                'cancelled' =>
+                    'bg-red-50 text-red-700 border-red-100',
+
+                default =>
+                    'bg-gray-50 text-gray-600 border-gray-100',
+            };
+
+            $statusLabel = match ($order->status) {
+                'pending' => 'En attente',
+                'confirmed' => 'Confirmée',
+                'preparing' => 'En préparation',
+                'shipped' => 'Expédiée',
+                'delivered' => 'Livrée',
+                'cancelled' => 'Annulée',
+                default => ucfirst($order->status),
+            };
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Mode de livraison
+            |--------------------------------------------------------------------------
+            */
+
+            $deliveryMethodLabel = match ($order->delivery_method) {
+                'delivery' => 'Livraison',
+                'pickup' => 'Retrait sur place',
+                default => ucfirst($order->delivery_method),
+            };
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Suppression
+            |--------------------------------------------------------------------------
+            |
+            | Une commande en attente ou annulée peut être supprimée.
+            | Les autres commandes font partie de l'historique commercial.
+            |
+            */
+
+            $canDeleteOrder = in_array(
+                $order->status,
+                ['pending', 'cancelled'],
+                true
+            );
+
+        @endphp
 
 
         {{-- ========================================================= --}}
@@ -113,26 +212,116 @@
 
                     @forelse ($order->items as $item)
 
-                        <div class="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="px-5 py-5">
 
-                            {{-- Produit --}}
-                            <div class="flex min-w-0 items-center gap-4">
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
-                                {{-- Image / icône --}}
-                                <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#593114]/[0.07] text-[#593114]">
+                                {{-- Produit --}}
+                                <div class="flex min-w-0 items-center gap-4">
 
-                                    @if ($item->product?->image)
+                                    {{-- Image / icône --}}
+                                    <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#593114]/[0.07] text-[#593114]">
 
-                                        <img
-                                            src="{{ $item->product->image }}"
-                                            alt="{{ $item->product->name }}"
-                                            class="h-full w-full object-cover"
-                                        >
+                                        @if ($item->product?->image)
 
-                                    @else
+                                            <img
+                                                src="{{ $item->product->image }}"
+                                                alt="{{ $item->product->name }}"
+                                                class="h-full w-full object-cover"
+                                            >
+
+                                        @else
+
+                                            <svg
+                                                class="h-6 w-6"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="1.7"
+                                                    d="M20 7l-8-4-8 4m16 0v10l-8 4-8-4V7m16 0l-8 4m0 0L4 7m8 4v10"
+                                                />
+                                            </svg>
+
+                                        @endif
+
+                                    </div>
+
+
+                                    {{-- Informations produit --}}
+                                    <div class="min-w-0">
+
+                                        <p class="truncate text-sm font-semibold text-gray-800">
+                                            {{ $item->product?->name ?? 'Produit supprimé' }}
+                                        </p>
+
+                                        @if ($item->product?->category)
+
+                                            <p class="mt-0.5 text-xs text-gray-400">
+                                                {{ $item->product->category->name }}
+                                            </p>
+
+                                        @endif
+
+                                        <p class="mt-1 text-xs text-gray-400">
+                                            Prix unitaire :
+                                            <span class="font-medium text-gray-600">
+                                                {{ number_format($item->unit_price, 0, ',', ' ') }} FCFA
+                                            </span>
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                {{-- Quantité + sous-total --}}
+                                <div class="flex items-center justify-between gap-8 sm:justify-end">
+
+                                    <div class="text-center">
+
+                                        <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+                                            Quantité
+                                        </p>
+
+                                        <p class="mt-1 text-sm font-semibold text-gray-700">
+                                            × {{ $item->quantity }}
+                                        </p>
+
+                                    </div>
+
+
+                                    <div class="min-w-[120px] text-right">
+
+                                        <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+                                            Sous-total
+                                        </p>
+
+                                        <p class="mt-1 text-sm font-semibold text-[#593114]">
+                                            {{ number_format($item->subtotal, 0, ',', ' ') }} FCFA
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- ================================================= --}}
+                            {{-- OPTIONS CHOISIES                                 --}}
+                            {{-- ================================================= --}}
+                            @if ($item->options->isNotEmpty())
+
+                                <div class="mt-4 ml-0 rounded-xl border border-gray-100 bg-gray-50/70 px-4 py-3 sm:ml-[4.5rem]">
+
+                                    <div class="flex items-center gap-2">
 
                                         <svg
-                                            class="h-6 w-6"
+                                            class="h-4 w-4 shrink-0 text-[#593114]"
                                             fill="none"
                                             stroke="currentColor"
                                             viewBox="0 0 24 24"
@@ -140,70 +329,64 @@
                                             <path
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
-                                                stroke-width="1.7"
-                                                d="M20 7l-8-4-8 4m16 0v10l-8 4-8-4V7m16 0l-8 4m0 0L4 7m8 4v10"
+                                                stroke-width="1.8"
+                                                d="M12 6v12m6-6H6"
                                             />
                                         </svg>
 
-                                    @endif
-
-                                </div>
-
-
-                                {{-- Informations produit --}}
-                                <div class="min-w-0">
-
-                                    <p class="truncate text-sm font-semibold text-gray-800">
-                                        {{ $item->product?->name ?? 'Produit supprimé' }}
-                                    </p>
-
-                                    @if ($item->product?->category)
-                                        <p class="mt-0.5 text-xs text-gray-400">
-                                            {{ $item->product->category->name }}
+                                        <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+                                            Personnalisation
                                         </p>
-                                    @endif
 
-                                    <p class="mt-1 text-xs text-gray-400">
-                                        Prix unitaire :
-                                        <span class="font-medium text-gray-600">
-                                            {{ number_format($item->unit_price, 0, ',', ' ') }} FCFA
-                                        </span>
-                                    </p>
+                                    </div>
+
+
+                                    <div class="mt-3 space-y-2">
+
+                                        @foreach ($item->options as $option)
+
+                                            <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+
+                                                <div class="flex min-w-0 items-center gap-2">
+
+                                                    <span class="font-medium text-gray-500">
+                                                        {{ $option->group_name }}
+                                                    </span>
+
+                                                    <span class="text-gray-300">
+                                                        →
+                                                    </span>
+
+                                                    <span class="font-semibold text-gray-700">
+                                                        {{ $option->choice_name }}
+                                                    </span>
+
+                                                </div>
+
+
+                                                <span class="shrink-0 font-medium {{ $option->price_modifier > 0 ? 'text-[#593114]' : 'text-gray-400' }}">
+
+                                                    @if ($option->price_modifier > 0)
+
+                                                        +{{ number_format($option->price_modifier, 0, ',', ' ') }} FCFA
+
+                                                    @else
+
+                                                        Inclus
+
+                                                    @endif
+
+                                                </span>
+
+                                            </div>
+
+                                        @endforeach
+
+                                    </div>
 
                                 </div>
 
-                            </div>
-
-
-                            {{-- Quantité + sous-total --}}
-                            <div class="flex items-center justify-between gap-8 sm:justify-end">
-
-                                <div class="text-center">
-
-                                    <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
-                                        Quantité
-                                    </p>
-
-                                    <p class="mt-1 text-sm font-semibold text-gray-700">
-                                        × {{ $item->quantity }}
-                                    </p>
-
-                                </div>
-
-
-                                <div class="min-w-[120px] text-right">
-
-                                    <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
-                                        Sous-total
-                                    </p>
-
-                                    <p class="mt-1 text-sm font-semibold text-[#593114]">
-                                        {{ number_format($item->subtotal, 0, ',', ' ') }} FCFA
-                                    </p>
-
-                                </div>
-
-                            </div>
+                            @endif
 
                         </div>
 
@@ -328,41 +511,6 @@
                                 Statut actuel
                             </p>
 
-                            @php
-                                $statusClasses = match ($order->status) {
-                                    'pending' =>
-                                        'bg-amber-50 text-amber-700 border-amber-100',
-
-                                    'confirmed' =>
-                                        'bg-blue-50 text-blue-700 border-blue-100',
-
-                                    'preparing' =>
-                                        'bg-orange-50 text-orange-700 border-orange-100',
-
-                                    'shipped' =>
-                                        'bg-purple-50 text-purple-700 border-purple-100',
-
-                                    'delivered' =>
-                                        'bg-green-50 text-green-700 border-green-100',
-
-                                    'cancelled' =>
-                                        'bg-red-50 text-red-700 border-red-100',
-
-                                    default =>
-                                        'bg-gray-50 text-gray-600 border-gray-100',
-                                };
-
-                                $statusLabel = match ($order->status) {
-                                    'pending' => 'En attente',
-                                    'confirmed' => 'Confirmée',
-                                    'preparing' => 'En préparation',
-                                    'shipped' => 'Expédiée',
-                                    'delivered' => 'Livrée',
-                                    'cancelled' => 'Annulée',
-                                    default => ucfirst($order->status),
-                                };
-                            @endphp
-
                             <span class="mt-2 inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold {{ $statusClasses }}">
                                 {{ $statusLabel }}
                             </span>
@@ -473,7 +621,7 @@
                     </p>
 
                     <p class="mt-1 text-sm font-semibold text-gray-800">
-                        {{ $order->delivery_method }}
+                        {{ $deliveryMethodLabel }}
                     </p>
 
                 </div>
@@ -657,36 +805,79 @@
                         Supprimer cette commande
                     </p>
 
-                    <p class="mt-1 text-xs leading-5 text-gray-400">
-                        Cette action est définitive et ne peut pas être annulée.
-                    </p>
+                    @if ($canDeleteOrder)
+
+                        <p class="mt-1 text-xs leading-5 text-gray-400">
+                            Cette action est définitive et ne peut pas être annulée.
+                        </p>
+
+                    @else
+
+                        <p class="mt-1 text-xs leading-5 text-gray-400">
+                            Cette commande fait partie de l'historique commercial et ne peut plus être supprimée.
+                        </p>
+
+                    @endif
 
                 </div>
 
 
-                <button
-                    type="button"
-                    onclick="document.getElementById('delete-order').showModal()"
-                    class="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-4 text-sm font-medium text-red-600 transition hover:bg-red-50"
-                >
+                @if ($canDeleteOrder)
 
-                    <svg
-                        class="h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                    <button
+                        type="button"
+                        onclick="document.getElementById('delete-order').showModal()"
+                        class="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-4 text-sm font-medium text-red-600 transition hover:bg-red-50"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="1.8"
-                            d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1 1H8a1 1 0 01-1-1V7m3 4v6m4-6v6"
-                        />
-                    </svg>
 
-                    Supprimer
+                        <svg
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.8"
+                                d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1 1H8a1 1 0 01-1-1V7m3 4v6m4-6v6"
+                            />
+                        </svg>
 
-                </button>
+                        Supprimer
+
+                    </button>
+
+                @else
+
+                    {{-- Bouton volontairement visible mais désactivé --}}
+                    <button
+                        type="button"
+                        disabled
+                        aria-disabled="true"
+                        title="Suppression indisponible pour cette commande"
+                        class="inline-flex h-9 cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 text-sm font-medium text-gray-300"
+                    >
+
+                        <svg
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.8"
+                                d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1 1H8a1 1 0 01-1-1V7m3 4v6m4-6v6"
+                            />
+                        </svg>
+
+                        Supprimer
+
+                    </button>
+
+                @endif
 
             </div>
 
@@ -696,104 +887,108 @@
         {{-- ========================================================= --}}
         {{-- MODAL DE SUPPRESSION                                     --}}
         {{-- ========================================================= --}}
-        <dialog
-            id="delete-order"
-            class="modal"
-        >
+        @if ($canDeleteOrder)
 
-            <div class="modal-box max-w-md overflow-hidden rounded-2xl p-0">
+            <dialog
+                id="delete-order"
+                class="modal"
+            >
 
-                {{-- Header --}}
-                <div class="px-6 py-6">
+                <div class="modal-box max-w-md overflow-hidden rounded-2xl p-0">
 
-                    <div class="flex items-start gap-4">
+                    {{-- Header --}}
+                    <div class="px-6 py-6">
 
-                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+                        <div class="flex items-start gap-4">
 
-                            <svg
-                                class="h-5 w-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+
+                                <svg
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="1.8"
+                                        d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1 1H8a1 1 0 01-1-1V7m3 4v6m4-6v6"
+                                    />
+                                </svg>
+
+                            </div>
+
+
+                            <div>
+
+                                <h3 class="text-base font-semibold text-gray-800">
+                                    Supprimer la commande ?
+                                </h3>
+
+                                <p class="mt-1 text-sm leading-6 text-gray-500">
+                                    Vous êtes sur le point de supprimer la commande
+                                    <span class="font-semibold text-gray-700">
+                                        #{{ $order->order_number }}
+                                    </span>.
+                                    Cette action est irréversible.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- Footer --}}
+                    <div class="flex items-center justify-end gap-3 bg-gray-50 px-6 py-4">
+
+                        <form method="dialog">
+
+                            <button
+                                type="submit"
+                                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="1.8"
-                                    d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1 1H8a1 1 0 01-1-1V7m3 4v6m4-6v6"
-                                />
-                            </svg>
+                                Annuler
+                            </button>
 
-                        </div>
+                        </form>
 
 
-                        <div>
+                        <form
+                            action="{{ route('admin.orders.destroy', $order) }}"
+                            method="POST"
+                        >
 
-                            <h3 class="text-base font-semibold text-gray-800">
-                                Supprimer la commande ?
-                            </h3>
+                            @csrf
+                            @method('DELETE')
 
-                            <p class="mt-1 text-sm leading-6 text-gray-500">
-                                Vous êtes sur le point de supprimer la commande
-                                <span class="font-semibold text-gray-700">
-                                    #{{ $order->order_number }}
-                                </span>.
-                                Cette action est irréversible.
-                            </p>
+                            <button
+                                type="submit"
+                                class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+                            >
+                                Supprimer
+                            </button>
 
-                        </div>
+                        </form>
 
                     </div>
 
                 </div>
 
 
-                {{-- Footer --}}
-                <div class="flex items-center justify-end gap-3 bg-gray-50 px-6 py-4">
+                {{-- Fermer en cliquant à l'extérieur --}}
+                <form
+                    method="dialog"
+                    class="modal-backdrop"
+                >
+                    <button>close</button>
+                </form>
 
-                    <form method="dialog">
+            </dialog>
 
-                        <button
-                            type="submit"
-                            class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
-                        >
-                            Annuler
-                        </button>
-
-                    </form>
-
-
-                    <form
-                        action="{{ route('admin.orders.destroy', $order) }}"
-                        method="POST"
-                    >
-
-                        @csrf
-                        @method('DELETE')
-
-                        <button
-                            type="submit"
-                            class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
-                        >
-                            Supprimer
-                        </button>
-
-                    </form>
-
-                </div>
-
-            </div>
-
-
-            {{-- Fermer en cliquant à l'extérieur --}}
-            <form
-                method="dialog"
-                class="modal-backdrop"
-            >
-                <button>close</button>
-            </form>
-
-        </dialog>
+        @endif
 
     </div>
 

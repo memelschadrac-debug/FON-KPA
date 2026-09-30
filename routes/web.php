@@ -7,6 +7,7 @@ use App\Http\Controllers\Storefront\OrderController;
 use App\Http\Controllers\Storefront\DishesController;
 use App\Http\Controllers\Storefront\CategoryController as StorefrontCategoryController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'storefront.home')
@@ -122,7 +123,7 @@ Route::middleware('auth')->group(function () {
 
         return view('storefront.commande.index', [
             'cart' => $cart,
-            'totalArticles' => $totalArticles,
+            'totalArticles' => $totalArticles,  
             'subtotal' => $subtotal,
         ]);
 
@@ -143,19 +144,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get(
         '/commande/{order}/confirmee',
-        function (\App\Models\Order $order) {
-
-            $order->load([
-                'user',
-                'items.product',
-            ]);
-
-            return view(
-                'storefront.commande.success',
-                compact('order')
-            );
-
-        }
+        [OrderController::class, 'success']
     )->name('commande.success');
 
 });
@@ -165,11 +154,7 @@ Route::middleware('auth')->group(function () {
 // DASHBOARD
 // =========================================================
 
-Route::get('/dashboard', function () {
-
-    return view('admin.dashboard');
-
-})
+Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth', 'verified', 'admin'])
     ->name('dashboard');
 

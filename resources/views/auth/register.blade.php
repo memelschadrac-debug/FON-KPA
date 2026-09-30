@@ -586,31 +586,37 @@
 
         <button
             type="submit"
-            class="
-                flex
-                h-10
-                w-full
-                items-center
-                justify-center
-                rounded-md
-                bg-[#593114]
-                px-4
-                text-[12px]
-                font-semibold
-                text-white
-                shadow-sm
-                transition-all
-                duration-200
-                hover:bg-[#47270f]
-                hover:shadow-md
-                focus:outline-none
-                focus:ring-2
-                focus:ring-[#593114]/20
-                focus:ring-offset-1
-                active:scale-[0.99]
-            "
+            id="register-submit"
+            class="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#593114] px-4 text-[12px] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[#47270f] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#593114]/20 focus:ring-offset-1 active:scale-[0.99]"
         >
-            Créer mon compte
+            <span id="register-submit-text">
+                Créer un compte
+            </span>
+
+            <svg
+                id="register-submit-spinner"
+                class="hidden h-4 w-4 animate-spin"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+            >
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    class="opacity-25"
+                    stroke="currentColor"
+                    stroke-width="3"
+                />
+
+                <path
+                    d="M21 12a9 9 0 0 0-9-9"
+                    class="opacity-90"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                />
+            </svg>
         </button>
 
     </form>
@@ -778,6 +784,50 @@
 
         }
 
+    </script>
+    
+    <script>
+        const registerForm =
+            document.querySelector(
+                'form[action="{{ route('register') }}"]'
+            );
+
+        const registerButton =
+            document.getElementById('register-submit');
+
+        const registerText =
+            document.getElementById('register-submit-text');
+
+        const registerSpinner =
+            document.getElementById('register-submit-spinner');
+
+
+        if (
+            registerForm &&
+            registerButton &&
+            registerText &&
+            registerSpinner
+        ) {
+
+            registerForm.addEventListener('submit', function () {
+
+                // Évite les doubles clics pendant l'inscription.
+                registerButton.disabled = true;
+
+                // Affiche le spinner.
+                registerSpinner.classList.remove('hidden');
+
+                // Change le texte du bouton.
+                registerText.textContent = 'Création...';
+
+                // Rend visuellement le bouton moins interactif.
+                registerButton.classList.add(
+                    'cursor-not-allowed',
+                    'opacity-90'
+                );
+
+            });
+        }
     </script>
 
 </x-guest-layout>

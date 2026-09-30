@@ -11,10 +11,12 @@ use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Throwable;
 
 class OrderController extends Controller
 {
@@ -147,11 +149,17 @@ class OrderController extends Controller
         | Charger les produits et leurs options
         |--------------------------------------------------------------------------
         |
-        | Important :
-        | On recharge les données depuis la base.
+        | IMPORTANT :
         |
-        | Le panier ne doit jamais être considéré comme une source
-        | de vérité pour les prix.
+        | Le panier/session n'est jamais considéré comme une source
+        | de vérité pour :
+        |
+        | - le prix du produit ;
+        | - le prix des options ;
+        | - la disponibilité ;
+        | - les règles des groupes d'options.
+        |
+        | Toutes ces informations viennent de la base.
         |
         */
 
@@ -193,7 +201,27 @@ class OrderController extends Controller
         */
 
         $orderLines = [];
-        $total = 0;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Total en centimes
+        |--------------------------------------------------------------------------
+        |
+        | Nous utilisons des entiers pour les calculs monétaires.
+        |
+        | Exemple :
+        |
+        | 3 500 FCFA
+        |
+        | devient :
+        |
+        | 350000 centimes
+        |
+        | Cela évite les problèmes classiques liés aux float.
+        |
+        */
+
+        $totalCents = 0;
 
         /*
         |--------------------------------------------------------------------------
@@ -275,8 +303,10 @@ class OrderController extends Controller
             | Récupérer uniquement les IDs des choix
             |--------------------------------------------------------------------------
             |
-            | Nous ne faisons jamais confiance au prix présent dans
-            | la session ou envoyé par le navigateur.
+            | IMPORTANT :
+            |
+            | Le prix éventuellement présent dans le panier est ignoré.
+            | Seul l'ID du choix est utilisé.
             |
             */
 
@@ -421,16 +451,21 @@ class OrderController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Calculer le supplément des options
+            | Calcul du prix des options
             |--------------------------------------------------------------------------
+            |
+            | Chaque montant est converti en centimes avant le calcul.
+            |
             */
 
-            $optionsPrice = $choiceIds->sum(
+            $optionsPriceCents = $choiceIds->sum(
                 function ($choiceId) use ($allChoices) {
 
-                    return (float) $allChoices
-                        ->get($choiceId)
-                        ->price_modifier;
+                    return $this->moneyToCents(
+                        $allChoices
+                            ->get($choiceId)
+                            ->price_modifier
+                    );
                 }
             );
 
@@ -440,7 +475,9 @@ class OrderController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $basePrice = (float) $product->price;
+            $basePriceCents = $this->moneyToCents(
+                $product->price
+            );
 
             /*
             |--------------------------------------------------------------------------
@@ -448,7 +485,9 @@ class OrderController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $unitPrice = $basePrice + $optionsPrice;
+            $unitPriceCents =
+                $basePriceCents
+                + $optionsPriceCents;
 
             /*
             |--------------------------------------------------------------------------
@@ -456,7 +495,24 @@ class OrderController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $subtotal = $unitPrice * $quantity;
+            $subtotalCents =
+                $unitPriceCents
+                * $quantity;
+
+            /*
+            |--------------------------------------------------------------------------
+            | Vérifier que le prix final est valide
+            |--------------------------------------------------------------------------
+            */
+
+            if ($unitPriceCents <= 0 || $subtotalCents <= 0) {
+                return redirect()
+                    ->route('cart.index')
+                    ->with(
+                        'error',
+                        "Le prix du plat « {$product->name} » est invalide."
+                    );
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -464,15 +520,16 @@ class OrderController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $total += $subtotal;
+            $totalCents += $subtotalCents;
 
             /*
             |--------------------------------------------------------------------------
             | Préparer les snapshots des options
             |--------------------------------------------------------------------------
             |
-            | Nous sauvegardons les informations importantes de l'option
-            | au moment de la commande.
+            | Nous sauvegardons les informations importantes au moment
+            | de la commande afin que l'historique reste cohérent même
+            | si le produit ou l'option est modifié plus tard.
             |
             */
 
@@ -484,15 +541,30 @@ class OrderController extends Controller
                     $group = $choice->optionGroup;
 
                     return [
-                        'option_group_id' => (int) $group->id,
+                        'option_group_id' =>
+                            (int) $group->id,
 
-                        'option_choice_id' => (int) $choice->id,
+                        'option_choice_id' =>
+                            (int) $choice->id,
 
-                        'group_name' => $group->name,
+                        'group_name' =>
+                            $group->name,
 
-                        'choice_name' => $choice->name,
+                        'choice_name' =>
+                            $choice->name,
 
-                        'price_modifier' => (float) $choice->price_modifier,
+                        /*
+                        |------------------------------------------------------
+                        | On stocke une valeur monétaire exacte.
+                        |------------------------------------------------------
+                        */
+
+                        'price_modifier' =>
+                            $this->centsToMoney(
+                                $this->moneyToCents(
+                                    $choice->price_modifier
+                                )
+                            ),
                     ];
                 })
                 ->sortBy([
@@ -510,27 +582,37 @@ class OrderController extends Controller
 
             $orderLines[] = [
 
-                'line_key' => $lineKey,
+                'line_key' =>
+                    $lineKey,
 
-                'product' => $product,
+                'product' =>
+                    $product,
 
-                'quantity' => $quantity,
+                'quantity' =>
+                    $quantity,
 
-                'unit_price' => $unitPrice,
+                'unit_price' =>
+                    $this->centsToMoney(
+                        $unitPriceCents
+                    ),
 
-                'subtotal' => $subtotal,
+                'subtotal' =>
+                    $this->centsToMoney(
+                        $subtotalCents
+                    ),
 
-                'options' => $options,
+                'options' =>
+                    $options,
             ];
         }
 
         /*
         |--------------------------------------------------------------------------
-        | Vérifier le total
+        | Vérifier le total final
         |--------------------------------------------------------------------------
         */
 
-        if ($total <= 0) {
+        if ($totalCents <= 0) {
             return redirect()
                 ->route('cart.index')
                 ->with(
@@ -548,7 +630,7 @@ class OrderController extends Controller
         $order = DB::transaction(function () use (
             $validated,
             $orderLines,
-            $total
+            $totalCents
         ) {
 
             /*
@@ -579,13 +661,19 @@ class OrderController extends Controller
 
             $order = Order::create([
 
-                'user_id' => auth()->id(),
+                'user_id' =>
+                    auth()->id(),
 
-                'order_number' => $orderNumber,
+                'order_number' =>
+                    $orderNumber,
 
-                'total' => $total,
+                'total' =>
+                    $this->centsToMoney(
+                        $totalCents
+                    ),
 
-                'status' => 'pending',
+                'status' =>
+                    'pending',
 
                 'delivery_method' =>
                     $validated['delivery_method'],
@@ -667,6 +755,9 @@ class OrderController extends Controller
         |--------------------------------------------------------------------------
         | Vider le panier
         |--------------------------------------------------------------------------
+        |
+        | La commande a été validée et enregistrée avec succès.
+        |
         */
 
         $request->session()->forget('cart');
@@ -676,16 +767,42 @@ class OrderController extends Controller
         | Envoyer l'email de confirmation
         |--------------------------------------------------------------------------
         |
-        | La page success est une nouvelle requête après la redirection.
-        | Il est donc inutile de préparer image_url ici.
+        | IMPORTANT :
+        |
+        | Une erreur de messagerie ne doit jamais annuler une commande
+        | déjà enregistrée en base.
+        |
+        | Nous journalisons l'erreur afin de pouvoir la diagnostiquer.
         |
         */
 
-        Mail::to(
-            $validated['email']
-        )->send(
-            new OrderConfirmationMail($order)
-        );
+        try {
+
+            Mail::to(
+                $validated['email']
+            )->send(
+                new OrderConfirmationMail($order)
+            );
+
+        } catch (Throwable $exception) {
+
+            Log::error(
+                'Échec de l’envoi de l’email de confirmation de commande.',
+                [
+                    'order_id' =>
+                        $order->id,
+
+                    'order_number' =>
+                        $order->order_number,
+
+                    'email' =>
+                        $validated['email'],
+
+                    'error' =>
+                        $exception->getMessage(),
+                ]
+            );
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -716,7 +833,7 @@ class OrderController extends Controller
         | Autorisation
         |--------------------------------------------------------------------------
         |
-        | Un utilisateur connecté ne doit pas pouvoir consulter
+        | Un utilisateur connecté ne doit jamais pouvoir consulter
         | la commande d'un autre utilisateur.
         |
         */
@@ -732,10 +849,6 @@ class OrderController extends Controller
         |--------------------------------------------------------------------------
         | Charger les relations nécessaires
         |--------------------------------------------------------------------------
-        |
-        | On recharge ici les données car la page success est
-        | appelée après une redirection HTTP.
-        |
         */
 
         $order->load([
@@ -748,20 +861,14 @@ class OrderController extends Controller
         |--------------------------------------------------------------------------
         | Préparer les URLs des images
         |--------------------------------------------------------------------------
-        |
-        | Cette logique doit être exécutée ici.
-        |
-        | Elle permet à la Blade d'utiliser simplement :
-        |
-        | $item->image_url
-        |
         */
 
         foreach ($order->items as $item) {
 
-            $item->image_url = $this->getPrimaryImageUrl(
-                $item->product
-            );
+            $item->image_url =
+                $this->getPrimaryImageUrl(
+                    $item->product
+                );
         }
 
         /*
@@ -783,8 +890,8 @@ class OrderController extends Controller
      *
      * Priorité :
      *
-     * 1. Image principale
-     * 2. Première image
+     * 1. Image marquée comme principale
+     * 2. Première image disponible
      * 3. null
      */
     private function getPrimaryImageUrl(
@@ -803,18 +910,30 @@ class OrderController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Récupérer l'image principale
+        | Chercher d'abord l'image principale
         |--------------------------------------------------------------------------
         |
-        | La relation productImages doit idéalement être triée
-        | avec :
-        |
-        | is_primary DESC
-        | sort_order ASC
+        | On ne dépend plus de l'ordre naturel de la relation.
         |
         */
 
-        $productImage = $product->productImages->first();
+        $productImage =
+            $product->productImages
+                ->first(
+                    fn ($image) =>
+                        (bool) $image->is_primary
+                );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Fallback : première image
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$productImage) {
+            $productImage =
+                $product->productImages->first();
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -868,6 +987,138 @@ class OrderController extends Controller
 
         return Storage::disk($disk)->url(
             $media->path
+        );
+    }
+
+    /**
+     * =========================================================
+     * CONVERTIR UN MONTANT EN CENTIMES
+     * =========================================================
+     *
+     * Exemple :
+     *
+     * "3500.00" -> 350000
+     * "1500.50" -> 150050
+     *
+     * On évite volontairement les float.
+     */
+    private function moneyToCents(
+        mixed $amount
+    ): int {
+
+        $value = trim(
+            (string) $amount
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Nettoyer le format monétaire
+        |--------------------------------------------------------------------------
+        */
+
+        $value = str_replace(
+            [' ', ','],
+            ['', '.'],
+            $value
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Vérifier le format
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !preg_match(
+                '/^-?\d+(?:\.\d{1,2})?$/',
+                $value
+            )
+        ) {
+            throw new \InvalidArgumentException(
+                'Montant monétaire invalide.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Séparer partie entière et décimale
+        |--------------------------------------------------------------------------
+        */
+
+        [$whole, $decimal] = array_pad(
+            explode('.', $value, 2),
+            2,
+            '0'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Toujours travailler avec exactement deux décimales
+        |--------------------------------------------------------------------------
+        */
+
+        $decimal = str_pad(
+            substr($decimal, 0, 2),
+            2,
+            '0'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Calcul exact en entier
+        |--------------------------------------------------------------------------
+        */
+
+        $sign = str_starts_with(
+            $whole,
+            '-'
+        )
+            ? -1
+            : 1;
+
+        $whole = ltrim(
+            $whole,
+            '+-'
+        );
+
+        return $sign * (
+            ((int) $whole * 100)
+            + (int) $decimal
+        );
+    }
+
+    /**
+     * =========================================================
+     * CONVERTIR DES CENTIMES EN MONTANT DÉCIMAL
+     * =========================================================
+     *
+     * Exemple :
+     *
+     * 350000 -> "3500.00"
+     * 150050 -> "1500.50"
+     */
+    private function centsToMoney(
+        int $cents
+    ): string {
+
+        $sign = $cents < 0
+            ? '-'
+            : '';
+
+        $cents = abs($cents);
+
+        $whole = intdiv(
+            $cents,
+            100
+        );
+
+        $decimal = $cents % 100;
+
+        return sprintf(
+            '%s%d.%02d',
+            $sign,
+            $whole,
+            $decimal
         );
     }
 }

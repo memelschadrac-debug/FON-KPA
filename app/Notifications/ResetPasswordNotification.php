@@ -32,6 +32,17 @@ class ResetPasswordNotification extends Notification
     }
 
     /**
+     * Retourne le token de réinitialisation.
+     *
+     * Utile notamment pour les tests et pour accéder
+     * au token sans exposer directement la propriété.
+     */
+    public function getToken(): string
+    {
+        return $this->token;
+    }
+
+    /**
      * Construit l'e-mail de réinitialisation.
      */
     public function toMail(object $notifiable): MailMessage

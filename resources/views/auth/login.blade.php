@@ -421,14 +421,17 @@
         {{-- BOUTON CONNEXION --}}
         {{-- ============================= --}}
 
+                
         <button
             type="submit"
+            id="login-submit"
             class="
                 flex
                 h-10
                 w-full
                 items-center
                 justify-center
+                gap-2
                 rounded-md
                 bg-[#593114]
                 px-4
@@ -447,8 +450,38 @@
                 active:scale-[0.99]
             "
         >
-            Se connecter
+            {{-- Texte normal --}}
+            <span id="login-submit-text">
+                Se connecter
+            </span>
+
+            {{-- Spinner --}}
+            <svg
+                id="login-submit-spinner"
+                class="hidden h-4 w-4 animate-spin"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+            >
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    class="opacity-25"
+                    stroke="currentColor"
+                    stroke-width="3"
+                />
+
+                <path
+                    d="M21 12a9 9 0 0 0-9-9"
+                    class="opacity-90"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                />
+            </svg>
         </button>
+
 
     </form>
 
@@ -614,6 +647,32 @@
 
         }
 
+    </script>
+
+        
+    <script>
+        const loginForm = document.querySelector('form[action="{{ route('login') }}"]');
+        const loginButton = document.getElementById('login-submit');
+        const loginText = document.getElementById('login-submit-text');
+        const loginSpinner = document.getElementById('login-submit-spinner');
+
+        if (loginForm && loginButton && loginText && loginSpinner) {
+
+            loginForm.addEventListener('submit', function () {
+
+                // Évite les doubles clics pendant la connexion.
+                loginButton.disabled = true;
+
+                // Affiche le spinner.
+                loginSpinner.classList.remove('hidden');
+
+                // Change le texte du bouton.
+                loginText.textContent = 'Connexion...';
+
+                // Rend visuellement le bouton moins interactif.
+                loginButton.classList.add('cursor-not-allowed', 'opacity-90');
+            });
+        }
     </script>
 
 </x-guest-layout>

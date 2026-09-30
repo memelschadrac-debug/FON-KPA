@@ -57,7 +57,7 @@
         antialiased
     "
 >
-
+<x-page-loader />
     <!--
         Conteneur principal
 

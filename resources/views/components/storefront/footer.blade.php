@@ -358,7 +358,7 @@
                     @if(auth()->user()->is_admin)
 
                         <a
-                            href="{{ route('dashboard') }}"
+                            href="{{ route('admin.dashboard') }}"
                             class="group inline-flex items-center justify-center gap-1.5 text-[9px] font-medium text-[#593114] transition-colors duration-200 hover:text-[#E25F12] sm:text-[10px]"
                         >
 

@@ -40,7 +40,6 @@ class UserController extends Controller
         ));
     }
 
-
     /**
      * Affiche le formulaire de création.
      */
@@ -48,7 +47,6 @@ class UserController extends Controller
     {
         return view('admin.users.create');
     }
-
 
     /**
      * Enregistre un nouvel utilisateur.
@@ -88,7 +86,6 @@ class UserController extends Controller
             ],
         ]);
 
-
         /*
         |--------------------------------------------------------------------------
         | Création de l'utilisateur
@@ -106,38 +103,37 @@ class UserController extends Controller
         |--------------------------------------------------------------------------
         |
         | Le modèle User possède le cast "hashed".
-        | Laravel hash donc automatiquement le mot de passe lors du save().
+        | Laravel hash automatiquement le mot de passe lors du save().
         |
         */
-        $user->password = $validated['password'];
 
+        $user->password = $validated['password'];
 
         /*
         |--------------------------------------------------------------------------
         | Rôle
         |--------------------------------------------------------------------------
         |
-        | 0 = Client
-        | 1 = Administrateur
+        | false = Client
+        | true  = Administrateur
         |
         */
-        $user->is_admin = (bool) $validated['is_admin'];
 
+        $user->is_admin = (bool) $validated['is_admin'];
 
         /*
         |--------------------------------------------------------------------------
         | Statut
         |--------------------------------------------------------------------------
         |
-        | 0 = Désactivé
-        | 1 = Actif
+        | false = Désactivé
+        | true  = Actif
         |
         */
+
         $user->is_active = (bool) $validated['is_active'];
 
-
         $user->save();
-
 
         return redirect()
             ->route('admin.users.index')
@@ -147,7 +143,6 @@ class UserController extends Controller
             );
     }
 
-
     /**
      * Affiche les détails d'un utilisateur.
      */
@@ -156,7 +151,6 @@ class UserController extends Controller
         return view('admin.users.show', compact('user'));
     }
 
-
     /**
      * Affiche le formulaire de modification.
      */
@@ -164,7 +158,6 @@ class UserController extends Controller
     {
         return view('admin.users.edit', compact('user'));
     }
-
 
     /**
      * Met à jour un utilisateur.
@@ -206,22 +199,53 @@ class UserController extends Controller
             ],
         ]);
 
-
         /*
         |--------------------------------------------------------------------------
         | Protection du compte actuellement connecté
         |--------------------------------------------------------------------------
         |
         | Un administrateur ne peut pas :
-        | - retirer son propre rôle administrateur
-        | - désactiver son propre compte
+        | - retirer son propre rôle administrateur ;
+        | - désactiver son propre compte.
         |
         */
+
         if ($user->id === auth()->id()) {
             $validated['is_admin'] = $user->is_admin;
             $validated['is_active'] = $user->is_active;
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Protection du dernier administrateur actif
+        |--------------------------------------------------------------------------
+        |
+        | Il doit toujours rester au moins un administrateur actif.
+        |
+        */
+
+        if (
+            $user->is_admin &&
+            $user->is_active &&
+            (
+                !$validated['is_admin'] ||
+                !$validated['is_active']
+            )
+        ) {
+            $activeAdminsCount = User::query()
+                ->where('is_admin', true)
+                ->where('is_active', true)
+                ->count();
+
+            if ($activeAdminsCount <= 1) {
+                return redirect()
+                    ->route('admin.users.index')
+                    ->with(
+                        'error',
+                        'Impossible de désactiver ou de retirer le rôle du dernier administrateur actif.'
+                    );
+            }
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -232,7 +256,6 @@ class UserController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
 
-
         /*
         |--------------------------------------------------------------------------
         | Rôle
@@ -241,7 +264,6 @@ class UserController extends Controller
 
         $user->is_admin = (bool) $validated['is_admin'];
 
-
         /*
         |--------------------------------------------------------------------------
         | Statut
@@ -249,7 +271,6 @@ class UserController extends Controller
         */
 
         $user->is_active = (bool) $validated['is_active'];
-
 
         /*
         |--------------------------------------------------------------------------
@@ -260,13 +281,12 @@ class UserController extends Controller
         | Sinon, Laravel le hash automatiquement grâce au cast "hashed".
         |
         */
+
         if (!empty($validated['password'])) {
             $user->password = $validated['password'];
         }
 
-
         $user->save();
-
 
         return redirect()
             ->route('admin.users.index')
@@ -275,7 +295,6 @@ class UserController extends Controller
                 'Les informations de l’utilisateur ont été mises à jour.'
             );
     }
-
 
     /**
      * Désactive un utilisateur.
@@ -297,10 +316,30 @@ class UserController extends Controller
                 );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Protection du dernier administrateur actif
+        |--------------------------------------------------------------------------
+        */
+
+        if ($user->is_admin && $user->is_active) {
+            $activeAdminsCount = User::query()
+                ->where('is_admin', true)
+                ->where('is_active', true)
+                ->count();
+
+            if ($activeAdminsCount <= 1) {
+                return redirect()
+                    ->route('admin.users.index')
+                    ->with(
+                        'error',
+                        'Impossible de désactiver le dernier administrateur actif.'
+                    );
+            }
+        }
 
         $user->is_active = false;
         $user->save();
-
 
         return redirect()
             ->route('admin.users.index')
@@ -310,7 +349,6 @@ class UserController extends Controller
             );
     }
 
-
     /**
      * Réactive un utilisateur.
      */
@@ -319,7 +357,6 @@ class UserController extends Controller
         $user->is_active = true;
         $user->save();
 
-
         return redirect()
             ->route('admin.users.index')
             ->with(
@@ -327,7 +364,6 @@ class UserController extends Controller
                 'Le compte de l’utilisateur a été réactivé.'
             );
     }
-
 
     /**
      * Supprime définitivement un utilisateur.
@@ -349,9 +385,51 @@ class UserController extends Controller
                 );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Protection du dernier administrateur actif
+        |--------------------------------------------------------------------------
+        */
+
+        if ($user->is_admin && $user->is_active) {
+            $activeAdminsCount = User::query()
+                ->where('is_admin', true)
+                ->where('is_active', true)
+                ->count();
+
+            if ($activeAdminsCount <= 1) {
+                return redirect()
+                    ->route('admin.users.index')
+                    ->with(
+                        'error',
+                        'Impossible de supprimer le dernier administrateur actif.'
+                    );
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Protection de l'historique des commandes
+        |--------------------------------------------------------------------------
+        |
+        | La suppression d'un utilisateur déclenche actuellement
+        | cascadeOnDelete() sur ses commandes.
+        |
+        | On refuse donc la suppression d'un utilisateur qui possède
+        | déjà des commandes.
+        |
+        */
+
+        if ($user->orders()->exists()) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with(
+                    'error',
+                    'Cet utilisateur possède des commandes et ne peut pas être supprimé. Vous pouvez désactiver son compte.'
+                );
+        }
 
         $user->delete();
-
 
         return redirect()
             ->route('admin.users.index')

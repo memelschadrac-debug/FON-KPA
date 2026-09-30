@@ -19,6 +19,9 @@
 
 <body class="bg-white text-gray-900">
 
+    {{-- Loader global --}}
+    <x-page-loader />
+
     {{-- Navbar --}}
     <header>
         <x-storefront.navbar />
