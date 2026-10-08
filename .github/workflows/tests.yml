@@ -27,5 +27,10 @@ jobs:
       - name: Installer les dépendances
         run: composer install --no-interaction --prefer-dist
 
+      - name: Préparer Laravel
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
       - name: Lancer les tests
         run: vendor/bin/phpunit
