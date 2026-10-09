@@ -62,7 +62,7 @@
                         >
                             La cuisine
                             <span class="text-[#E25F12]">
-                                ivoirienne,
+                                africaine,
                             </span>
 
                             <br>
@@ -1108,7 +1108,7 @@
                                 Parcourez notre menu et découvrez
                                 une sélection de plats inspirés
                                 de la richesse de la cuisine
-                                ivoirienne.
+                                africaine.
                             </p>
 
                         </div>

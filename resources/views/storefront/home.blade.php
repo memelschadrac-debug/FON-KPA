@@ -31,7 +31,7 @@
                     <div class="mb-6 flex items-center gap-3">
 
                         <span class="badge rounded-full border-[#E8D9CC] bg-white px-4 py-3 text-[9px] font-bold uppercase tracking-[0.2em] text-[#E25F12] shadow-sm">
-                            Cuisine ivoirienne
+                            Cuisine africaine
                         </span>
 
                         <span class="hidden h-px w-10 bg-[#E5D7CC] sm:block"></span>
@@ -71,7 +71,7 @@
 
 
                     <p class="mt-7 max-w-[500px] text-sm leading-7 text-[#756960] sm:text-[15px]">
-                        Découvrez une cuisine ivoirienne généreuse,
+                        Découvrez une cuisine africaine généreuse,
                         authentique et moderne. Des recettes inspirées
                         de nos traditions, préparées avec des ingrédients
                         soigneusement sélectionnés.
@@ -207,7 +207,7 @@
                                 </p>
 
                                 <p class="mt-0.5 text-[10px] font-bold text-[#593114]">
-                                    100% ivoirienne
+                                    100% africaine
                                 </p>
                             </div>
 
@@ -1118,11 +1118,11 @@
 
                         <h2 class="mx-auto mt-6 max-w-2xl text-3xl font-black leading-[1.05] tracking-[-0.045em] text-[#FFFF] sm:text-5xl lg:text-[3.4rem]">
 
-                            Le vrai goût de la
+                            Le vrai goût
 
                             <span class="relative inline-block text-[#F4C451]">
 
-                                Côte d'Ivoire.
+                                Africaine.
 
                                 <span class="absolute -bottom-1 left-1/2 h-[3px] w-10 -translate-x-1/2 rounded-full bg-[#F4C451]/70"></span>
 

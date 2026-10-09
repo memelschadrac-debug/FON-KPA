@@ -327,7 +327,7 @@
                             <span
                                 class="hidden text-[9px] font-medium uppercase tracking-[0.18em] text-[#9A8B81] sm:block"
                             >
-                                Cuisine ivoirienne
+                                Cuisine africaine
                             </span>
 
                         </div>
@@ -347,7 +347,7 @@
                         <p
                             class="mt-7 max-w-xl text-sm leading-7 text-[#756960] sm:text-[15px]"
                         >
-                            Des recettes ivoiriennes généreuses, des grillades
+                            Des recettes africaines généreuses, des grillades
                             savoureuses et des accompagnements qui racontent
                             notre cuisine.
 
@@ -549,7 +549,7 @@
                                 <span
                                     class="text-[8px] font-bold uppercase tracking-[0.14em] text-[#6F625A]"
                                 >
-                                    100% ivoirien
+                                    100% africain
                                 </span>
 
                             </div>
